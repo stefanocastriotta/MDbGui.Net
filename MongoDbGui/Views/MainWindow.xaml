@@ -80,6 +80,14 @@
                 </DataTemplate>
             </TreeView.Resources>
         </TreeView>
+        <TabControl HorizontalAlignment="Left" Height="717" Margin="238,10,0,0" VerticalAlignment="Top" Width="768" ItemsSource="{Binding Tabs}">
+            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        </TabControl>
 
     </Grid>
 </Window>

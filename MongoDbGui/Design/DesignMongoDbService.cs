@@ -23,5 +23,12 @@ namespace MongoDbGui.Design
 
             return new List<BsonDocument>();
         }
+
+        public async Task<BsonDocument> ExecuteRawCommand(MongoClient client, string databaseName, string command)
+        {
+            // Use this to create design time data
+
+            return new BsonDocument();
+        }
     }
 }

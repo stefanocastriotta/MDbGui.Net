@@ -30,5 +30,12 @@ namespace MongoDbGui.Model
             var listCollections = await collections.ToListAsync();
             return listCollections;
         }
+
+        public async Task<BsonDocument> ExecuteRawCommand(MongoClient client, string databaseName, string command)
+        {
+            var db = client.GetDatabase(databaseName);
+            var result = await db.RunCommandAsync(new BsonDocumentCommand<BsonDocument>(BsonDocument.Parse(command)));
+            return result;
+        }
     }
 }

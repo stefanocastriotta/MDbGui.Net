@@ -27,6 +27,17 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        private ObservableCollection<TabViewModel> _tabs;
+        public ObservableCollection<TabViewModel> Tabs
+        {
+            get { return _tabs; }
+            set
+            {
+                _tabs = value;
+                RaisePropertyChanged("Tabs");
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -34,6 +45,7 @@ namespace MongoDbGui.ViewModel
         {
             _mongoDbService = mongoDbService;
             _activeConnections = new ObservableCollection<MongoDbServerViewModel>();
+            _tabs = new ObservableCollection<TabViewModel>();
             Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => NotificationMessageHandler(message));
         }
 

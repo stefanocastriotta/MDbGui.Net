@@ -90,6 +90,7 @@
     <Compile Include="ViewModel\MongoDbDatabaseViewModel.cs" />
     <Compile Include="ViewModel\MongoDbIndexViewModel.cs" />
     <Compile Include="ViewModel\MongoDbServerViewModel.cs" />
+    <Compile Include="ViewModel\TabViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Views\LoginView.xaml">
       <SubType>Form</SubType>
