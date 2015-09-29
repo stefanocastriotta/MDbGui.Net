@@ -16,8 +16,21 @@ namespace MongoDbGui.ViewModel
             get { return _collection; }
             set
             {
-                _collection = value;
-                RaisePropertyChanged("Collection");
+                Set(ref _collection, value);
+            }
+        }
+
+        private string _name = string.Empty;
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                Set(ref _name, value);
             }
         }
 

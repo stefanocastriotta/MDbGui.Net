@@ -121,10 +121,14 @@ namespace MongoDbGui.ViewModel
         {
             Connecting = true;
             var serverInfo = await _mongoDbService.Connect(new ConnectionInfo() { Address = Address, Port = Port, Mode = HostPortMode ? 1 : 2, ConnectionString = ConnectionString });
-            MongoDbServerViewModel serverVm = new MongoDbServerViewModel(serverInfo.Client);
+            MongoDbServerViewModel serverVm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<MongoDbServerViewModel>();
+            serverVm.Client = serverInfo.Client;
             foreach (var database in serverInfo.Databases)
             {
-                serverVm.Databases.Add(new MongoDbDatabaseViewModel() { Server = serverVm });
+                var databaseVm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<MongoDbDatabaseViewModel>();
+                databaseVm.Server = serverVm;
+                databaseVm.Name = database["name"].AsString;
+                serverVm.Databases.Add(databaseVm);
             }
             Messenger.Default.Send(new NotificationMessage<MongoDbServerViewModel>(serverVm, "LoginSuccessfully"));
         }

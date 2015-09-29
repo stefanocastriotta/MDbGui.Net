@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ignore="http://www.galasoft.ch/ignore"
+        xmlns:local="clr-namespace:MongoDbGui.ViewModel"
         mc:Ignorable="d ignore"
         Height="768"
         Width="1024"
@@ -27,7 +28,58 @@
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
                    TextWrapping="Wrap" />
-        <TreeView HorizontalAlignment="Left" Height="717" Margin="10,10,0,0" VerticalAlignment="Top" Width="223" ItemsSource="{Binding ActiveConnections}"/>
+        <TreeView HorizontalAlignment="Left" Height="717" Margin="10,10,0,0" VerticalAlignment="Top" Width="223" ItemsSource="{Binding ActiveConnections}">
+            <TreeView.ItemContainerStyle>
+                <!-- 
+    This Style binds a TreeViewItem to a PersonViewModel. 
+    -->
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TreeView.ItemContainerStyle>
+
+            <TreeView.Resources>
+                <HierarchicalDataTemplate 
+      DataType="{x:Type local:MongoDbServerViewModel}" 
+      ItemsSource="{Binding Databases}"
+      >
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Address}" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+
+                <HierarchicalDataTemplate 
+      DataType="{x:Type local:MongoDbDatabaseViewModel}" 
+      ItemsSource="{Binding Collections}"
+      >
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+
+                <HierarchicalDataTemplate 
+      DataType="{x:Type local:MongoDbCollectionViewModel}" 
+      ItemsSource="{Binding Indexes}"
+      >
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+
+                <DataTemplate DataType="{x:Type local:MongoDbIndexViewModel}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TreeView.Resources>
+        </TreeView>
 
     </Grid>
 </Window>

@@ -23,9 +23,9 @@ namespace MongoDbGui.Model
             return server;
         }
 
-        public async Task<List<BsonDocument>> GetCollections(MongoDbServer server, string databaseName)
+        public async Task<List<BsonDocument>> GetCollections(MongoClient client, string databaseName)
         {
-            var db = server.Client.GetDatabase(databaseName);
+            var db = client.GetDatabase(databaseName);
             var collections = await db.ListCollectionsAsync();
             var listCollections = await collections.ToListAsync();
             return listCollections;

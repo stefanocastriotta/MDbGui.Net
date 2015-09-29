@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace MongoDbGui.Model
     public interface IMongoDbService
     {
         Task<MongoDbServer> Connect(ConnectionInfo connectionInfo);
-        Task<List<BsonDocument>> GetCollections(MongoDbServer server, string databaseName);
+        Task<List<BsonDocument>> GetCollections(MongoClient client, string databaseName);
     }
 }

@@ -17,8 +17,21 @@ namespace MongoDbGui.ViewModel
             get { return _database; }
             set
             {
-                _database = value;
-                RaisePropertyChanged("Database");
+                Set(ref _database, value);
+            }
+        }
+
+        private string _name = string.Empty;
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                Set(ref _name, value);
             }
         }
 

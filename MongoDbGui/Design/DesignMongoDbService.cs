@@ -3,6 +3,7 @@ using MongoDbGui.Model;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace MongoDbGui.Design
 {
@@ -16,7 +17,7 @@ namespace MongoDbGui.Design
             return server;
         }
 
-        public async Task<List<BsonDocument>> GetCollections(MongoDbServer server, string databaseName)
+        public async Task<List<BsonDocument>> GetCollections(MongoClient client, string databaseName)
         {
             // Use this to create design time data
 
