@@ -99,6 +99,11 @@
             <GridSplitter Grid.Column="1"></GridSplitter>
             <TabControl Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Tabs}">
                 <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
                     <DataTemplate DataType="{x:Type local:CollectionTabViewModel}">
                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <Grid.RowDefinitions>
@@ -110,14 +115,22 @@
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
                                     <Label Content="Find"></Label>
-                                    <TextBox Text="{Binding Find}"></TextBox>
-                                </StackPanel>
-                                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <TextBox Grid.Column="1" Text="{Binding Find}"></TextBox>
+                                </Grid>
+                                <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
                                     <Label Content="Sort"></Label>
-                                    <TextBox Text="{Binding Sort}"></TextBox>
-                                </StackPanel>
+                                    <TextBox Grid.Column="1" Text="{Binding Sort}"></TextBox>
+                                </Grid>
                             </Grid>
                             <TreeView Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Results}">
                                 <TreeView.ItemContainerStyle>
@@ -137,19 +150,17 @@
                                 </TreeView.ItemContainerStyle>
 
                                 <TreeView.ItemTemplate>
-                                    <DataTemplate>
+                                    <HierarchicalDataTemplate ItemsSource="{Binding Elements}">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Name}">
-                                            </TextBlock>
+                                            <TextBlock Text="{Binding RawValue}" />
                                         </StackPanel>
-                                    </DataTemplate>
-
+                                    </HierarchicalDataTemplate>
                                 </TreeView.ItemTemplate>
                             </TreeView>
 
                         </Grid>
                     </DataTemplate>
-                </TabControl.ItemTemplate>
+                </TabControl.ContentTemplate>
             </TabControl>
 
         </Grid>
