@@ -13,5 +13,6 @@ namespace MongoDbGui.Model
         Task<MongoDbServer> Connect(ConnectionInfo connectionInfo);
         Task<List<BsonDocument>> GetCollections(MongoClient client, string databaseName);
         Task<BsonDocument> ExecuteRawCommand(MongoClient client, string databaseName, string command);
+        Task<List<BsonDocument>> Find(MongoClient client, string databaseName, string collection, string find, string sort, int? size, int? skip);
     }
 }

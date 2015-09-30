@@ -84,13 +84,15 @@
     <Compile Include="Model\MongoDbServer.cs" />
     <Compile Include="Model\MongoDbService.cs" />
     <Compile Include="Model\IMongoDbService.cs" />
+    <Compile Include="ViewModel\CollectionTabViewModel.cs" />
+    <Compile Include="ViewModel\CommandTabViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MongoDbCollectionViewModel.cs" />
     <Compile Include="ViewModel\MongoDbDatabaseViewModel.cs" />
     <Compile Include="ViewModel\MongoDbIndexViewModel.cs" />
     <Compile Include="ViewModel\MongoDbServerViewModel.cs" />
-    <Compile Include="ViewModel\TabViewModel.cs" />
+    <Compile Include="ViewModel\BaseTabViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Views\LoginView.xaml">
       <SubType>Form</SubType>

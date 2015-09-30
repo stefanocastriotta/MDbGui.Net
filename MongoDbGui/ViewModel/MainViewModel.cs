@@ -27,8 +27,8 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private ObservableCollection<TabViewModel> _tabs;
-        public ObservableCollection<TabViewModel> Tabs
+        private ObservableCollection<BaseTabViewModel> _tabs;
+        public ObservableCollection<BaseTabViewModel> Tabs
         {
             get { return _tabs; }
             set
@@ -45,17 +45,30 @@ namespace MongoDbGui.ViewModel
         {
             _mongoDbService = mongoDbService;
             _activeConnections = new ObservableCollection<MongoDbServerViewModel>();
-            _tabs = new ObservableCollection<TabViewModel>();
-            Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => NotificationMessageHandler(message));
+            _tabs = new ObservableCollection<BaseTabViewModel>();
+            Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => LoginMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<CollectionTabViewModel>>(this, (message) => OpenTabMessageHandler(message));
         }
 
-        private void NotificationMessageHandler(NotificationMessage<MongoDbServerViewModel> message)
+        private void LoginMessageHandler(NotificationMessage<MongoDbServerViewModel> message)
         {
             if (message.Notification == "LoginSuccessfully")
             {
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     ActiveConnections.Add(message.Content);
+                });
+            }
+        }
+
+        private void OpenTabMessageHandler(NotificationMessage<CollectionTabViewModel> message)
+        {
+            if (message.Notification == "OpenCollectionTab")
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    Tabs.Add(message.Content);
+                    message.Content.ExecuteFind.Execute(null);
                 });
             }
         }

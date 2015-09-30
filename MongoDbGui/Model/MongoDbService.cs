@@ -37,5 +37,13 @@ namespace MongoDbGui.Model
             var result = await db.RunCommandAsync(new BsonDocumentCommand<BsonDocument>(BsonDocument.Parse(command)));
             return result;
         }
+
+        public async Task<List<BsonDocument>> Find(MongoClient client, string databaseName, string collection, string find, string sort, int? size, int? skip)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            var result = await mongoCollection.Find(BsonDocument.Parse(find)).Sort(BsonDocument.Parse(sort)).Limit(size).Skip(skip).ToListAsync();
+            return result;
+        }
     }
 }

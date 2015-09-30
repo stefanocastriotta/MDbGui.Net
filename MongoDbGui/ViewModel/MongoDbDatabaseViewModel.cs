@@ -94,6 +94,7 @@ namespace MongoDbGui.ViewModel
         {
             _mongoDbService = mongoDbService;
             _collections = new ObservableCollection<MongoDbCollectionViewModel>();
+            _collections.Add(new MongoDbCollectionViewModel());
         }
 
         public async void LoadCollections()
@@ -101,6 +102,7 @@ namespace MongoDbGui.ViewModel
             var collections = await _mongoDbService.GetCollections(Server.Client, Name);
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
+                Collections.Clear();
                 foreach (var collection in collections)
                 {
                     var collectionVm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<MongoDbCollectionViewModel>();
