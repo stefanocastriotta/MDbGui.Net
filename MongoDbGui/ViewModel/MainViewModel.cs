@@ -38,6 +38,20 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        private BaseTabViewModel _selectedTab;
+
+        public BaseTabViewModel SelectedTab
+        {
+            get
+            {
+                return _selectedTab;
+            }
+            set
+            {
+                Set(ref _selectedTab, value);
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -68,6 +82,7 @@ namespace MongoDbGui.ViewModel
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     Tabs.Add(message.Content);
+                    SelectedTab = message.Content;
                     message.Content.ExecuteFind.Execute(null);
                 });
             }

@@ -29,8 +29,8 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private ObservableCollection<BsonDocument> _results;
-        public ObservableCollection<BsonDocument> Results
+        private ObservableCollection<string> _results;
+        public ObservableCollection<string> Results
         {
             get { return _results; }
             set
@@ -46,7 +46,7 @@ namespace MongoDbGui.ViewModel
         public BaseTabViewModel(IMongoDbService mongoDbService)
         {
             _mongoDbService = mongoDbService;
-            _results = new ObservableCollection<BsonDocument>();
+            _results = new ObservableCollection<string>();
         }
     }
 }

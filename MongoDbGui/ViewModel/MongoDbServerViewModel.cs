@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using MongoDB.Driver;
@@ -97,5 +98,13 @@ namespace MongoDbGui.ViewModel
             _mongoDbService = mongoDbService;
             _databases = new ObservableCollection<MongoDbDatabaseViewModel>();
         }
+
+        public RelayCommand OpenCreateDatabase { get; set; }
+
+        public async void InnerOpenCreateDatabase()
+        {
+            
+        }
+
     }
 }

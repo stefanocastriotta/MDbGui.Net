@@ -1,11 +1,13 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Threading;
 using MongoDbGui.Model;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson.IO;
 
 namespace MongoDbGui.ViewModel
 {
@@ -17,6 +19,7 @@ namespace MongoDbGui.ViewModel
             _find = "{}";
             _size = 50;
             ExecuteFind = new RelayCommand(InnerExecuteFind);
+            ExecuteCount = new RelayCommand(InnerExecuteCount);
         }
 
         private MongoDbCollectionViewModel _collection;
@@ -93,8 +96,21 @@ namespace MongoDbGui.ViewModel
             var results = await _mongoDbService.Find(Collection.Database.Server.Client, Collection.Database.Name, Collection.Name, Find, Sort, Size, Skip);
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                foreach(var result in results)
-                    Results.Add(result);
+                Results.Clear();
+                foreach (var result in results)
+                    Results.Add(result.ToJson(new JsonWriterSettings { Indent = true }));
+            });
+        }
+
+        public RelayCommand ExecuteCount { get; set; }
+
+        public async void InnerExecuteCount()
+        {
+            var result = await _mongoDbService.Count(Collection.Database.Server.Client, Collection.Database.Name, Collection.Name, Find);
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                Results.Clear();
+                Results.Add(result.ToString());
             });
         }
     }

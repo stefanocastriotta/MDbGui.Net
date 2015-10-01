@@ -17,6 +17,15 @@ namespace MongoDbGui.Design
             return server;
         }
 
+        public async Task<IMongoDatabase> CreateNewDatabase(MongoClient client, string databaseName, string collection)
+        {
+            return null;
+        }
+
+        public async void CreateCollection(MongoClient client, string databaseName, string collection)
+        {
+        }
+
         public async Task<List<BsonDocument>> GetCollections(MongoClient client, string databaseName)
         {
             // Use this to create design time data
@@ -31,11 +40,18 @@ namespace MongoDbGui.Design
             return new BsonDocument();
         }
 
-        public async Task<List<BsonDocument>> Find(MongoClient client, string databaseName, string collection, string find, string sort, int? size, int? skip)
+        public async Task<List<BsonDocument>> Find(MongoClient client, string databaseName, string collection, string filter, string sort, int? limit, int? skip)
         {
             // Use this to create design time data
 
             return new List<BsonDocument>();
+        }
+
+        public async Task<long> Count(MongoClient client, string databaseName, string collection, string filter)
+        {
+            // Use this to create design time data
+
+            return 100;
         }
     }
 }
