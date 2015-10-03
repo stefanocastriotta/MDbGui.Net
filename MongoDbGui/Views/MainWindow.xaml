@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ignore="http://www.galasoft.ch/ignore"
         xmlns:local="clr-namespace:MongoDbGui.ViewModel"
+        xmlns:utils="clr-namespace:MongoDbGui.Utils"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d ignore"
@@ -18,18 +19,12 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <utils:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
     <Grid x:Name="LayoutRoot">
 
-        <TextBlock FontSize="36"
-                   FontWeight="Bold"
-                   Foreground="Purple"
-                   Text="{Binding WelcomeTitle}"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   TextWrapping="Wrap" />
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -38,9 +33,6 @@
             </Grid.ColumnDefinitions>
             <TreeView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding ActiveConnections}">
                 <TreeView.ItemContainerStyle>
-                    <!-- 
-    This Style binds a TreeViewItem to a PersonViewModel. 
-    -->
                     <Style TargetType="{x:Type TreeViewItem}">
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
@@ -55,14 +47,14 @@
 
                 <TreeView.Resources>
                     <HierarchicalDataTemplate 
-      DataType="{x:Type local:MongoDbServerViewModel}" 
-      ItemsSource="{Binding Databases}"
-      >
+                      DataType="{x:Type local:MongoDbServerViewModel}" 
+                      ItemsSource="{Binding Databases}"
+                      >
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Address}">
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Create database" Command="{Binding Path=OpenCreateDatabase}" />
+                                        <MenuItem Header="Create database" Command="{Binding Path=CreateNewDatabase}" />
                                     </ContextMenu>
                                 </TextBlock.ContextMenu>
                             </TextBlock>
@@ -70,36 +62,47 @@
                     </HierarchicalDataTemplate>
 
                     <HierarchicalDataTemplate 
-      DataType="{x:Type local:MongoDbDatabaseViewModel}" 
-      ItemsSource="{Binding Collections}"
-      >
+                      DataType="{x:Type local:MongoDbDatabaseViewModel}" 
+                      ItemsSource="{Binding Collections}"
+                      >
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}">
+                            <TextBlock Text="{Binding Name}" Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}">
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Create collection" Command="{Binding Path=OpenCreateCollection}" />
+                                        <MenuItem Header="Create collection" Command="{Binding Path=CreateNewCollection}" />
                                         <MenuItem Header="Drop database"/>
                                         <Separator/>
                                     </ContextMenu>
                                 </TextBlock.ContextMenu>
                             </TextBlock>
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" utils:FocusExtension.IsFocused="{Binding IsNew}" Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding CreateDatabase}" Key="Enter" />
+                                </TextBox.InputBindings>
+                            </TextBox>
                         </StackPanel>
                     </HierarchicalDataTemplate>
 
                     <HierarchicalDataTemplate 
-      DataType="{x:Type local:MongoDbCollectionViewModel}" 
-      ItemsSource="{Binding Indexes}"
-      >
+                      DataType="{x:Type local:MongoDbCollectionViewModel}" 
+                      ItemsSource="{Binding Indexes}"
+                      >
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}">
+                            <TextBlock Text="{Binding Name}" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}">
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Open collection" Command="{Binding Path=OpenTab}" />
+                                        <MenuItem Header="Rename collection" Command="{Binding Path=RenameCollection}" />
                                         <MenuItem Header="Delete collection"/>
                                         <Separator/>
                                     </ContextMenu>
                                 </TextBlock.ContextMenu>
                             </TextBlock>
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" utils:FocusExtension.IsFocused="{Binding IsEditing}" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding SaveCollection}" Key="Enter" />
+                                </TextBox.InputBindings>
+                            </TextBox>
                         </StackPanel>
                     </HierarchicalDataTemplate>
 

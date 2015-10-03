@@ -13,7 +13,7 @@ namespace MongoDbGui.ViewModel
 {
     public class CollectionTabViewModel : BaseTabViewModel
     {
-        public CollectionTabViewModel(IMongoDbService mongoDbService) : base(mongoDbService)
+        public CollectionTabViewModel()
         {
             _sort = "{}";
             _find = "{}";
@@ -93,7 +93,7 @@ namespace MongoDbGui.ViewModel
 
         public async void InnerExecuteFind()
         {
-            var results = await _mongoDbService.Find(Collection.Database.Server.Client, Collection.Database.Name, Collection.Name, Find, Sort, Size, Skip);
+            var results = await Collection.Database.Server.MongoDbService.Find(Collection.Database.Name, Collection.Name, Find, Sort, Size, Skip);
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 Results.Clear();
@@ -106,7 +106,7 @@ namespace MongoDbGui.ViewModel
 
         public async void InnerExecuteCount()
         {
-            var result = await _mongoDbService.Count(Collection.Database.Server.Client, Collection.Database.Name, Collection.Name, Find);
+            var result = await Collection.Database.Server.MongoDbService.Count(Collection.Database.Name, Collection.Name, Find);
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 Results.Clear();

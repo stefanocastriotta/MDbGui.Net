@@ -74,6 +74,32 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        private string _oldName = string.Empty;
+
+
+        private bool _isNew;
+
+        public bool IsNew
+        {
+            get { return _isNew; }
+            set
+            {
+                Set(ref _isNew, value);
+            }
+        }
+
+        private bool _isEditing;
+
+        public bool IsEditing
+        {
+            get { return _isEditing; }
+            set
+            {
+                Set(ref _isEditing, value);
+            }
+        }
+
+
         private ObservableCollection<MongoDbIndexViewModel> _indexes;
         public ObservableCollection<MongoDbIndexViewModel> Indexes
         {
@@ -87,21 +113,53 @@ namespace MongoDbGui.ViewModel
 
         public RelayCommand OpenTab { get; set; }
 
+        public RelayCommand SaveCollection { get; set; }
+
+        public RelayCommand RenameCollection { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the MongoDbCollectionViewModel class.
         /// </summary>
-        public MongoDbCollectionViewModel()
+        public MongoDbCollectionViewModel(MongoDbDatabaseViewModel database, string collectionName)
         {
             _indexes = new ObservableCollection<MongoDbIndexViewModel>();
             OpenTab = new RelayCommand(InternalOpenTab);
+            RenameCollection = new RelayCommand(InternalRenameCollection);
+            SaveCollection = new RelayCommand(InnerSaveCollection, () =>
+            {
+                return !string.IsNullOrWhiteSpace(Name);
+            });
+            Database = database;
+            _name = collectionName;
+            _oldName = collectionName;
         }
 
         private void InternalOpenTab()
         {
-            CollectionTabViewModel collectionTabVm = SimpleIoc.Default.GetInstanceWithoutCaching<CollectionTabViewModel>();
+            CollectionTabViewModel collectionTabVm = new CollectionTabViewModel();
             collectionTabVm.Collection = this;
             collectionTabVm.Name = this.Name;
             Messenger.Default.Send(new NotificationMessage<CollectionTabViewModel>(collectionTabVm, "OpenCollectionTab"));
+        }
+
+        private void InternalRenameCollection()
+        {
+            IsEditing = true;
+        }
+
+        public async void InnerSaveCollection()
+        {
+            if (_isNew)
+            {
+                await Database.Server.MongoDbService.CreateCollection(Database.Name, this.Name);
+                IsNew = false;
+            }
+            else
+            {
+                await Database.Server.MongoDbService.RenameCollection(Database.Name, this._oldName, this.Name);
+            }
+            _oldName = this.Name;
+            IsEditing = false;
         }
     }
 }

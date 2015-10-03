@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Threading;
 using MongoDbGui.Model;
 using System.Collections.ObjectModel;
@@ -13,8 +14,6 @@ namespace MongoDbGui.ViewModel
     /// </summary>
     public class MongoDbDatabaseViewModel : ViewModelBase
     {
-        private readonly IMongoDbService _mongoDbService;
-
         private MongoDbServerViewModel _server;
         public MongoDbServerViewModel Server
         {
@@ -61,7 +60,6 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-
         private string _name = string.Empty;
 
         public string Name
@@ -73,6 +71,17 @@ namespace MongoDbGui.ViewModel
             set
             {
                 Set(ref _name, value);
+            }
+        }
+
+        private bool _isNew;
+
+        public bool IsNew
+        {
+            get { return _isNew; }
+            set
+            {
+                Set(ref _isNew, value);
             }
         }
 
@@ -90,27 +99,57 @@ namespace MongoDbGui.ViewModel
         /// <summary>
         /// Initializes a new instance of the MongoDbDatabaseViewModel class.
         /// </summary>
-        public MongoDbDatabaseViewModel(IMongoDbService mongoDbService)
+        public MongoDbDatabaseViewModel(MongoDbServerViewModel server, string name)
         {
-            _mongoDbService = mongoDbService;
+            Server = server;
+            Name = name;
             _collections = new ObservableCollection<MongoDbCollectionViewModel>();
-            _collections.Add(new MongoDbCollectionViewModel());
+            _collections.Add(new MongoDbCollectionViewModel(this, ""));
+            CreateDatabase = new RelayCommand(InnerCreateDatabase, () =>
+            {
+                return !string.IsNullOrWhiteSpace(Name) && IsNew;
+            });
+            CreateNewCollection = new RelayCommand(InnerCreateNewCollection);
         }
 
         public async void LoadCollections()
         {
-            var collections = await _mongoDbService.GetCollections(Server.Client, Name);
+            var collections = await Server.MongoDbService.GetCollections(Name);
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 Collections.Clear();
                 foreach (var collection in collections)
                 {
-                    var collectionVm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<MongoDbCollectionViewModel>();
+                    var collectionVm = new MongoDbCollectionViewModel(this, collection["name"].AsString);
                     collectionVm.Database = this;
-                    collectionVm.Name = collection["name"].AsString;
                     Collections.Add(collectionVm);
                 }
                 _collectionsLoaded = true;
+            });
+        }
+
+        public RelayCommand CreateDatabase { get; set; }
+
+        public RelayCommand CreateNewCollection { get; set; }
+
+        public async void InnerCreateDatabase()
+        {
+            if (_isNew)
+            {
+                await Server.MongoDbService.CreateNewDatabase(this.Name);
+                IsNew = false;
+            }
+        }
+
+        public void InnerCreateNewCollection()
+        {
+            var newCollection = new MongoDbCollectionViewModel(this, "");
+            newCollection.IsSelected = true;
+            newCollection.IsNew = true;
+            newCollection.IsEditing = true;
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                Collections.Add(newCollection);
             });
         }
     }

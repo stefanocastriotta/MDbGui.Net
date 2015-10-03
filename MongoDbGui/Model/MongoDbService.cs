@@ -8,11 +8,12 @@ namespace MongoDbGui.Model
 {
     public class MongoDbService : IMongoDbService
     {
+        private MongoClient client;
+
         #region Server Admin
 
         public async Task<MongoDbServer> Connect(ConnectionInfo connectionInfo)
         {
-            MongoClient client;
             if (connectionInfo.Mode == 1)
                 client = new MongoClient(new MongoClientSettings() { Server = new MongoServerAddress(connectionInfo.Address, connectionInfo.Port) });
             else
@@ -25,16 +26,20 @@ namespace MongoDbGui.Model
             return server;
         }
 
-        public async Task<IMongoDatabase> CreateNewDatabase(MongoClient client, string databaseName, string collection)
+        public async Task<IMongoDatabase> CreateNewDatabase(string databaseName)
         {
             var databases = await client.ListDatabasesAsync();
             var databasesList = await databases.ToListAsync();
-            
+            foreach (var database in databasesList)
+            {
+                if (database["name"] == databaseName)
+                    throw new Exception("Database " + databaseName + " already existing");
+            }
             return client.GetDatabase(databaseName);
             
         }
 
-        public async Task<BsonDocument> ExecuteRawCommand(MongoClient client, string databaseName, string command)
+        public async Task<BsonDocument> ExecuteRawCommand(string databaseName, string command)
         {
             var db = client.GetDatabase(databaseName);
             var result = await db.RunCommandAsync(new BsonDocumentCommand<BsonDocument>(BsonDocument.Parse(command)));
@@ -45,7 +50,7 @@ namespace MongoDbGui.Model
 
         #region Database Admin
 
-        public async Task<List<BsonDocument>> GetCollections(MongoClient client, string databaseName)
+        public async Task<List<BsonDocument>> GetCollections(string databaseName)
         {
             var db = client.GetDatabase(databaseName);
             var collections = await db.ListCollectionsAsync();
@@ -53,15 +58,21 @@ namespace MongoDbGui.Model
             return listCollections;
         }
 
-        public async void CreateCollection(MongoClient client, string databaseName, string collection)
+        public async Task CreateCollection(string databaseName, string collection)
         {
             var db = client.GetDatabase(databaseName);
             await db.CreateCollectionAsync(collection);
         }
 
+        public async Task RenameCollection(string databaseName, string oldName, string newName)
+        {
+            var db = client.GetDatabase(databaseName);
+            await db.RenameCollectionAsync(oldName, newName);
+        }
+
         #endregion
 
-        public async Task<List<BsonDocument>> Find(MongoClient client, string databaseName, string collection, string filter, string sort, int? limit, int? skip)
+        public async Task<List<BsonDocument>> Find(string databaseName, string collection, string filter, string sort, int? limit, int? skip)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
@@ -69,7 +80,7 @@ namespace MongoDbGui.Model
             return result;
         }
 
-        public async Task<long> Count(MongoClient client, string databaseName, string collection, string filter)
+        public async Task<long> Count(string databaseName, string collection, string filter)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);

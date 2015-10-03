@@ -84,6 +84,8 @@
     <Compile Include="Model\MongoDbServer.cs" />
     <Compile Include="Model\MongoDbService.cs" />
     <Compile Include="Model\IMongoDbService.cs" />
+    <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Utils\FocusExtension.cs" />
     <Compile Include="ViewModel\CollectionTabViewModel.cs" />
     <Compile Include="ViewModel\CommandTabViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />

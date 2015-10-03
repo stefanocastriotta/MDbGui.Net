@@ -13,8 +13,6 @@ namespace MongoDbGui.ViewModel
     /// </summary>
     public class BaseTabViewModel : ViewModelBase
     {
-        protected readonly IMongoDbService _mongoDbService;
-
         private string _name = string.Empty;
 
         public string Name
@@ -43,9 +41,8 @@ namespace MongoDbGui.ViewModel
         /// <summary>
         /// Initializes a new instance of the TabViewModel class.
         /// </summary>
-        public BaseTabViewModel(IMongoDbService mongoDbService)
+        public BaseTabViewModel()
         {
-            _mongoDbService = mongoDbService;
             _results = new ObservableCollection<string>();
         }
     }

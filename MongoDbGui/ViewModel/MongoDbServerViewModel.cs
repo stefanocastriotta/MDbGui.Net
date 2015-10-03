@@ -17,23 +17,7 @@ namespace MongoDbGui.ViewModel
     /// </summary>
     public class MongoDbServerViewModel : ViewModelBase
     {
-        private readonly IMongoDbService _mongoDbService;
-
-
-        private MongoClient _client { get; set; }
-
-        public MongoClient Client
-        {
-            get
-            {
-                return _client;
-            }
-            set
-            {
-                _client = value;
-                Address = _client.Settings.Server.Host + ":" + _client.Settings.Server.Port;
-            }
-        }
+        public readonly IMongoDbService MongoDbService;
 
         private string _address = string.Empty;
 
@@ -95,15 +79,22 @@ namespace MongoDbGui.ViewModel
         /// </summary>
         public MongoDbServerViewModel(IMongoDbService mongoDbService)
         {
-            _mongoDbService = mongoDbService;
+            MongoDbService = mongoDbService;
             _databases = new ObservableCollection<MongoDbDatabaseViewModel>();
+            CreateNewDatabase = new RelayCommand(InnerCreateNewDatabase);
         }
 
-        public RelayCommand OpenCreateDatabase { get; set; }
+        public RelayCommand CreateNewDatabase { get; set; }
 
-        public async void InnerOpenCreateDatabase()
+        public void InnerCreateNewDatabase()
         {
-            
+            var newDb = new MongoDbDatabaseViewModel(this, "");
+            newDb.IsSelected = true;
+            newDb.IsNew = true;
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                Databases.Add(newDb);
+            });
         }
 
     }

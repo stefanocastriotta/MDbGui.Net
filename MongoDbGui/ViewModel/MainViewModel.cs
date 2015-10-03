@@ -14,8 +14,6 @@ namespace MongoDbGui.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private readonly IMongoDbService _mongoDbService;
-
         private ObservableCollection<MongoDbServerViewModel> _activeConnections;
         public ObservableCollection<MongoDbServerViewModel> ActiveConnections
         {
@@ -55,9 +53,8 @@ namespace MongoDbGui.ViewModel
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IMongoDbService mongoDbService)
+        public MainViewModel()
         {
-            _mongoDbService = mongoDbService;
             _activeConnections = new ObservableCollection<MongoDbServerViewModel>();
             _tabs = new ObservableCollection<BaseTabViewModel>();
             Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => LoginMessageHandler(message));

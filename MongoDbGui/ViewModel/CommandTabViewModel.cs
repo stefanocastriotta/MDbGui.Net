@@ -34,7 +34,7 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        public CommandTabViewModel(IMongoDbService mongoDbService) : base(mongoDbService)
+        public CommandTabViewModel()
         {
             ExecuteCommand = new RelayCommand(InnerExecuteCommand, () =>
             {

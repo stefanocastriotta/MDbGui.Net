@@ -13,8 +13,6 @@ namespace MongoDbGui.ViewModel
     /// </summary>
     public class LoginViewModel : ViewModelBase
     {
-        private readonly IMongoDbService _mongoDbService;
-
         private string _address = string.Empty;
         
         public string Address
@@ -105,9 +103,8 @@ namespace MongoDbGui.ViewModel
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public LoginViewModel(IMongoDbService mongoDbService)
+        public LoginViewModel()
         {
-            _mongoDbService = mongoDbService;
             Connect = new RelayCommand(ConnectToDatabase, () =>
             {
                 if (HostPortMode)
@@ -120,14 +117,13 @@ namespace MongoDbGui.ViewModel
         public async void ConnectToDatabase()
         {
             Connecting = true;
+            var _mongoDbService = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<IMongoDbService>();
             var serverInfo = await _mongoDbService.Connect(new ConnectionInfo() { Address = Address, Port = Port, Mode = HostPortMode ? 1 : 2, ConnectionString = ConnectionString });
-            MongoDbServerViewModel serverVm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<MongoDbServerViewModel>();
-            serverVm.Client = serverInfo.Client;
+            MongoDbServerViewModel serverVm = new MongoDbServerViewModel(_mongoDbService);
+            serverVm.Address = serverInfo.Client.Settings.Server.Host + ":" + serverInfo.Client.Settings.Server.Port;
             foreach (var database in serverInfo.Databases)
             {
-                var databaseVm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<MongoDbDatabaseViewModel>();
-                databaseVm.Server = serverVm;
-                databaseVm.Name = database["name"].AsString;
+                var databaseVm = new MongoDbDatabaseViewModel(serverVm, database["name"].AsString);
                 serverVm.Databases.Add(databaseVm);
             }
             Messenger.Default.Send(new NotificationMessage<MongoDbServerViewModel>(serverVm, "LoginSuccessfully"));

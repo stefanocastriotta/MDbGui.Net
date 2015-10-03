@@ -11,11 +11,12 @@ namespace MongoDbGui.Model
     public interface IMongoDbService
     {
         Task<MongoDbServer> Connect(ConnectionInfo connectionInfo);
-        Task<IMongoDatabase> CreateNewDatabase(MongoClient client, string databaseName, string collection);
-        Task<BsonDocument> ExecuteRawCommand(MongoClient client, string databaseName, string command);
-        void CreateCollection(MongoClient client, string databaseName, string collection);
-        Task<List<BsonDocument>> GetCollections(MongoClient client, string databaseName);
-        Task<List<BsonDocument>> Find(MongoClient client, string databaseName, string collection, string filter, string sort, int? limit, int? skip);
-        Task<long> Count(MongoClient client, string databaseName, string collection, string filter);
+        Task<IMongoDatabase> CreateNewDatabase(string databaseName);
+        Task<BsonDocument> ExecuteRawCommand(string databaseName, string command);
+        Task CreateCollection(string databaseName, string collection);
+        Task RenameCollection(string databaseName, string oldName, string newName);
+        Task<List<BsonDocument>> GetCollections(string databaseName);
+        Task<List<BsonDocument>> Find(string databaseName, string collection, string filter, string sort, int? limit, int? skip);
+        Task<long> Count(string databaseName, string collection, string filter);
     }
 }
