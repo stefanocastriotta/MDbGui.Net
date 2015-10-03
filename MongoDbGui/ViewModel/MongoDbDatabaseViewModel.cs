@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using MongoDbGui.Model;
 using System.Collections.ObjectModel;
@@ -12,7 +13,7 @@ namespace MongoDbGui.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class MongoDbDatabaseViewModel : ViewModelBase
+    public class MongoDbDatabaseViewModel : BaseTreeviewViewModel
     {
         private MongoDbServerViewModel _server;
         public MongoDbServerViewModel Server
@@ -25,40 +26,6 @@ namespace MongoDbGui.ViewModel
         }
 
         private bool _collectionsLoaded;
-
-        private bool _isSelected;
-
-        /// <summary>
-        /// Gets/sets whether the TreeViewItem 
-        /// associated with this object is selected.
-        /// </summary>
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                Set(ref _isSelected, value);
-            }
-        }
-
-        private bool _isExpanded;
-
-        /// <summary>
-        /// Gets/sets whether the TreeViewItem 
-        /// associated with this object is expanded.
-        /// </summary>
-        public bool IsExpanded
-        {
-            get { return _isExpanded; }
-            set
-            {
-                Set(ref _isExpanded, value);
-                if (!_collectionsLoaded)
-                {
-                    LoadCollections();
-                }
-            }
-        }
 
         private string _name = string.Empty;
 
@@ -74,27 +41,19 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private bool _isNew;
-
-        public bool IsNew
+        private ObservableCollection<FolderViewModel> _folders;
+        public ObservableCollection<FolderViewModel> Folders
         {
-            get { return _isNew; }
+            get { return _folders; }
             set
             {
-                Set(ref _isNew, value);
+                _folders = value;
+                RaisePropertyChanged("Folders");
             }
         }
 
-        private ObservableCollection<MongoDbCollectionViewModel> _collections;
-        public ObservableCollection<MongoDbCollectionViewModel> Collections
-        {
-            get { return _collections; }
-            set
-            {
-                _collections = value;
-                RaisePropertyChanged("Collections");
-            }
-        }
+        private FolderViewModel _collections;
+        private FolderViewModel _users;
 
         /// <summary>
         /// Initializes a new instance of the MongoDbDatabaseViewModel class.
@@ -103,28 +62,47 @@ namespace MongoDbGui.ViewModel
         {
             Server = server;
             Name = name;
-            _collections = new ObservableCollection<MongoDbCollectionViewModel>();
-            _collections.Add(new MongoDbCollectionViewModel(this, ""));
+            _folders = new ObservableCollection<FolderViewModel>();
+            _collections = new FolderViewModel("Collections", this);
+            _users = new FolderViewModel("Users", this);
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                _folders.Add(_collections);
+                _collections.Children.Add(new MongoDbCollectionViewModel(this, ""));
+                _folders.Add(_users);
+                _users.Children.Add(new BaseTreeviewViewModel());
+            });
+
             CreateDatabase = new RelayCommand(InnerCreateDatabase, () =>
             {
                 return !string.IsNullOrWhiteSpace(Name) && IsNew;
             });
             CreateNewCollection = new RelayCommand(InnerCreateNewCollection);
+            Messenger.Default.Register<PropertyChangedMessage<bool>>(this, (message) =>
+            {
+                if (message.Sender == _collections && message.PropertyName == "IsExpanded" && _collections.IsExpanded)
+                {
+                    if (!IsNew && !_collectionsLoaded && !string.IsNullOrWhiteSpace(Name))
+                        LoadCollections();
+                }
+            });
         }
 
         public async void LoadCollections()
         {
+            _collections.IsBusy = true;
             var collections = await Server.MongoDbService.GetCollections(Name);
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                Collections.Clear();
+                _collections.Children.Clear();
                 foreach (var collection in collections)
                 {
                     var collectionVm = new MongoDbCollectionViewModel(this, collection["name"].AsString);
                     collectionVm.Database = this;
-                    Collections.Add(collectionVm);
+                    _collections.Children.Add(collectionVm);
                 }
                 _collectionsLoaded = true;
+                _collections.IsBusy = false;
             });
         }
 
@@ -134,7 +112,7 @@ namespace MongoDbGui.ViewModel
 
         public async void InnerCreateDatabase()
         {
-            if (_isNew)
+            if (IsNew)
             {
                 await Server.MongoDbService.CreateNewDatabase(this.Name);
                 IsNew = false;
@@ -147,9 +125,11 @@ namespace MongoDbGui.ViewModel
             newCollection.IsSelected = true;
             newCollection.IsNew = true;
             newCollection.IsEditing = true;
+            this.IsExpanded = true;
+            this._collections.IsExpanded = true;
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                Collections.Add(newCollection);
+                _collections.Children.Add(newCollection);
             });
         }
     }

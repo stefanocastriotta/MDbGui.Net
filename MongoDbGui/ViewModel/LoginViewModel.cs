@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
+using MongoDB.Driver;
 using MongoDbGui.Model;
 
 namespace MongoDbGui.ViewModel
@@ -108,25 +109,27 @@ namespace MongoDbGui.ViewModel
             Connect = new RelayCommand(ConnectToDatabase, () =>
             {
                 if (HostPortMode)
-                    return !string.IsNullOrWhiteSpace(Address) && Port > 0;
+                    return !Connecting && !string.IsNullOrWhiteSpace(Address) && Port > 0;
                 else
-                    return !string.IsNullOrWhiteSpace(ConnectionString);
+                    return !Connecting && !string.IsNullOrWhiteSpace(ConnectionString);
             });
         }
 
-        public async void ConnectToDatabase()
+        public void ConnectToDatabase()
         {
             Connecting = true;
-            var _mongoDbService = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<IMongoDbService>();
-            var serverInfo = await _mongoDbService.Connect(new ConnectionInfo() { Address = Address, Port = Port, Mode = HostPortMode ? 1 : 2, ConnectionString = ConnectionString });
-            MongoDbServerViewModel serverVm = new MongoDbServerViewModel(_mongoDbService);
-            serverVm.Address = serverInfo.Client.Settings.Server.Host + ":" + serverInfo.Client.Settings.Server.Port;
-            foreach (var database in serverInfo.Databases)
+            MongoClient client;
+            ConnectionInfo info = new ConnectionInfo() { Address = Address, Port = Port, Mode = HostPortMode ? 1 : 2, ConnectionString = ConnectionString };
+            if (HostPortMode)
+                client = new MongoClient(new MongoClientSettings() { Server = new MongoServerAddress(Address, Port) });
+            else
             {
-                var databaseVm = new MongoDbDatabaseViewModel(serverVm, database["name"].AsString);
-                serverVm.Databases.Add(databaseVm);
+                client = new MongoClient(new MongoUrl(ConnectionString));
+                info.Address = client.Settings.Server.Host;
+                info.Port = client.Settings.Server.Port;
             }
-            Messenger.Default.Send(new NotificationMessage<MongoDbServerViewModel>(serverVm, "LoginSuccessfully"));
+
+            Messenger.Default.Send(new NotificationMessage<ConnectionInfo>(info, "LoggingIn"));
         }
     }
 }

@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using MongoDbGui.Model;
+using System;
 using System.Collections.ObjectModel;
 
 namespace MongoDbGui.ViewModel
@@ -57,20 +58,46 @@ namespace MongoDbGui.ViewModel
         {
             _activeConnections = new ObservableCollection<MongoDbServerViewModel>();
             _tabs = new ObservableCollection<BaseTabViewModel>();
-            Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => LoginMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<CollectionTabViewModel>>(this, (message) => OpenTabMessageHandler(message));
         }
 
-        private void LoginMessageHandler(NotificationMessage<MongoDbServerViewModel> message)
+        private async void LoggingInMessageHandler(NotificationMessage<ConnectionInfo> message)
         {
-            if (message.Notification == "LoginSuccessfully")
+            if (message.Notification == "LoggingIn")
             {
+                var _mongoDbService = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<IMongoDbService>();
+                MongoDbServerViewModel serverVm = new MongoDbServerViewModel(_mongoDbService);
+                serverVm.IsBusy = true;
+                serverVm.Address = message.Content.Address + ":" + message.Content.Port;
+
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
-                    ActiveConnections.Add(message.Content);
+                    ActiveConnections.Add(serverVm);
                 });
+
+                try
+                {
+                    var serverInfo = await _mongoDbService.Connect(message.Content);
+                    FolderViewModel systemDbFolder = new FolderViewModel("System", serverVm);
+                    serverVm.Items.Add(systemDbFolder);
+                    foreach (var database in serverInfo.Databases)
+                    {
+                        var databaseVm = new MongoDbDatabaseViewModel(serverVm, database["name"].AsString);
+                        if (databaseVm.Name == "local")
+                            systemDbFolder.Children.Add(databaseVm);
+                        else
+                            serverVm.Items.Add(databaseVm);
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+                serverVm.IsBusy = false;
             }
         }
+
 
         private void OpenTabMessageHandler(NotificationMessage<CollectionTabViewModel> message)
         {

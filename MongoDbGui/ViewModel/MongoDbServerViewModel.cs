@@ -15,7 +15,7 @@ namespace MongoDbGui.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class MongoDbServerViewModel : ViewModelBase
+    public class MongoDbServerViewModel : BaseTreeviewViewModel
     {
         public readonly IMongoDbService MongoDbService;
 
@@ -33,44 +33,14 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private ObservableCollection<MongoDbDatabaseViewModel> _databases;
-        public ObservableCollection<MongoDbDatabaseViewModel> Databases
+        private ObservableCollection<BaseTreeviewViewModel> _items;
+        public ObservableCollection<BaseTreeviewViewModel> Items
         {
-            get { return _databases; }
+            get { return _items; }
             set
             {
-                _databases = value;
-                RaisePropertyChanged("Databases");
-            }
-        }
-
-        private bool _isSelected;
-
-        /// <summary>
-        /// Gets/sets whether the TreeViewItem 
-        /// associated with this object is selected.
-        /// </summary>
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                Set(ref _isSelected, value);
-            }
-        }
-
-        private bool _isExpanded;
-
-        /// <summary>
-        /// Gets/sets whether the TreeViewItem 
-        /// associated with this object is expanded.
-        /// </summary>
-        public bool IsExpanded
-        {
-            get { return _isExpanded; }
-            set
-            {
-                Set(ref _isExpanded, value);
+                _items = value;
+                RaisePropertyChanged("Items");
             }
         }
 
@@ -80,7 +50,7 @@ namespace MongoDbGui.ViewModel
         public MongoDbServerViewModel(IMongoDbService mongoDbService)
         {
             MongoDbService = mongoDbService;
-            _databases = new ObservableCollection<MongoDbDatabaseViewModel>();
+            _items = new ObservableCollection<BaseTreeviewViewModel>();
             CreateNewDatabase = new RelayCommand(InnerCreateNewDatabase);
         }
 
@@ -91,9 +61,10 @@ namespace MongoDbGui.ViewModel
             var newDb = new MongoDbDatabaseViewModel(this, "");
             newDb.IsSelected = true;
             newDb.IsNew = true;
+            this.IsExpanded = true;
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                Databases.Add(newDb);
+                Items.Add(newDb);
             });
         }
 

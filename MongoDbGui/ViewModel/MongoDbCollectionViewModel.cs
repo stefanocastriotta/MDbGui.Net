@@ -13,7 +13,7 @@ namespace MongoDbGui.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class MongoDbCollectionViewModel : ViewModelBase
+    public class MongoDbCollectionViewModel : BaseTreeviewViewModel
     {
         private MongoDbDatabaseViewModel _database;
         public MongoDbDatabaseViewModel Database
@@ -76,30 +76,6 @@ namespace MongoDbGui.ViewModel
 
         private string _oldName = string.Empty;
 
-
-        private bool _isNew;
-
-        public bool IsNew
-        {
-            get { return _isNew; }
-            set
-            {
-                Set(ref _isNew, value);
-            }
-        }
-
-        private bool _isEditing;
-
-        public bool IsEditing
-        {
-            get { return _isEditing; }
-            set
-            {
-                Set(ref _isEditing, value);
-            }
-        }
-
-
         private ObservableCollection<MongoDbIndexViewModel> _indexes;
         public ObservableCollection<MongoDbIndexViewModel> Indexes
         {
@@ -149,7 +125,7 @@ namespace MongoDbGui.ViewModel
 
         public async void InnerSaveCollection()
         {
-            if (_isNew)
+            if (IsNew)
             {
                 await Database.Server.MongoDbService.CreateCollection(Database.Name, this.Name);
                 IsNew = false;

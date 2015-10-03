@@ -22,6 +22,7 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Button>
+
         <TextBox HorizontalAlignment="Left" Height="23" Margin="119,89,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="212" Text="{Binding ConnectionString}" IsEnabled="{Binding ConnectionStringMode}"/>
         <Label Content="Connection string" HorizontalAlignment="Left" Margin="10,86,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.316,0.385"/>
         <RadioButton Content="Host : Port" HorizontalAlignment="Left" Margin="10,17,0,0" VerticalAlignment="Top" GroupName="ConnectionType" IsChecked="{Binding HostPortMode, Mode=TwoWay}"/>

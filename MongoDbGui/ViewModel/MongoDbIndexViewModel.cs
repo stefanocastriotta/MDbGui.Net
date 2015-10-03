@@ -8,7 +8,7 @@ namespace MongoDbGui.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class MongoDbIndexViewModel : ViewModelBase
+    public class MongoDbIndexViewModel : BaseTreeviewViewModel
     {
         private MongoDbCollectionViewModel _collection;
         public MongoDbCollectionViewModel Collection

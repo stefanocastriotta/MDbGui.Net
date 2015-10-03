@@ -1,6 +1,9 @@
 ﻿using System.Windows;
 using MongoDbGui.ViewModel;
 using GalaSoft.MvvmLight.Messaging;
+using System.Windows.Input;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace MongoDbGui.Views
 {
@@ -22,6 +25,25 @@ namespace MongoDbGui.Views
         {
             LoginView wnd = new LoginView();
             wnd.ShowDialog();
+        }
+
+        private void OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
+
+            if (treeViewItem != null)
+            {
+                treeViewItem.Focus();
+                e.Handled = true;
+            }
+        }
+
+        static TreeViewItem VisualUpwardSearch(DependencyObject source)
+        {
+            while (source != null && !(source is TreeViewItem))
+                source = VisualTreeHelper.GetParent(source);
+
+            return source as TreeViewItem;
         }
     }
 }
