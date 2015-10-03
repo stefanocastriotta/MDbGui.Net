@@ -95,11 +95,16 @@ namespace MongoDbGui.ViewModel
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 _collections.Children.Clear();
+                FolderViewModel systemCollections = new FolderViewModel("System", this);
+                _collections.Children.Add(systemCollections);
                 foreach (var collection in collections)
                 {
                     var collectionVm = new MongoDbCollectionViewModel(this, collection["name"].AsString);
                     collectionVm.Database = this;
-                    _collections.Children.Add(collectionVm);
+                    if (collection["name"].AsString.StartsWith("system."))
+                        systemCollections.Children.Add(collectionVm);
+                    else
+                        _collections.Children.Add(collectionVm);
                 }
                 _collectionsLoaded = true;
                 _collections.IsBusy = false;

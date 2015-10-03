@@ -42,9 +42,7 @@
         <ListView Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Results}" Background="Black">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <WrapPanel>
-                        <TextBlock Text="{Binding}" Style="{StaticResource ResultsViewTextBlock}" />
-                    </WrapPanel>
+                    <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding Mode=OneWay}" Style="{StaticResource ResultsView}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

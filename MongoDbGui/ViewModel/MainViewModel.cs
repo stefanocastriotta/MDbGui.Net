@@ -89,6 +89,7 @@ namespace MongoDbGui.ViewModel
                         else
                             serverVm.Items.Add(databaseVm);
                     }
+                    serverVm.IsExpanded = true;
                 }
                 catch (Exception ex)
                 {
