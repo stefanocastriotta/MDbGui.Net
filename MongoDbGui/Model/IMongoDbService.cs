@@ -18,5 +18,6 @@ namespace MongoDbGui.Model
         Task<List<BsonDocument>> GetCollections(string databaseName);
         Task<List<BsonDocument>> Find(string databaseName, string collection, string filter, string sort, int? limit, int? skip);
         Task<long> Count(string databaseName, string collection, string filter);
+        Task<BulkWriteResult<BsonDocument>> Insert(string databaseName, string collection, IEnumerable<BsonDocument> documents);
     }
 }

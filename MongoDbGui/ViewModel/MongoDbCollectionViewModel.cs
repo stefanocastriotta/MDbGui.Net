@@ -44,6 +44,8 @@ namespace MongoDbGui.ViewModel
 
         public RelayCommand RenameCollection { get; set; }
 
+        public RelayCommand InsertDocuments { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the MongoDbCollectionViewModel class.
         /// </summary>
@@ -56,6 +58,8 @@ namespace MongoDbGui.ViewModel
             {
                 return !string.IsNullOrWhiteSpace(Name);
             });
+            InsertDocuments = new RelayCommand(InternalInsertDocuments);
+
             Database = database;
             _name = collectionName;
             _oldName = collectionName;
@@ -88,6 +92,12 @@ namespace MongoDbGui.ViewModel
             _oldName = this.Name;
             IsEditing = false;
         }
+
+        private void InternalInsertDocuments()
+        {
+            Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, "OpenInsertDocuments"));
+        }
+
 
         public override void Cleanup()
         {

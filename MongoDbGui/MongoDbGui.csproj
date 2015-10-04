@@ -84,6 +84,7 @@
     </ApplicationDefinition>
     <Compile Include="Design\DesignMongoDbService.cs" />
     <Compile Include="Model\ConnectionInfo.cs" />
+    <Compile Include="Model\InsertDocumentsModel.cs" />
     <Compile Include="Model\MongoDbServer.cs" />
     <Compile Include="Model\MongoDbService.cs" />
     <Compile Include="Model\IMongoDbService.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="ViewModel\CollectionTabViewModel.cs" />
     <Compile Include="ViewModel\CommandTabViewModel.cs" />
     <Compile Include="ViewModel\FolderViewModel.cs" />
+    <Compile Include="ViewModel\InsertDocumentsViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MongoDbCollectionViewModel.cs" />
@@ -108,9 +110,16 @@
     <Compile Include="Views\Controls\ServerTreeView.xaml.cs">
       <DependentUpon>ServerTreeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Dialogs\InsertDocumentsView.xaml.cs">
+      <DependentUpon>InsertDocumentsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Spinner.xaml.cs">
       <DependentUpon>Spinner.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\Dialogs\InsertDocumentsView.xaml">
+      <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Dialogs\LoginView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>

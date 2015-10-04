@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace MongoDbGui.Model
 {
@@ -87,5 +88,14 @@ namespace MongoDbGui.Model
             var result = await mongoCollection.CountAsync(BsonDocument.Parse(filter));
             return result;
         }
+
+        public async Task<BulkWriteResult<BsonDocument>> Insert(string databaseName, string collection, IEnumerable<BsonDocument> documents)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            var result = await mongoCollection.BulkWriteAsync(documents.Select(d => new InsertOneModel<BsonDocument>(d)));
+            return result;
+        }
+
     }
 }

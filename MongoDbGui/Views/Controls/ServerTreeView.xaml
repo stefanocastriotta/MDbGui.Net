@@ -109,6 +109,7 @@
                                 <MenuItem Header="Rename collection" Command="{Binding Path=RenameCollection}" />
                                 <MenuItem Header="Delete collection"/>
                                 <Separator/>
+                                <MenuItem Header="Insert documents" Command="{Binding Path=InsertDocuments}" />
                             </ContextMenu>
                         </TextBlock.ContextMenu>
                     </TextBlock>

@@ -1,6 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using MongoDB.Bson;
+using MongoDB.Driver.Linq;
 using MongoDbGui.Model;
 using System;
 using System.Collections.Generic;
@@ -63,6 +65,7 @@ namespace MongoDbGui.ViewModel
             Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<CollectionTabViewModel>>(this, (message) => TabMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => MongoDbServerMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<InsertDocumentsModel>>(this, (message) => InsertDocumentsMessageHandler(message));
         }
 
         private async void LoggingInMessageHandler(NotificationMessage<ConnectionInfo> message)
@@ -140,6 +143,17 @@ namespace MongoDbGui.ViewModel
                 {
                     ActiveConnections.Remove(message.Content);
                 });
+            }
+        }
+
+        private async void InsertDocumentsMessageHandler(NotificationMessage<InsertDocumentsModel> message)
+        {
+            if (message.Notification == "InsertDocuments")
+            {
+                message.Content.Collection.IsBusy = true;
+                BsonArray array = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(message.Content.Documents);
+                await message.Content.Collection.Database.Server.MongoDbService.Insert(message.Content.Collection.Database.Name, message.Content.Collection.Name, array.Select(i => i.AsBsonDocument));
+                message.Content.Collection.IsBusy = false;
             }
         }
 

@@ -57,5 +57,10 @@ namespace MongoDbGui.Design
 
             return 100;
         }
+
+        public async Task<BulkWriteResult<BsonDocument>> Insert(string databaseName, string collection, IEnumerable<BsonDocument> documents)
+        {
+            return null;
+        }
     }
 }

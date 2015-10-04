@@ -40,6 +40,7 @@ namespace MongoDbGui.ViewModel
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<LoginViewModel>();
+            SimpleIoc.Default.Register<InsertDocumentsViewModel>();
         }
 
         /// <summary>

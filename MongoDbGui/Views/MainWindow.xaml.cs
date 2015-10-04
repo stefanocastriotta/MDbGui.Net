@@ -20,6 +20,7 @@ namespace MongoDbGui.Views
         {
             InitializeComponent();
             Closing += (s, e) => ViewModelLocator.Cleanup();
+            Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, (message) => OpenInsertDocumentsMessageHandler(message));
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -32,6 +33,18 @@ namespace MongoDbGui.Views
         {
             LoginView wnd = new LoginView();
             wnd.ShowDialog();
+        }
+
+        private void OpenInsertDocumentsMessageHandler(NotificationMessage<MongoDbCollectionViewModel> message)
+        {
+            if (message.Notification == "OpenInsertDocuments")
+            {
+                InsertDocumentsView wnd = new InsertDocumentsView();
+                var vm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<InsertDocumentsViewModel>();
+                vm.Collection = message.Content;
+                wnd.DataContext = vm;
+                wnd.ShowDialog();
+            }
         }
     }
 }

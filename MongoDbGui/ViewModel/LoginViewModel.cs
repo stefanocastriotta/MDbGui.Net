@@ -87,18 +87,6 @@ namespace MongoDbGui.ViewModel
 
         private bool _connecting = false;
 
-        public bool Connecting
-        {
-            get
-            {
-                return _connecting;
-            }
-            set
-            {
-                Set(ref _connecting, value);
-            }
-        }
-
         public RelayCommand Connect { get; set; }
 
         /// <summary>
@@ -109,15 +97,15 @@ namespace MongoDbGui.ViewModel
             Connect = new RelayCommand(ConnectToDatabase, () =>
             {
                 if (HostPortMode)
-                    return !Connecting && !string.IsNullOrWhiteSpace(Address) && Port > 0;
+                    return !_connecting && !string.IsNullOrWhiteSpace(Address) && Port > 0;
                 else
-                    return !Connecting && !string.IsNullOrWhiteSpace(ConnectionString);
+                    return !_connecting && !string.IsNullOrWhiteSpace(ConnectionString);
             });
         }
 
         public void ConnectToDatabase()
         {
-            Connecting = true;
+            _connecting = true;
             MongoClient client;
             ConnectionInfo info = new ConnectionInfo() { Address = Address, Port = Port, Mode = HostPortMode ? 1 : 2, ConnectionString = ConnectionString };
             if (HostPortMode)
