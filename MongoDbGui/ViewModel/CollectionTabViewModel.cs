@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson.IO;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace MongoDbGui.ViewModel
 {
@@ -20,6 +21,7 @@ namespace MongoDbGui.ViewModel
             _size = 50;
             ExecuteFind = new RelayCommand(InnerExecuteFind);
             ExecuteCount = new RelayCommand(InnerExecuteCount);
+            ExecuteClose = new RelayCommand(InnerExecuteClose);
         }
 
         private MongoDbCollectionViewModel _collection;
@@ -87,6 +89,13 @@ namespace MongoDbGui.ViewModel
             {
                 Set(ref _size, value);
             }
+        }
+
+        public RelayCommand ExecuteClose { get; set; }
+
+        public void InnerExecuteClose()
+        {
+            Messenger.Default.Send(new NotificationMessage<CollectionTabViewModel>(this, "CloseTab"));
         }
 
         public RelayCommand ExecuteFind { get; set; }

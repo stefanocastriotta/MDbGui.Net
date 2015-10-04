@@ -57,20 +57,6 @@ namespace MongoDbGui.ViewModel
         }
 
         /// <summary>
-        /// Gets the LoginViewModel property.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
-            "CA1822:MarkMembersAsStatic",
-            Justification = "This non-static member is needed for data binding purposes.")]
-        public LoginViewModel LoginViewModel
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<LoginViewModel>();
-            }
-        }
-
-        /// <summary>
         /// Cleans up all the resources.
         /// </summary>
         public static void Cleanup()

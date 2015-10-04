@@ -11,7 +11,7 @@ namespace MongoDbGui.ViewModel
     /// </summary>
     public class BaseTreeviewViewModel : ViewModelBase
     {
-        private bool _isSelected;
+        protected bool _isSelected;
 
         /// <summary>
         /// Gets/sets whether the TreeViewItem 
@@ -43,7 +43,22 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private bool _isEditing;
+
+        protected string _name = string.Empty;
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                Set(ref _name, value);
+            }
+        }
+
+        protected bool _isEditing;
 
         public bool IsEditing
         {
@@ -54,8 +69,7 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-
-        private bool _isBusy;
+        protected bool _isBusy;
 
         public bool IsBusy
         {
@@ -66,8 +80,7 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-
-        private bool _isNew;
+        protected bool _isNew;
 
         public bool IsNew
         {

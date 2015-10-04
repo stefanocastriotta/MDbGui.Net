@@ -19,20 +19,6 @@ namespace MongoDbGui.ViewModel
     {
         public readonly IMongoDbService MongoDbService;
 
-        private string _address = string.Empty;
-
-        public string Address
-        {
-            get
-            {
-                return _address;
-            }
-            set
-            {
-                Set(ref _address, value);
-            }
-        }
-
         private ObservableCollection<BaseTreeviewViewModel> _items;
         public ObservableCollection<BaseTreeviewViewModel> Items
         {
@@ -52,9 +38,12 @@ namespace MongoDbGui.ViewModel
             MongoDbService = mongoDbService;
             _items = new ObservableCollection<BaseTreeviewViewModel>();
             CreateNewDatabase = new RelayCommand(InnerCreateNewDatabase);
+            Disconnect = new RelayCommand(InnerDisconnect);
         }
 
         public RelayCommand CreateNewDatabase { get; set; }
+
+        public RelayCommand Disconnect { get; set; }
 
         public void InnerCreateNewDatabase()
         {
@@ -68,5 +57,15 @@ namespace MongoDbGui.ViewModel
             });
         }
 
+        public void InnerDisconnect()
+        {
+            Messenger.Default.Send(new NotificationMessage<MongoDbServerViewModel>(this, "Disconnect"));
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            MessengerInstance.Unregister(this);
+        }
     }
 }

@@ -3,7 +3,9 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using MongoDbGui.Model;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace MongoDbGui.ViewModel
 {
@@ -26,20 +28,6 @@ namespace MongoDbGui.ViewModel
         }
 
         private bool _collectionsLoaded;
-
-        private string _name = string.Empty;
-
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                Set(ref _name, value);
-            }
-        }
 
         private ObservableCollection<FolderViewModel> _folders;
         public ObservableCollection<FolderViewModel> Folders
@@ -94,19 +82,29 @@ namespace MongoDbGui.ViewModel
             var collections = await Server.MongoDbService.GetCollections(Name);
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
+                List<MongoDbCollectionViewModel> systemCollections = new List<MongoDbCollectionViewModel>();
+                List<MongoDbCollectionViewModel> standardCollections = new List<MongoDbCollectionViewModel>();
                 _collections.Children.Clear();
-                FolderViewModel systemCollections = new FolderViewModel("System", this);
-                _collections.Children.Add(systemCollections);
                 foreach (var collection in collections)
                 {
                     var collectionVm = new MongoDbCollectionViewModel(this, collection["name"].AsString);
                     collectionVm.Database = this;
                     if (collection["name"].AsString.StartsWith("system."))
-                        systemCollections.Children.Add(collectionVm);
+                        systemCollections.Add(collectionVm);
                     else
-                        _collections.Children.Add(collectionVm);
+                        standardCollections.Add(collectionVm);
                 }
+                FolderViewModel systemCollectionsFolder = new FolderViewModel("System", this);
+                foreach (var systemCollection in systemCollections.OrderBy(o => o.Name))
+                    systemCollectionsFolder.Children.Add(systemCollection);
+
+                _collections.Children.Add(systemCollectionsFolder);
+
+                foreach (var collection in standardCollections.OrderBy(o => o.Name))
+                    _collections.Children.Add(collection);
+
                 _collectionsLoaded = true;
+                _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
                 _collections.IsBusy = false;
             });
         }
@@ -136,6 +134,12 @@ namespace MongoDbGui.ViewModel
             {
                 _collections.Children.Add(newCollection);
             });
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            MessengerInstance.Unregister(this);
         }
     }
 }

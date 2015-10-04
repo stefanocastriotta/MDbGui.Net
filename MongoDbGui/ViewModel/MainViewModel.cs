@@ -3,7 +3,9 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using MongoDbGui.Model;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace MongoDbGui.ViewModel
 {
@@ -59,7 +61,8 @@ namespace MongoDbGui.ViewModel
             _activeConnections = new ObservableCollection<MongoDbServerViewModel>();
             _tabs = new ObservableCollection<BaseTabViewModel>();
             Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
-            Messenger.Default.Register<NotificationMessage<CollectionTabViewModel>>(this, (message) => OpenTabMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<CollectionTabViewModel>>(this, (message) => TabMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => MongoDbServerMessageHandler(message));
         }
 
         private async void LoggingInMessageHandler(NotificationMessage<ConnectionInfo> message)
@@ -69,7 +72,7 @@ namespace MongoDbGui.ViewModel
                 var _mongoDbService = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<IMongoDbService>();
                 MongoDbServerViewModel serverVm = new MongoDbServerViewModel(_mongoDbService);
                 serverVm.IsBusy = true;
-                serverVm.Address = message.Content.Address + ":" + message.Content.Port;
+                serverVm.Name = message.Content.Address + ":" + message.Content.Port;
 
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
@@ -79,16 +82,27 @@ namespace MongoDbGui.ViewModel
                 try
                 {
                     var serverInfo = await _mongoDbService.Connect(message.Content);
+                    List<MongoDbDatabaseViewModel> systemDatabases = new List<MongoDbDatabaseViewModel>();
+                    List<MongoDbDatabaseViewModel> standardDatabases = new List<MongoDbDatabaseViewModel>();
+
                     FolderViewModel systemDbFolder = new FolderViewModel("System", serverVm);
-                    serverVm.Items.Add(systemDbFolder);
                     foreach (var database in serverInfo.Databases)
                     {
                         var databaseVm = new MongoDbDatabaseViewModel(serverVm, database["name"].AsString);
                         if (databaseVm.Name == "local")
-                            systemDbFolder.Children.Add(databaseVm);
+                            systemDatabases.Add(databaseVm);
                         else
-                            serverVm.Items.Add(databaseVm);
+                            standardDatabases.Add(databaseVm);
                     }
+
+                    foreach (var systemDb in systemDatabases.OrderBy(o => o.Name))
+                        systemDbFolder.Children.Add(systemDb);
+
+                    serverVm.Items.Add(systemDbFolder);
+
+                    foreach (var db in standardDatabases.OrderBy(o => o.Name))
+                        serverVm.Items.Add(db);
+
                     serverVm.IsExpanded = true;
                 }
                 catch (Exception ex)
@@ -100,15 +114,31 @@ namespace MongoDbGui.ViewModel
         }
 
 
-        private void OpenTabMessageHandler(NotificationMessage<CollectionTabViewModel> message)
+        private void TabMessageHandler(NotificationMessage<CollectionTabViewModel> message)
         {
-            if (message.Notification == "OpenCollectionTab")
+            switch (message.Notification)
             {
+                case "OpenCollectionTab":
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     Tabs.Add(message.Content);
                     SelectedTab = message.Content;
                     message.Content.ExecuteFind.Execute(null);
+                });
+                break;
+                case "CloseTab":
+                Tabs.Remove(message.Content);
+                break;
+            }
+        }
+
+        private void MongoDbServerMessageHandler(NotificationMessage<MongoDbServerViewModel> message)
+        {
+            if (message.Notification == "Disconnect")
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    ActiveConnections.Remove(message.Content);
                 });
             }
         }

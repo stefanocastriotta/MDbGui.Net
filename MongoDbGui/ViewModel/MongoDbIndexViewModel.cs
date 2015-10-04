@@ -20,25 +20,17 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private string _name = string.Empty;
-
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                Set(ref _name, value);
-            }
-        }
-
         /// <summary>
         /// Initializes a new instance of the MongoDbIndexViewModel class.
         /// </summary>
         public MongoDbIndexViewModel()
         {
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            MessengerInstance.Unregister(this);
         }
     }
 }

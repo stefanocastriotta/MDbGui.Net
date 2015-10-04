@@ -131,5 +131,11 @@ namespace MongoDbGui.ViewModel
 
             Messenger.Default.Send(new NotificationMessage<ConnectionInfo>(info, "LoggingIn"));
         }
+
+        public override void Cleanup()
+        {
+ 	        base.Cleanup();
+            MessengerInstance.Unregister(this);
+        }
     }
 }

@@ -28,134 +28,43 @@
     <Grid x:Name="LayoutRoot">
 
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="1"></ColumnDefinition>
-                <ColumnDefinition Width="3*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <TreeView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding ActiveConnections}">
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="{x:Type TreeViewItem}">
-                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                        <Setter Property="FontWeight" Value="Normal" />
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="FontWeight" Value="Bold" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TreeView.ItemContainerStyle>
-
-                <TreeView.Resources>
-                    <HierarchicalDataTemplate 
-                      DataType="{x:Type local:MongoDbServerViewModel}" 
-                      ItemsSource="{Binding Items}"
-                      >
-                        <StackPanel Orientation="Horizontal">
-                            <fa:ImageAwesome Icon="Refresh" Spin="True" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                            <fa:ImageAwesome Icon="Server" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"></fa:ImageAwesome>
-                            <TextBlock Text="{Binding Address}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
-                                <TextBlock.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Create database" Command="{Binding Path=CreateNewDatabase}" />
-                                    </ContextMenu>
-                                </TextBlock.ContextMenu>
-                            </TextBlock>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                    <HierarchicalDataTemplate 
-                      DataType="{x:Type local:FolderViewModel}" 
-                      ItemsSource="{Binding Children}"
-                      >
-                        <StackPanel Orientation="Horizontal">
-                            <fa:ImageAwesome Icon="Refresh" Spin="True" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"/>
-                            <Grid Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}">
-                                <fa:ImageAwesome Icon="Folder" Width="16" Height="16" Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"></fa:ImageAwesome>
-                                <fa:ImageAwesome Icon="FolderOpen" Width="16" Height="16" Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"></fa:ImageAwesome>
-                            </Grid>
-                            <TextBlock Text="{Binding Name}">
-                            </TextBlock>
-                            <TextBlock Text="{Binding Path=Count, StringFormat=({0:#})}">
-                            </TextBlock>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-
-                    <HierarchicalDataTemplate 
-                      DataType="{x:Type local:MongoDbDatabaseViewModel}" 
-                      ItemsSource="{Binding Folders}"
-                      >
-                        <StackPanel Orientation="Horizontal">
-                            <fa:ImageAwesome Icon="Spinner" Spin="True" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                            <fa:ImageAwesome Icon="Database" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"></fa:ImageAwesome>
-                            <TextBlock Text="{Binding Name}" Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
-                                <TextBlock.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Create collection" Command="{Binding Path=CreateNewCollection}" />
-                                        <MenuItem Header="Drop database"/>
-                                        <Separator/>
-                                    </ContextMenu>
-                                </TextBlock.ContextMenu>
-                            </TextBlock>
-                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" utils:FocusExtension.IsFocused="{Binding IsNew}" 
-                                     Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}" 
-                                     PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown"
-                                     MinWidth="50">
-                                <TextBox.InputBindings>
-                                    <KeyBinding Command="{Binding CreateDatabase}" Key="Enter" />
-                                </TextBox.InputBindings>
-                            </TextBox>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-
-                    <HierarchicalDataTemplate 
-                      DataType="{x:Type local:MongoDbCollectionViewModel}" 
-                      ItemsSource="{Binding Indexes}"
-                      >
-                        <StackPanel Orientation="Horizontal">
-                            <fa:ImageAwesome Icon="Table" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"></fa:ImageAwesome>
-                            <TextBlock Text="{Binding Name}" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
-                                <TextBlock.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Open collection" Command="{Binding Path=OpenTab}" />
-                                        <MenuItem Header="Rename collection" Command="{Binding Path=RenameCollection}" />
-                                        <MenuItem Header="Delete collection"/>
-                                        <Separator/>
-                                    </ContextMenu>
-                                </TextBlock.ContextMenu>
-                            </TextBlock>
-                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" utils:FocusExtension.IsFocused="{Binding IsEditing}" 
-                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}" 
-                                     PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown"
-                                     MinWidth="50">
-                                <TextBox.InputBindings>
-                                    <KeyBinding Command="{Binding SaveCollection}" Key="Enter" />
-                                </TextBox.InputBindings>
-                            </TextBox>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-
-                    <DataTemplate DataType="{x:Type local:MongoDbIndexViewModel}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown" />
-                        </StackPanel>
-                    </DataTemplate>
-                </TreeView.Resources>
-            </TreeView>
-            <GridSplitter Grid.Column="1"></GridSplitter>
-            <TabControl Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab}">
-                <TabControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
-                    </DataTemplate>
-                </TabControl.ItemTemplate>
-                <TabControl.ContentTemplate>
-                    <DataTemplate DataType="{x:Type local:CollectionTabViewModel}">
-                        <uc:ResultsView></uc:ResultsView>
-                    </DataTemplate>
-                </TabControl.ContentTemplate>
-            </TabControl>
-
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Button Height="24" Width="24" Click="Login_Click">
+                        <fa:ImageAwesome Icon="Server" ToolTip="New connection"></fa:ImageAwesome>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="3"></ColumnDefinition>
+                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <uc:ServerTreeView></uc:ServerTreeView>
+                <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"></GridSplitter>
+                <TabControl Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab}">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}"/>
+                                <Button Command="{Binding ExecuteClose}" Height="16" Width="16">
+                                    <fa:ImageAwesome Icon="Close"></fa:ImageAwesome>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate DataType="{x:Type local:CollectionTabViewModel}">
+                            <uc:ResultsView></uc:ResultsView>
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

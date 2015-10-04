@@ -6,8 +6,7 @@
         xmlns:ignore="http://www.galasoft.ch/ignore"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
-        mc:Ignorable="d ignore"
-        DataContext="{Binding LoginViewModel, Source={StaticResource Locator}}" Height="209.667" Width="348.166">
+        mc:Ignorable="d ignore" Height="209.667" Width="348.166">
 
     <Grid>
         <Label Content="Address" HorizontalAlignment="Left" Margin="10,34,0,0" VerticalAlignment="Top"/>
@@ -27,5 +26,6 @@
         <Label Content="Connection string" HorizontalAlignment="Left" Margin="10,86,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.316,0.385"/>
         <RadioButton Content="Host : Port" HorizontalAlignment="Left" Margin="10,17,0,0" VerticalAlignment="Top" GroupName="ConnectionType" IsChecked="{Binding HostPortMode, Mode=TwoWay}"/>
         <RadioButton Content="Connection string" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top" GroupName="ConnectionType" IsChecked="{Binding ConnectionStringMode, Mode=TwoWay}"/>
+        <Button Content="Close" HorizontalAlignment="Left" Margin="119,131,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
     </Grid>
 </Window>

@@ -25,55 +25,6 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private bool _isSelected;
-
-        /// <summary>
-        /// Gets/sets whether the TreeViewItem 
-        /// associated with this object is selected.
-        /// </summary>
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                Set(ref _isSelected, value);
-            }
-        }
-
-        private bool _isExpanded;
-
-        /// <summary>
-        /// Gets/sets whether the TreeViewItem 
-        /// associated with this object is expanded.
-        /// </summary>
-        public bool IsExpanded
-        {
-            get { return _isExpanded; }
-            set
-            {
-                Set(ref _isExpanded, value);
-                //if (!_collectionsLoaded)
-                //{
-                //    LoadCollections();
-                //}
-            }
-        }
-
-
-        private string _name = string.Empty;
-
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                Set(ref _name, value);
-            }
-        }
-
         private string _oldName = string.Empty;
 
         private ObservableCollection<MongoDbIndexViewModel> _indexes;
@@ -136,6 +87,12 @@ namespace MongoDbGui.ViewModel
             }
             _oldName = this.Name;
             IsEditing = false;
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            MessengerInstance.Unregister(this);
         }
     }
 }

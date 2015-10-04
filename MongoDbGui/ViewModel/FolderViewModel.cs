@@ -23,21 +23,6 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-
-        private string _name = string.Empty;
-
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                Set(ref _name, value);
-            }
-        }
-
         private ObservableCollection<BaseTreeviewViewModel> _children;
         public ObservableCollection<BaseTreeviewViewModel> Children
         {
@@ -45,8 +30,6 @@ namespace MongoDbGui.ViewModel
             set
             {
                 _children = value;
-                if (_children != null)
-                    Count = _children.Count;
                 RaisePropertyChanged("Children");
             }
         }
@@ -59,7 +42,7 @@ namespace MongoDbGui.ViewModel
             {
                 return _count;
             }
-            private set
+            set
             {
                 Set(ref _count, value);
             }
@@ -70,13 +53,6 @@ namespace MongoDbGui.ViewModel
             this._name = name;
             this._parent = parent;
             _children = new ObservableCollection<BaseTreeviewViewModel>();
-            _children.CollectionChanged += _children_CollectionChanged;
-        }
-
-        void _children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (this.IsExpanded && _children != null)
-                Count = _children.Count;
         }
     }
 }

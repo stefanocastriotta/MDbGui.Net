@@ -27,23 +27,10 @@ namespace MongoDbGui.Views
             wnd.ShowDialog();
         }
 
-        private void OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        private void Login_Click(object sender, RoutedEventArgs e)
         {
-            TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
-
-            if (treeViewItem != null)
-            {
-                treeViewItem.Focus();
-                e.Handled = true;
-            }
-        }
-
-        static TreeViewItem VisualUpwardSearch(DependencyObject source)
-        {
-            while (source != null && !(source is TreeViewItem))
-                source = VisualTreeHelper.GetParent(source);
-
-            return source as TreeViewItem;
+            LoginView wnd = new LoginView();
+            wnd.ShowDialog();
         }
     }
 }
