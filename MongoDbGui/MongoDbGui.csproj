@@ -102,16 +102,16 @@
     <Compile Include="ViewModel\MongoDbServerViewModel.cs" />
     <Compile Include="ViewModel\BaseTabViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="Views\ResultsView.xaml.cs">
+    <Compile Include="Views\Controls\ResultsView.xaml.cs">
       <DependentUpon>ResultsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ServerTreeView.xaml.cs">
+    <Compile Include="Views\Controls\ServerTreeView.xaml.cs">
       <DependentUpon>ServerTreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Spinner.xaml.cs">
       <DependentUpon>Spinner.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\LoginView.xaml">
+    <Page Include="Views\Dialogs\LoginView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -123,7 +123,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\LoginView.xaml.cs">
+    <Compile Include="Views\Dialogs\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
@@ -134,11 +134,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ResultsView.xaml">
+    <Page Include="Views\Controls\ResultsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ServerTreeView.xaml">
+    <Page Include="Views\Controls\ServerTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

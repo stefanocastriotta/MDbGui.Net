@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MongoDbGui.Views
+namespace MongoDbGui.Views.Controls
 {
     /// <summary>
     /// Interaction logic for RestultsView.xaml

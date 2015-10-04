@@ -4,7 +4,7 @@ using MongoDbGui.Model;
 using MongoDbGui.ViewModel;
 using System.Windows;
 
-namespace MongoDbGui.Views
+namespace MongoDbGui.Views.Dialogs
 {
     /// <summary>
     /// Description for LoginView.

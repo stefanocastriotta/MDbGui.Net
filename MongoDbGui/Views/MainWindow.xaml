@@ -6,7 +6,7 @@
         xmlns:ignore="http://www.galasoft.ch/ignore"
         xmlns:local="clr-namespace:MongoDbGui.ViewModel"
         xmlns:utils="clr-namespace:MongoDbGui.Utils"
-        xmlns:uc="clr-namespace:MongoDbGui.Views"
+        xmlns:uc="clr-namespace:MongoDbGui.Views.Controls"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
         xmlns:fa="http://schemas.fontawesome.io/icons/"

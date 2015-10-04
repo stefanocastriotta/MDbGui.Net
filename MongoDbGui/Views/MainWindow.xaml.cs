@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Messaging;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Media;
+using MongoDbGui.Views.Dialogs;
 
 namespace MongoDbGui.Views
 {
