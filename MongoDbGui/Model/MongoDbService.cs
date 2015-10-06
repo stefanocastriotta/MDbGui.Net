@@ -16,7 +16,7 @@ namespace MongoDbGui.Model
         public async Task<MongoDbServer> Connect(ConnectionInfo connectionInfo)
         {
             if (connectionInfo.Mode == 1)
-                client = new MongoClient(new MongoClientSettings() { Server = new MongoServerAddress(connectionInfo.Address, connectionInfo.Port) });
+                client = new MongoClient(new MongoClientSettings() { Server = new MongoServerAddress(connectionInfo.Address, connectionInfo.Port), ConnectionMode = ConnectionMode.Direct });
             else
                 client = new MongoClient(new MongoUrl(connectionInfo.ConnectionString));
             var databases = await client.ListDatabasesAsync();

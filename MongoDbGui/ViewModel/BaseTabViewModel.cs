@@ -27,8 +27,8 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private ObservableCollection<string> _results;
-        public ObservableCollection<string> Results
+        private ObservableCollection<ResultItemViewModel> _results;
+        public ObservableCollection<ResultItemViewModel> Results
         {
             get { return _results; }
             set
@@ -43,7 +43,7 @@ namespace MongoDbGui.ViewModel
         /// </summary>
         public BaseTabViewModel()
         {
-            _results = new ObservableCollection<string>();
+            _results = new ObservableCollection<ResultItemViewModel>();
         }
     }
 }

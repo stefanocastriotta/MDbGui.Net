@@ -107,7 +107,11 @@
     <Compile Include="ViewModel\MongoDbIndexViewModel.cs" />
     <Compile Include="ViewModel\MongoDbServerViewModel.cs" />
     <Compile Include="ViewModel\BaseTabViewModel.cs" />
+    <Compile Include="ViewModel\ResultItemViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Views\Controls\ResultItem.xaml.cs">
+      <DependentUpon>ResultItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\ResultsView.xaml.cs">
       <DependentUpon>ResultsView.xaml</DependentUpon>
     </Compile>
@@ -120,6 +124,10 @@
     <Compile Include="Views\Spinner.xaml.cs">
       <DependentUpon>Spinner.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\Controls\ResultItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Dialogs\InsertDocumentsView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>

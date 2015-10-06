@@ -107,7 +107,7 @@ namespace MongoDbGui.ViewModel
             {
                 Results.Clear();
                 foreach (var result in results)
-                    Results.Add(result.ToJson(new JsonWriterSettings { Indent = true }));
+                    Results.Add(new ResultItemViewModel() { Result = result.ToJson(new JsonWriterSettings { Indent = true }), Index = results.IndexOf(result) + 1 });
             });
         }
 
@@ -119,7 +119,7 @@ namespace MongoDbGui.ViewModel
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 Results.Clear();
-                Results.Add(result.ToString());
+                Results.Add(new ResultItemViewModel() { Result = result.ToString(), Index = 1 });
             });
         }
     }
