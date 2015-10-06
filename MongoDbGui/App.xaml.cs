@@ -1,5 +1,8 @@
 ﻿using System.Windows;
 using GalaSoft.MvvmLight.Threading;
+using System.Xml;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace MongoDbGui
 {
@@ -11,6 +14,13 @@ namespace MongoDbGui
         static App()
         {
             DispatcherHelper.Initialize();
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            XmlReader reader = XmlReader.Create("Resources/BsonHighlighting.xml");
+            HighlightingManager.Instance.RegisterHighlighting("Bson", new string[] { ".bson" }, HighlightingLoader.Load(reader, HighlightingManager.Instance));
         }
     }
 }

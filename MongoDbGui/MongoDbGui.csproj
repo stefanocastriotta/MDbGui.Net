@@ -48,6 +48,9 @@
     <Reference Include="GalaSoft.MvvmLight.Platform">
       <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit">
+      <HintPath>..\packages\AvalonEdit.5.0.2\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -91,6 +94,7 @@
     <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utils\FocusExtension.cs" />
     <Compile Include="Utils\NullValueToVisibilityConverter.cs" />
+    <Compile Include="Utils\StringToDocumentTextConverter.cs" />
     <Compile Include="ViewModel\BaseTreeviewViewModel.cs" />
     <Compile Include="ViewModel\CollectionTabViewModel.cs" />
     <Compile Include="ViewModel\CommandTabViewModel.cs" />
@@ -188,6 +192,11 @@
     <Resource Include="Skins\spinnermask2.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\BsonHighlighting.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
