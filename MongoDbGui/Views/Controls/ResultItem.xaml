@@ -31,18 +31,6 @@
                     <fa:FontAwesome Icon="Edit" ToolTip="Edit"></fa:FontAwesome>
                 </Button>
             </DockPanel>
-            <avalonEdit:TextArea Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                Document="{Binding Result, Converter={StaticResource StringToDocumentTextConverter}}"
-                Background="Black" Foreground="White" FontFamily="Courier New" Name="txtArea">
-                <ContextMenuService.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Edit" Command="{Binding Path=EditResult}" />
-                        <MenuItem Header="Delete" Command="{Binding Path=ConfirmDeleteResult}" />
-                        <Separator/>
-                        <MenuItem Header="Copy to clipboard" Command="{Binding Path=CopyToClipboard}" />
-                    </ContextMenu>
-                </ContextMenuService.ContextMenu>
-            </avalonEdit:TextArea>
 
         </StackPanel>
     </Border>

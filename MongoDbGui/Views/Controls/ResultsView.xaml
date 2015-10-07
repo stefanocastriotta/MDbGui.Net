@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MongoDbGui.Views.Controls"
+             xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+             xmlns:utils="clr-namespace:MongoDbGui.Utils"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -12,6 +14,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <utils:StringToDocumentTextConverter x:Key="StringToDocumentTextConverter" />
             <!-- Remove listview selected item overlay http://stackoverflow.com/questions/1051215/wpf-listview-turn-off-selection/16024204#16024204 -->
             <Style TargetType="{x:Type ListViewItem}">
                 <Setter Property="Template">
@@ -57,18 +60,12 @@
             <Button Command="{Binding ExecuteFind}" Content="Find"></Button>
             <Button Command="{Binding ExecuteCount}" Content="Count"></Button>
         </StackPanel>
-        <ListView Grid.Row="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Results}" Background="Black" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <local:ResultItem></local:ResultItem>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <avalonEdit:TextEditor Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                Document="{Binding RawResult, Converter={StaticResource StringToDocumentTextConverter}}" HorizontalScrollBarVisibility="Disabled"
+                Background="Black" Foreground="White" FontFamily="Courier New" IsReadOnly="True" SyntaxHighlighting="Bson">
+            
+        </avalonEdit:TextEditor>
+
         <!--<TreeView Grid.Row="2" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding TreeResults}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">

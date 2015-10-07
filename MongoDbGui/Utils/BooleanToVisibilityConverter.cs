@@ -25,7 +25,7 @@ namespace MongoDbGui.Utils
             }
             if (parameter != null)
             {
-                if (bool.Parse((string)parameter))
+                if (!bool.Parse((string)parameter))
                 {
                     flag = !flag;
                 }

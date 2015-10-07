@@ -103,6 +103,19 @@ namespace MongoDbGui.ViewModel
         public async void InnerExecuteFind()
         {
             var results = await Collection.Database.Server.MongoDbService.Find(Collection.Database.Name, Collection.Name, Find, Sort, Size, Skip);
+            StringBuilder sb = new StringBuilder();
+            int index = 1;
+            foreach (var result in results)
+            {
+                sb.Append("# ");
+                sb.AppendLine(index.ToString());
+                sb.AppendLine(result.ToJson(new JsonWriterSettings { Indent = true }));
+                sb.AppendLine();
+                index++;
+            }
+
+            RawResult = sb.ToString();
+
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 Results.Clear();
@@ -116,6 +129,9 @@ namespace MongoDbGui.ViewModel
         public async void InnerExecuteCount()
         {
             var result = await Collection.Database.Server.MongoDbService.Count(Collection.Database.Name, Collection.Name, Find);
+
+            RawResult = result.ToString();
+            
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 Results.Clear();

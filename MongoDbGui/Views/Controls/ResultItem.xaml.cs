@@ -1,4 +1,6 @@
-﻿using ICSharpCode.AvalonEdit.Highlighting;
+﻿using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Editing;
+using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,13 +27,23 @@ namespace MongoDbGui.Views.Controls
         {
             InitializeComponent();
             //http://community.sharpdevelop.net/forums/t/11977.aspx
-            txtArea.TextView.LineTransformers.Insert(0, new HighlightingColorizer(HighlightingManager.Instance.GetDefinition("Bson")));
-            txtArea.PreviewKeyDown += txtArea_PreviewKeyDown;
+            //txtArea.TextView.LineTransformers.Insert(0, new HighlightingColorizer(HighlightingManager.Instance.GetDefinition("Bson")));
+            //txtArea.ReadOnlySectionProvider = ReadOnlySectionDocument.Instance;
         }
 
-        void txtArea_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            e.Handled = true;
-        }
+        //class ReadOnlySectionDocument : IReadOnlySectionProvider
+        //{
+        //    public static readonly ReadOnlySectionDocument Instance = new ReadOnlySectionDocument();
+
+        //    public bool CanInsert(int offset)
+        //    {
+        //        return false;
+        //    }
+
+        //    public IEnumerable<ISegment> GetDeletableSegments(ISegment segment)
+        //    {
+        //        return Enumerable.Empty<ISegment>();
+        //    }
+        //}
     }
 }

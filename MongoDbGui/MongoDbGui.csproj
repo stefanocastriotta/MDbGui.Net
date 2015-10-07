@@ -92,6 +92,7 @@
     <Compile Include="Model\MongoDbService.cs" />
     <Compile Include="Model\IMongoDbService.cs" />
     <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Utils\ObjectToVisibilityMultiConverter.cs" />
     <Compile Include="Utils\FocusExtension.cs" />
     <Compile Include="Utils\NullValueToVisibilityConverter.cs" />
     <Compile Include="Utils\StringToDocumentTextConverter.cs" />

@@ -16,6 +16,7 @@
             </ResourceDictionary.MergedDictionaries>
             <utils:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <utils:NullValueToVisibilityConverter x:Key="NullValueToVisibilityConverter" />
+            <utils:ObjectToVisibilityMultiConverter x:Key="ObjectToVisibilityMultiConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -40,7 +41,7 @@
                       >
                 <StackPanel Orientation="Horizontal">
                     <fa:ImageAwesome Icon="Refresh" Spin="True" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <fa:ImageAwesome Icon="Server" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"></fa:ImageAwesome>
+                    <fa:ImageAwesome Icon="Server" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"></fa:ImageAwesome>
                     <TextBlock Text="{Binding Name}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
                         <TextBlock.ContextMenu>
                             <ContextMenu>
@@ -57,10 +58,10 @@
                       ItemsSource="{Binding Children}"
                       >
                 <StackPanel Orientation="Horizontal">
-                    <fa:ImageAwesome Icon="Refresh" Spin="True" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"/>
-                    <Grid Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}">
-                        <fa:ImageAwesome Icon="Folder" Width="16" Height="16" Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"></fa:ImageAwesome>
-                        <fa:ImageAwesome Icon="FolderOpen" Width="16" Height="16" Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"></fa:ImageAwesome>
+                    <fa:ImageAwesome Icon="Refresh" Spin="True" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Grid Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}">
+                        <fa:ImageAwesome Icon="Folder" Width="16" Height="16" Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"></fa:ImageAwesome>
+                        <fa:ImageAwesome Icon="FolderOpen" Width="16" Height="16" Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"></fa:ImageAwesome>
                     </Grid>
                     <TextBlock Text="{Binding Name}">
                     </TextBlock>
@@ -75,8 +76,8 @@
                       >
                 <StackPanel Orientation="Horizontal">
                     <fa:ImageAwesome Icon="Spinner" Spin="True" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <fa:ImageAwesome Icon="Database" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"></fa:ImageAwesome>
-                    <TextBlock Text="{Binding Name}" Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
+                    <fa:ImageAwesome Icon="Database" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"></fa:ImageAwesome>
+                    <TextBlock Text="{Binding Name}" Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
                         <TextBlock.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Create collection" Command="{Binding Path=CreateNewCollection}" />
@@ -86,7 +87,7 @@
                         </TextBlock.ContextMenu>
                     </TextBlock>
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" utils:FocusExtension.IsFocused="{Binding IsNew}" 
-                                     Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}" 
+                                     Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}}" 
                                      PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown"
                                      MinWidth="50">
                         <TextBox.InputBindings>
@@ -101,8 +102,15 @@
                       ItemsSource="{Binding Indexes}"
                       >
                 <StackPanel Orientation="Horizontal">
-                    <fa:ImageAwesome Icon="Table" Width="16" Height="16" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"></fa:ImageAwesome>
-                    <TextBlock Text="{Binding Name}" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
+                    <fa:ImageAwesome Icon="Table" Width="16" Height="16">
+                        <fa:ImageAwesome.Visibility>
+                            <MultiBinding Converter="{StaticResource ObjectToVisibilityMultiConverter}" ConverterParameter="false">
+                                <Binding Path="IsBusy" />
+                                <Binding Path="Name" />
+                            </MultiBinding>
+                        </fa:ImageAwesome.Visibility>
+                    </fa:ImageAwesome>
+                    <TextBlock Text="{Binding Name}" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
                         <TextBlock.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Open collection" Command="{Binding Path=OpenTab}" />
@@ -114,7 +122,7 @@
                         </TextBlock.ContextMenu>
                     </TextBlock>
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" utils:FocusExtension.IsFocused="{Binding IsEditing}" 
-                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}" 
+                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" 
                                      PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown"
                                      MinWidth="50">
                         <TextBox.InputBindings>

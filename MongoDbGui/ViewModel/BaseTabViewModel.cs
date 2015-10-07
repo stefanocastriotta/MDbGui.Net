@@ -27,6 +27,21 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        private string _rawResult = string.Empty;
+
+        public string RawResult
+        {
+            get
+            {
+                return _rawResult;
+            }
+            set
+            {
+                Set(ref _rawResult, value);
+            }
+        }
+
+
         private ObservableCollection<ResultItemViewModel> _results;
         public ObservableCollection<ResultItemViewModel> Results
         {
