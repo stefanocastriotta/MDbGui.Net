@@ -15,6 +15,17 @@ namespace MongoDbGui.ViewModel
     /// </summary>
     public class MongoDbCollectionViewModel : BaseTreeviewViewModel
     {
+        protected bool _iconVisible = true;
+
+        public bool IconVisible
+        {
+            get { return _iconVisible; }
+            set
+            {
+                Set(ref _iconVisible, value);
+            }
+        }
+
         private MongoDbDatabaseViewModel _database;
         public MongoDbDatabaseViewModel Database
         {

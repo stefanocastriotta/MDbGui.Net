@@ -1,7 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
 using MongoDB.Bson;
 using MongoDbGui.Model;
+using System;
 using System.Collections.ObjectModel;
+using System.Windows.Threading;
 
 namespace MongoDbGui.ViewModel
 {
@@ -26,6 +28,49 @@ namespace MongoDbGui.ViewModel
                 Set(ref _name, value);
             }
         }
+
+        private bool _executing;
+
+        public bool Executing
+        {
+            get
+            {
+                return _executing;
+            }
+            set
+            {
+                if (value && !_executing)
+                {
+                    ExecutingTime = TimeSpan.Zero.ToString("hh':'mm':'ss'.'fff");
+                    _executingStartTime = DateTime.Now;
+                    ExecutingTimer.Start();
+                }
+                else if (!value && _executing)
+                {
+                    ExecutingTimer.Stop();
+                }
+                Set(ref _executing, value);
+            }
+        }
+
+        private DispatcherTimer ExecutingTimer = new DispatcherTimer();
+
+        private DateTime _executingStartTime;
+
+        private string _executingTime = string.Empty;
+
+        public string ExecutingTime
+        {
+            get
+            {
+                return _executingTime;
+            }
+            set
+            {
+                Set(ref _executingTime, value);
+            }
+        }
+
 
         private string _rawResult = string.Empty;
 
@@ -59,6 +104,13 @@ namespace MongoDbGui.ViewModel
         public BaseTabViewModel()
         {
             _results = new ObservableCollection<ResultItemViewModel>();
+            ExecutingTimer.Tick += ExecutingTimer_Tick;
+            ExecutingTimer.Interval = TimeSpan.FromMilliseconds(100);
+        }
+
+        void ExecutingTimer_Tick(object sender, System.EventArgs e)
+        {
+            ExecutingTime = (DateTime.Now - _executingStartTime).ToString("hh':'mm':'ss'.'fff");
         }
     }
 }

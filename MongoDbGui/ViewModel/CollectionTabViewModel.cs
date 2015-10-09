@@ -102,17 +102,26 @@ namespace MongoDbGui.ViewModel
 
         public async void InnerExecuteFind()
         {
+            Executing = true;
             var results = await Collection.Database.Server.MongoDbService.Find(Collection.Database.Name, Collection.Name, Find, Sort, Size, Skip);
+            Executing = false;
             StringBuilder sb = new StringBuilder();
             int index = 1;
+            sb.Append("[");
             foreach (var result in results)
             {
-                sb.Append("# ");
-                sb.AppendLine(index.ToString());
-                sb.AppendLine(result.ToJson(new JsonWriterSettings { Indent = true }));
                 sb.AppendLine();
+                sb.Append("/* # ");
+                sb.Append(index.ToString());
+                sb.AppendLine(" */");
+                sb.AppendLine(result.ToJson(new JsonWriterSettings { Indent = true }));
+                sb.Append(",");
                 index++;
             }
+            if (results.Count > 0)
+                sb.Length -= 1;
+            sb.AppendLine();
+            sb.Append("]");
 
             RawResult = sb.ToString();
 
@@ -128,7 +137,9 @@ namespace MongoDbGui.ViewModel
 
         public async void InnerExecuteCount()
         {
+            Executing = true;
             var result = await Collection.Database.Server.MongoDbService.Count(Collection.Database.Name, Collection.Name, Find);
+            Executing = false;
 
             RawResult = result.ToString();
             

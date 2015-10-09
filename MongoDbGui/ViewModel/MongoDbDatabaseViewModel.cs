@@ -56,7 +56,7 @@ namespace MongoDbGui.ViewModel
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 _folders.Add(_collections);
-                _collections.Children.Add(new MongoDbCollectionViewModel(this, ""));
+                _collections.Children.Add(new MongoDbCollectionViewModel(this, null) { IconVisible = false });
                 _folders.Add(_users);
                 _users.Children.Add(new BaseTreeviewViewModel());
             });

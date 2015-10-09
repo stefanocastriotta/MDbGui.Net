@@ -44,7 +44,7 @@ namespace MongoDbGui.ViewModel
         }
 
 
-        protected string _name = string.Empty;
+        protected string _name;
 
         public string Name
         {

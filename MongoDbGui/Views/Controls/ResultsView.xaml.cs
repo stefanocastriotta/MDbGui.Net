@@ -23,6 +23,8 @@ namespace MongoDbGui.Views.Controls
         public ResultsView()
         {
             InitializeComponent();
+            txtEditor.Options.EnableHyperlinks = false;
+            txtEditor.Options.EnableEmailHyperlinks = false;
         }
     }
 }
