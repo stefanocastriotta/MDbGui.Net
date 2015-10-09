@@ -17,6 +17,7 @@
             </ResourceDictionary.MergedDictionaries>
             <utils:StringToDocumentTextConverter x:Key="StringToDocumentTextConverter" />
             <utils:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <utils:NullValueToVisibilityConverter x:Key="NullValueToVisibilityConverter" />
             <!-- Remove listview selected item overlay http://stackoverflow.com/questions/1051215/wpf-listview-turn-off-selection/16024204#16024204 -->
             <Style TargetType="{x:Type ListViewItem}">
                 <Setter Property="Template">
@@ -63,17 +64,33 @@
             <Button Command="{Binding ExecuteFind}" Content="Find"></Button>
             <Button Command="{Binding ExecuteCount}" Content="Count"></Button>
         </StackPanel>
-        <StackPanel Margin="10,0" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Top">
-            <fa:ImageAwesome Spin="True" Icon="Refresh" Height="18" Width="18" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></fa:ImageAwesome>
-            <Label Content="Executing command" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></Label>
-            <Label Content="Execution completed" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"></Label>
-            <Label Content="{Binding ExecutingTime}"></Label>
-        </StackPanel>
+        <DockPanel Margin="10,0" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" LastChildFill="False">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                <fa:ImageAwesome Spin="True" Icon="Refresh" Height="18" Width="18" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></fa:ImageAwesome>
+                <Label Content="Executing command" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></Label>
+                <Label Content="Execution completed" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"></Label>
+                <Label Content="{Binding ExecutingTime}"></Label>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <Button Height="18" Width="18" Command="{Binding PageBack}">
+                    <fa:ImageAwesome Icon="CaretLeft"></fa:ImageAwesome>
+                </Button>
+                <TextBox Width="30" Height="18" Style="{StaticResource ResultsView}" Text="{Binding Skip}"></TextBox>
+                <TextBox Width="30" Height="18" Style="{StaticResource ResultsView}" Text="{Binding Size}"></TextBox>
+                <Button Height="18" Width="18" Command="{Binding PageForward}">
+                    <fa:ImageAwesome Icon="CaretRight"></fa:ImageAwesome>
+                </Button>
+            </StackPanel>
+        </DockPanel>
         <avalonEdit:TextEditor Name="txtEditor" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-            Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}" 
+            Visibility="{Binding RawResult, Converter={StaticResource NullValueToVisibilityConverter}, ConverterParameter=false}" 
             Document="{Binding RawResult, Converter={StaticResource StringToDocumentTextConverter}}" HorizontalScrollBarVisibility="Disabled"
             Background="Black" Foreground="White" FontFamily="Courier New" IsReadOnly="True" SyntaxHighlighting="Bson">
-            
+            <ContextMenuService.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy to clipboard" Command="{Binding Path=CopyToClipboard}" />
+                </ContextMenu>
+            </ContextMenuService.ContextMenu>            
         </avalonEdit:TextEditor>
 
         <!--<TreeView Grid.Row="2" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding TreeResults}">

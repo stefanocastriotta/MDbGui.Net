@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson.IO;
 using GalaSoft.MvvmLight.Messaging;
+using System.Windows;
 
 namespace MongoDbGui.ViewModel
 {
@@ -19,9 +20,19 @@ namespace MongoDbGui.ViewModel
             _sort = "{}";
             _find = "{}";
             _size = 50;
-            ExecuteFind = new RelayCommand(InnerExecuteFind);
+            ExecuteFind = new RelayCommand(() =>
+            {
+                Skip = 0;
+                InnerExecuteFind();
+            });
             ExecuteCount = new RelayCommand(InnerExecuteCount);
             ExecuteClose = new RelayCommand(InnerExecuteClose);
+            PageBack = new RelayCommand(InnerPageBack);
+            PageForward = new RelayCommand(InnerPageForward);
+            CopyToClipboard = new RelayCommand(() =>
+            {
+                Clipboard.SetText(RawResult);
+            });
         }
 
         private MongoDbCollectionViewModel _collection;
@@ -149,5 +160,25 @@ namespace MongoDbGui.ViewModel
                 Results.Add(new ResultItemViewModel() { Result = result.ToString(), Index = 1 });
             });
         }
+
+        public RelayCommand PageBack { get; set; }
+
+        public void InnerPageBack()
+        {
+            Skip -= Size;
+            Skip = Math.Max(0, Skip);
+            InnerExecuteFind();
+        }
+
+        public RelayCommand PageForward { get; set; }
+
+        public void InnerPageForward()
+        {
+            Skip += Size;
+            InnerExecuteFind();
+        }
+
+        public RelayCommand CopyToClipboard { get; set; }
+
     }
 }

@@ -2,7 +2,7 @@
 <!-- syntaxdefinition for MongoDB Bson Document -->
 <SyntaxDefinition name="Bson" extensions=".bson" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
 	<Color name="Digits" foreground="Cyan" exampleText="3.14" />
-	<Color name="Comment" foreground="LightGray" exampleText="// comment" />
+	<Color name="Comment" foreground="Gray" exampleText="// comment" />
 	<Color name="String" foreground="Green" exampleText="var text = &quot;Hello, World!&quot;;" />
 	<Color name="Character" foreground="Green" exampleText="var char = 'a';" />
 	<Color name="Regex" foreground="Green" exampleText="/abc/m" />
@@ -103,7 +103,8 @@
 			<Word>ObjectId</Word>
 			<Word>NumberLong</Word>
 			<Word>NumberInt</Word>
-		</Keywords>
+      <Word>CSUUID</Word>
+    </Keywords>
 		<Span color="Comment">
 			<Begin>//</Begin>
 		</Span>
