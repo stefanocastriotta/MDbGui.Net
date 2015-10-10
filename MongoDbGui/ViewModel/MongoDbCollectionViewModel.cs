@@ -15,6 +15,17 @@ namespace MongoDbGui.ViewModel
     /// </summary>
     public class MongoDbCollectionViewModel : BaseTreeviewViewModel
     {
+        protected long _sizeOnDisk;
+
+        public long SizeOnDisk
+        {
+            get { return _sizeOnDisk; }
+            set
+            {
+                Set(ref _sizeOnDisk, value);
+            }
+        }
+
         protected bool _iconVisible = true;
 
         public bool IconVisible

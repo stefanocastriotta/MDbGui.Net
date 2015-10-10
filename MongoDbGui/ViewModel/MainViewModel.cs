@@ -92,6 +92,7 @@ namespace MongoDbGui.ViewModel
                     foreach (var database in serverInfo.Databases)
                     {
                         var databaseVm = new MongoDbDatabaseViewModel(serverVm, database["name"].AsString);
+                        databaseVm.SizeOnDisk = database["sizeOnDisk"].AsDouble;
                         if (databaseVm.Name == "local")
                             systemDatabases.Add(databaseVm);
                         else

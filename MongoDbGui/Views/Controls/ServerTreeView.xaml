@@ -84,6 +84,12 @@
                                 <Separator/>
                             </ContextMenu>
                         </TextBlock.ContextMenu>
+                        <TextBlock.ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}"></TextBlock>
+                                <TextBlock Text="{Binding SizeOnDisk, StringFormat=Size: {0:#}}"></TextBlock>
+                            </StackPanel>
+                        </TextBlock.ToolTip>
                     </TextBlock>
                     <TextBox Margin="5,0,0,0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" utils:FocusExtension.IsFocused="{Binding IsNew}" 
                                      Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}}" 

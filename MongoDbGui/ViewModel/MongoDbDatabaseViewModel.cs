@@ -43,6 +43,17 @@ namespace MongoDbGui.ViewModel
         private FolderViewModel _collections;
         private FolderViewModel _users;
 
+        protected double _sizeOnDisk;
+
+        public double SizeOnDisk
+        {
+            get { return _sizeOnDisk; }
+            set
+            {
+                Set(ref _sizeOnDisk, value);
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the MongoDbDatabaseViewModel class.
         /// </summary>
