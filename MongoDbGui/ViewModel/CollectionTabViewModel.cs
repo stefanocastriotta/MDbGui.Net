@@ -8,15 +8,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson.IO;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using System.Windows;
+using System.Collections.ObjectModel;
+using System.Windows.Threading;
 
 namespace MongoDbGui.ViewModel
 {
-    public class CollectionTabViewModel : BaseTabViewModel
+    public class TabViewModel : ViewModelBase
     {
-        public CollectionTabViewModel()
+        public TabViewModel()
         {
+            _results = new ObservableCollection<ResultItemViewModel>();
+            ExecutingTimer.Tick += ExecutingTimer_Tick;
+            ExecutingTimer.Interval = TimeSpan.FromMilliseconds(100);
+
             _sort = "{}";
             _find = "{}";
             _size = 50;
@@ -34,6 +41,95 @@ namespace MongoDbGui.ViewModel
                 Clipboard.SetText(RawResult);
             });
         }
+
+                private string _name = string.Empty;
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                Set(ref _name, value);
+            }
+        }
+
+        private bool _executing;
+
+        public bool Executing
+        {
+            get
+            {
+                return _executing;
+            }
+            set
+            {
+                if (value && !_executing)
+                {
+                    ExecutingTime = TimeSpan.Zero.ToString("hh':'mm':'ss'.'fff");
+                    _executingStartTime = DateTime.Now;
+                    ExecutingTimer.Start();
+                }
+                else if (!value && _executing)
+                {
+                    ExecutingTimer.Stop();
+                }
+                Set(ref _executing, value);
+            }
+        }
+
+        private DispatcherTimer ExecutingTimer = new DispatcherTimer();
+
+        private DateTime _executingStartTime;
+
+        private string _executingTime = string.Empty;
+
+        public string ExecutingTime
+        {
+            get
+            {
+                return _executingTime;
+            }
+            set
+            {
+                Set(ref _executingTime, value);
+            }
+        }
+
+
+        private string _rawResult = string.Empty;
+
+        public string RawResult
+        {
+            get
+            {
+                return _rawResult;
+            }
+            set
+            {
+                Set(ref _rawResult, value);
+            }
+        }
+
+
+        private ObservableCollection<ResultItemViewModel> _results;
+        public ObservableCollection<ResultItemViewModel> Results
+        {
+            get { return _results; }
+            set
+            {
+                _results = value;
+                RaisePropertyChanged("Results");
+            }
+        }
+
+        void ExecutingTimer_Tick(object sender, System.EventArgs e)
+        {
+            ExecutingTime = (DateTime.Now - _executingStartTime).ToString("hh':'mm':'ss'.'fff");
+        }
+
 
         private MongoDbCollectionViewModel _collection;
         public MongoDbCollectionViewModel Collection
@@ -106,7 +202,7 @@ namespace MongoDbGui.ViewModel
 
         public void InnerExecuteClose()
         {
-            Messenger.Default.Send(new NotificationMessage<CollectionTabViewModel>(this, "CloseTab"));
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(this, "CloseTab"));
         }
 
         public RelayCommand ExecuteFind { get; set; }

@@ -98,7 +98,6 @@
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="ViewModel\BaseTreeviewViewModel.cs" />
     <Compile Include="ViewModel\CollectionTabViewModel.cs" />
-    <Compile Include="ViewModel\CommandTabViewModel.cs" />
     <Compile Include="ViewModel\FolderViewModel.cs" />
     <Compile Include="ViewModel\InsertDocumentsViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
@@ -107,7 +106,6 @@
     <Compile Include="ViewModel\MongoDbDatabaseViewModel.cs" />
     <Compile Include="ViewModel\MongoDbIndexViewModel.cs" />
     <Compile Include="ViewModel\MongoDbServerViewModel.cs" />
-    <Compile Include="ViewModel\BaseTabViewModel.cs" />
     <Compile Include="ViewModel\ResultItemViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Views\Controls\ResultItem.xaml.cs">

@@ -30,8 +30,8 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private ObservableCollection<BaseTabViewModel> _tabs;
-        public ObservableCollection<BaseTabViewModel> Tabs
+        private ObservableCollection<TabViewModel> _tabs;
+        public ObservableCollection<TabViewModel> Tabs
         {
             get { return _tabs; }
             set
@@ -41,9 +41,9 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private BaseTabViewModel _selectedTab;
+        private TabViewModel _selectedTab;
 
-        public BaseTabViewModel SelectedTab
+        public TabViewModel SelectedTab
         {
             get
             {
@@ -61,9 +61,9 @@ namespace MongoDbGui.ViewModel
         public MainViewModel()
         {
             _activeConnections = new ObservableCollection<MongoDbServerViewModel>();
-            _tabs = new ObservableCollection<BaseTabViewModel>();
+            _tabs = new ObservableCollection<TabViewModel>();
             Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
-            Messenger.Default.Register<NotificationMessage<CollectionTabViewModel>>(this, (message) => TabMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<TabViewModel>>(this, (message) => TabMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => MongoDbServerMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<InsertDocumentsModel>>(this, (message) => InsertDocumentsMessageHandler(message));
         }
@@ -118,7 +118,7 @@ namespace MongoDbGui.ViewModel
         }
 
 
-        private void TabMessageHandler(NotificationMessage<CollectionTabViewModel> message)
+        private void TabMessageHandler(NotificationMessage<TabViewModel> message)
         {
             switch (message.Notification)
             {
