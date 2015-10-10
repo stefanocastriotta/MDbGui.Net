@@ -87,7 +87,7 @@
                         <TextBlock.ToolTip>
                             <StackPanel>
                                 <TextBlock Text="{Binding Name}"></TextBlock>
-                                <TextBlock Text="{Binding SizeOnDisk, StringFormat=Size: {0:#}}"></TextBlock>
+                                <TextBlock Text="{Binding SizeOnDiskString}"></TextBlock>
                             </StackPanel>
                         </TextBlock.ToolTip>
                     </TextBlock>
@@ -119,6 +119,12 @@
                                 <MenuItem Header="Insert documents" Command="{Binding Path=InsertDocuments}" />
                             </ContextMenu>
                         </TextBlock.ContextMenu>
+                        <TextBlock.ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}"></TextBlock>
+                                <TextBlock Text="{Binding SizeOnDiskString}"></TextBlock>
+                            </StackPanel>
+                        </TextBlock.ToolTip>
                     </TextBlock>
                     <TextBox Margin="5,0,0,0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" utils:FocusExtension.IsFocused="{Binding IsEditing}" 
                                      Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" 

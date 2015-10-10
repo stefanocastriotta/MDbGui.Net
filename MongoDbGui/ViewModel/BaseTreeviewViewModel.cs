@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using MongoDbGui.Utils;
 
 namespace MongoDbGui.ViewModel
 {
@@ -90,6 +91,30 @@ namespace MongoDbGui.ViewModel
                 Set(ref _isNew, value);
             }
         }
+
+        protected double _sizeOnDisk;
+
+        public double SizeOnDisk
+        {
+            get { return _sizeOnDisk; }
+            set
+            {
+                Set(ref _sizeOnDisk, value);
+                SizeOnDiskString = "Size: " + value.SizeSuffix();
+            }
+        }
+
+        protected string _sizeOnDiskString;
+
+        public string SizeOnDiskString
+        {
+            get { return _sizeOnDiskString; }
+            set
+            {
+                Set(ref _sizeOnDiskString, value);
+            }
+        }
+
 
         /// <summary>
         /// Initializes a new instance of the BaseTreeviewViewModel class.

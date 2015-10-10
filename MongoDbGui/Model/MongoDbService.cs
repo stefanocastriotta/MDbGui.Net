@@ -13,7 +13,7 @@ namespace MongoDbGui.Model
 
         #region Server Admin
 
-        public async Task<MongoDbServer> Connect(ConnectionInfo connectionInfo)
+        public async Task<MongoDbServer> ConnectAsync(ConnectionInfo connectionInfo)
         {
             if (connectionInfo.Mode == 1)
                 client = new MongoClient(new MongoClientSettings() { Server = new MongoServerAddress(connectionInfo.Address, connectionInfo.Port), ConnectionMode = ConnectionMode.Direct });
@@ -27,7 +27,7 @@ namespace MongoDbGui.Model
             return server;
         }
 
-        public async Task<IMongoDatabase> CreateNewDatabase(string databaseName)
+        public async Task<IMongoDatabase> CreateNewDatabaseAsync(string databaseName)
         {
             var databases = await client.ListDatabasesAsync();
             var databasesList = await databases.ToListAsync();
@@ -40,7 +40,7 @@ namespace MongoDbGui.Model
             
         }
 
-        public async Task<BsonDocument> ExecuteRawCommand(string databaseName, string command)
+        public async Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command)
         {
             var db = client.GetDatabase(databaseName);
             var result = await db.RunCommandAsync(new BsonDocumentCommand<BsonDocument>(BsonDocument.Parse(command)));
@@ -51,7 +51,7 @@ namespace MongoDbGui.Model
 
         #region Database Admin
 
-        public async Task<List<BsonDocument>> GetCollections(string databaseName)
+        public async Task<List<BsonDocument>> GetCollectionsAsync(string databaseName)
         {
             var db = client.GetDatabase(databaseName);
             var collections = await db.ListCollectionsAsync();
@@ -59,13 +59,21 @@ namespace MongoDbGui.Model
             return listCollections;
         }
 
-        public async Task CreateCollection(string databaseName, string collection)
+        public async Task<BsonDocument> GetCollectionStats(string databaseName, string collection)
+        {
+            var db = client.GetDatabase(databaseName);
+            var stats = await db.RunCommandAsync(new JsonCommand<BsonDocument>("{ collStats: \"" +collection + "\", verbose: true }"));
+            return stats;
+        }
+
+
+        public async Task CreateCollectionAsync(string databaseName, string collection)
         {
             var db = client.GetDatabase(databaseName);
             await db.CreateCollectionAsync(collection);
         }
 
-        public async Task RenameCollection(string databaseName, string oldName, string newName)
+        public async Task RenameCollectionAsync(string databaseName, string oldName, string newName)
         {
             var db = client.GetDatabase(databaseName);
             await db.RenameCollectionAsync(oldName, newName);
@@ -73,7 +81,7 @@ namespace MongoDbGui.Model
 
         #endregion
 
-        public async Task<List<BsonDocument>> Find(string databaseName, string collection, string filter, string sort, int? limit, int? skip)
+        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
@@ -81,7 +89,7 @@ namespace MongoDbGui.Model
             return result;
         }
 
-        public async Task<long> Count(string databaseName, string collection, string filter)
+        public async Task<long> CountAsync(string databaseName, string collection, string filter)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
@@ -89,7 +97,7 @@ namespace MongoDbGui.Model
             return result;
         }
 
-        public async Task<BulkWriteResult<BsonDocument>> Insert(string databaseName, string collection, IEnumerable<BsonDocument> documents)
+        public async Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);

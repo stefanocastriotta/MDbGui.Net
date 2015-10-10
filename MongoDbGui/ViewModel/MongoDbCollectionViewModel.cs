@@ -15,17 +15,6 @@ namespace MongoDbGui.ViewModel
     /// </summary>
     public class MongoDbCollectionViewModel : BaseTreeviewViewModel
     {
-        protected long _sizeOnDisk;
-
-        public long SizeOnDisk
-        {
-            get { return _sizeOnDisk; }
-            set
-            {
-                Set(ref _sizeOnDisk, value);
-            }
-        }
-
         protected bool _iconVisible = true;
 
         public bool IconVisible
@@ -104,12 +93,12 @@ namespace MongoDbGui.ViewModel
         {
             if (IsNew)
             {
-                await Database.Server.MongoDbService.CreateCollection(Database.Name, this.Name);
+                await Database.Server.MongoDbService.CreateCollectionAsync(Database.Name, this.Name);
                 IsNew = false;
             }
             else
             {
-                await Database.Server.MongoDbService.RenameCollection(Database.Name, this._oldName, this.Name);
+                await Database.Server.MongoDbService.RenameCollectionAsync(Database.Name, this._oldName, this.Name);
             }
             _oldName = this.Name;
             IsEditing = false;

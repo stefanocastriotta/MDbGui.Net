@@ -84,7 +84,7 @@ namespace MongoDbGui.ViewModel
 
                 try
                 {
-                    var serverInfo = await _mongoDbService.Connect(message.Content);
+                    var serverInfo = await _mongoDbService.ConnectAsync(message.Content);
                     List<MongoDbDatabaseViewModel> systemDatabases = new List<MongoDbDatabaseViewModel>();
                     List<MongoDbDatabaseViewModel> standardDatabases = new List<MongoDbDatabaseViewModel>();
 
@@ -153,7 +153,7 @@ namespace MongoDbGui.ViewModel
             {
                 message.Content.Collection.IsBusy = true;
                 BsonArray array = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(message.Content.Documents);
-                await message.Content.Collection.Database.Server.MongoDbService.Insert(message.Content.Collection.Database.Name, message.Content.Collection.Name, array.Select(i => i.AsBsonDocument));
+                await message.Content.Collection.Database.Server.MongoDbService.InsertAsync(message.Content.Collection.Database.Name, message.Content.Collection.Name, array.Select(i => i.AsBsonDocument));
                 message.Content.Collection.IsBusy = false;
             }
         }

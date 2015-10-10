@@ -6,6 +6,7 @@ using MongoDbGui.Model;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MongoDbGui.ViewModel
 {
@@ -43,17 +44,6 @@ namespace MongoDbGui.ViewModel
         private FolderViewModel _collections;
         private FolderViewModel _users;
 
-        protected double _sizeOnDisk;
-
-        public double SizeOnDisk
-        {
-            get { return _sizeOnDisk; }
-            set
-            {
-                Set(ref _sizeOnDisk, value);
-            }
-        }
-
         /// <summary>
         /// Initializes a new instance of the MongoDbDatabaseViewModel class.
         /// </summary>
@@ -90,24 +80,27 @@ namespace MongoDbGui.ViewModel
         public async void LoadCollections()
         {
             _collections.IsBusy = true;
-            var collections = await Server.MongoDbService.GetCollections(Name);
+            var collections = await Server.MongoDbService.GetCollectionsAsync(Name);
+
+            List<MongoDbCollectionViewModel> systemCollections = new List<MongoDbCollectionViewModel>();
+            List<MongoDbCollectionViewModel> standardCollections = new List<MongoDbCollectionViewModel>();
+            foreach (var collection in collections)
+            {
+                var collectionVm = new MongoDbCollectionViewModel(this, collection["name"].AsString);
+                collectionVm.Database = this;
+                    
+                if (collection["name"].AsString.StartsWith("system."))
+                    systemCollections.Add(collectionVm);
+                else
+                    standardCollections.Add(collectionVm);
+            }
+            FolderViewModel systemCollectionsFolder = new FolderViewModel("System", this);
+            foreach (var systemCollection in systemCollections.OrderBy(o => o.Name))
+                systemCollectionsFolder.Children.Add(systemCollection);
+
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                List<MongoDbCollectionViewModel> systemCollections = new List<MongoDbCollectionViewModel>();
-                List<MongoDbCollectionViewModel> standardCollections = new List<MongoDbCollectionViewModel>();
                 _collections.Children.Clear();
-                foreach (var collection in collections)
-                {
-                    var collectionVm = new MongoDbCollectionViewModel(this, collection["name"].AsString);
-                    collectionVm.Database = this;
-                    if (collection["name"].AsString.StartsWith("system."))
-                        systemCollections.Add(collectionVm);
-                    else
-                        standardCollections.Add(collectionVm);
-                }
-                FolderViewModel systemCollectionsFolder = new FolderViewModel("System", this);
-                foreach (var systemCollection in systemCollections.OrderBy(o => o.Name))
-                    systemCollectionsFolder.Children.Add(systemCollection);
 
                 _collections.Children.Add(systemCollectionsFolder);
 
@@ -118,6 +111,28 @@ namespace MongoDbGui.ViewModel
                 _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
                 _collections.IsBusy = false;
             });
+
+            await LoadCollectionsStats(systemCollections.Union(standardCollections));
+        }
+
+        private async Task LoadCollectionsStats(IEnumerable<MongoDbCollectionViewModel> collections)
+        {
+            foreach (var collection in collections.OrderBy(o => o.Name))
+            {
+                var stats = await Server.MongoDbService.ExecuteRawCommandAsync(Name, "{ collStats: \"" + collection.Name + "\", verbose: true }");
+                switch (stats["storageSize"].BsonType)
+                {
+                    case MongoDB.Bson.BsonType.Int32:
+                        collection.SizeOnDisk = stats["storageSize"].AsInt32;
+                        break;
+                    case MongoDB.Bson.BsonType.Int64:
+                        collection.SizeOnDisk = stats["storageSize"].AsInt64;
+                        break;
+                    case MongoDB.Bson.BsonType.Double:
+                        collection.SizeOnDisk = stats["storageSize"].AsDouble;
+                        break;
+                }
+            }
         }
 
         public RelayCommand CreateDatabase { get; set; }
@@ -128,7 +143,7 @@ namespace MongoDbGui.ViewModel
         {
             if (IsNew)
             {
-                await Server.MongoDbService.CreateNewDatabase(this.Name);
+                await Server.MongoDbService.CreateNewDatabaseAsync(this.Name);
                 IsNew = false;
             }
         }

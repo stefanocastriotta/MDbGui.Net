@@ -9,7 +9,7 @@ namespace MongoDbGui.Design
 {
     public class DesignMongoDbService : IMongoDbService
     {
-        public async Task<MongoDbServer> Connect(ConnectionInfo connectionInfo)
+        public async Task<MongoDbServer> ConnectAsync(ConnectionInfo connectionInfo)
         {
             // Use this to create design time data
 
@@ -17,48 +17,56 @@ namespace MongoDbGui.Design
             return server;
         }
 
-        public async Task<IMongoDatabase> CreateNewDatabase(string databaseName)
+        public async Task<IMongoDatabase> CreateNewDatabaseAsync(string databaseName)
         {
             return null;
         }
 
-        public async Task CreateCollection(string databaseName, string collection)
+        public async Task CreateCollectionAsync(string databaseName, string collection)
         {
         }
 
-        public async Task RenameCollection(string databaseName, string oldName, string newName)
+        public async Task RenameCollectionAsync(string databaseName, string oldName, string newName)
         {
         }
 
-        public async Task<List<BsonDocument>> GetCollections(string databaseName)
+        public async Task<List<BsonDocument>> GetCollectionsAsync(string databaseName)
         {
             // Use this to create design time data
 
             return new List<BsonDocument>();
         }
 
-        public async Task<BsonDocument> ExecuteRawCommand(string databaseName, string command)
+        public async Task<BsonDocument> GetCollectionStatsAsync(string databaseName, string collection)
+        {
+            // Use this to create design time data
+
+            return new BsonDocument();
+        }
+
+
+        public async Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command)
         {
             // Use this to create design time data
              
             return new BsonDocument();
         }
 
-        public async Task<List<BsonDocument>> Find(string databaseName, string collection, string filter, string sort, int? limit, int? skip)
+        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip)
         {
             // Use this to create design time data
 
             return new List<BsonDocument>();
         }
 
-        public async Task<long> Count(string databaseName, string collection, string filter)
+        public async Task<long> CountAsync(string databaseName, string collection, string filter)
         {
             // Use this to create design time data
 
             return 100;
         }
 
-        public async Task<BulkWriteResult<BsonDocument>> Insert(string databaseName, string collection, IEnumerable<BsonDocument> documents)
+        public async Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents)
         {
             return null;
         }
