@@ -97,7 +97,7 @@
     <Compile Include="Utils\StringToDocumentTextConverter.cs" />
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="ViewModel\BaseTreeviewViewModel.cs" />
-    <Compile Include="ViewModel\CollectionTabViewModel.cs" />
+    <Compile Include="ViewModel\TabViewModel.cs" />
     <Compile Include="ViewModel\FolderViewModel.cs" />
     <Compile Include="ViewModel\InsertDocumentsViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />

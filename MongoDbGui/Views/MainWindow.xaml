@@ -57,7 +57,7 @@
                         </DataTemplate>
                     </TabControl.ItemTemplate>
                     <TabControl.ContentTemplate>
-                        <DataTemplate DataType="{x:Type local:CollectionTabViewModel}">
+                        <DataTemplate DataType="{x:Type local:TabViewModel}">
                             <uc:ResultsView></uc:ResultsView>
                         </DataTemplate>
                     </TabControl.ContentTemplate>
