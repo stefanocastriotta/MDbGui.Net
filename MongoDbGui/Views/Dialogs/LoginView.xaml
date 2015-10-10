@@ -13,13 +13,7 @@
         <TextBox HorizontalAlignment="Left" Height="23" Margin="68,37,0,0" TextWrapping="Wrap" Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding HostPortMode}" VerticalAlignment="Top" Width="162"/>
         <Label Content=":" HorizontalAlignment="Left" Margin="235,34,0,0" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="253,37,0,0" TextWrapping="Wrap" Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding HostPortMode}" VerticalAlignment="Top" Width="78"/>
-        <Button Content="Connect" HorizontalAlignment="Left" Margin="10,131,0,0" VerticalAlignment="Top" Width="75">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Click">
-                    <mvvm:EventToCommand Command="{Binding Connect, Mode=OneWay}">
-                    </mvvm:EventToCommand>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+        <Button Content="Connect" HorizontalAlignment="Left" Margin="10,131,0,0" VerticalAlignment="Top" Width="75" Command="{Binding Connect, Mode=OneWay}">
         </Button>
 
         <TextBox HorizontalAlignment="Left" Height="23" Margin="119,89,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="212" Text="{Binding ConnectionString}" IsEnabled="{Binding ConnectionStringMode}"/>

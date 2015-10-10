@@ -32,6 +32,10 @@ namespace MongoDbGui.ViewModel
                 Skip = 0;
                 InnerExecuteFind();
             });
+            DoPaging = new RelayCommand(() =>
+            {
+                InnerExecuteFind();
+            });
             ExecuteCount = new RelayCommand(InnerExecuteCount);
             ExecuteClose = new RelayCommand(InnerExecuteClose);
             PageBack = new RelayCommand(InnerPageBack);
@@ -273,6 +277,8 @@ namespace MongoDbGui.ViewModel
             Skip += Size;
             InnerExecuteFind();
         }
+
+        public RelayCommand DoPaging { get; set; }
 
         public RelayCommand CopyToClipboard { get; set; }
 
