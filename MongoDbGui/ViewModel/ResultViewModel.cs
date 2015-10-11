@@ -56,8 +56,8 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private ObservableCollection<BsonElement> _elements;
-        public ObservableCollection<BsonElement> Elements
+        private ObservableCollection<ResultItemViewModel> _elements;
+        public ObservableCollection<ResultItemViewModel> Elements
         {
             get { return _elements; }
             set
@@ -82,7 +82,7 @@ namespace MongoDbGui.ViewModel
             {
                 Clipboard.SetText(Result);
             });
-            _elements = new ObservableCollection<BsonElement>();
+            _elements = new ObservableCollection<ResultItemViewModel>();
         }
     }
 }

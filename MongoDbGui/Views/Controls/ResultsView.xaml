@@ -10,7 +10,6 @@
              xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:utils="clr-namespace:MongoDbGui.Utils"
              xmlns:vm="clr-namespace:MongoDbGui.ViewModel"
-             xmlns:mongodb="clr-namespace:MongoDB.Bson;assembly=MongoDB.Bson"
              xmlns:listview="clr-namespace:BrightIdeasSoftware;assembly=ObjectListView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="700">
@@ -150,7 +149,7 @@
                         </Style>
                     </TreeView.ItemContainerStyle>
                     <TreeView.Resources>
-                        <HierarchicalDataTemplate DataType="{x:Type vm:ResultItemViewModel}"  ItemsSource="{Binding Elements}">
+                        <HierarchicalDataTemplate DataType="{x:Type vm:ResultViewModel}" ItemsSource="{Binding Elements}">
                             <TextBlock DockPanel.Dock="Left" Text="{Binding Index, StringFormat=# {0:#}}">
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>
@@ -162,11 +161,12 @@
                                 </TextBlock.ContextMenu>
                             </TextBlock>
                         </HierarchicalDataTemplate>
-                        <DataTemplate DataType="{x:Type mongodb:BsonElement}">
+                        <HierarchicalDataTemplate DataType="{x:Type vm:ResultItemViewModel}" ItemsSource="{Binding Children}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Margin="5,0,0,0" Text="{Binding Name}" />
+                                <TextBlock Margin="5,0,0,0" Text="{Binding Value}" />
                             </StackPanel>
-                        </DataTemplate>
+                        </HierarchicalDataTemplate>
                     </TreeView.Resources>
                 </TreeView>
             </TabItem>

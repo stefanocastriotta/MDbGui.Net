@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Threading;
 using MongoDbGui.Model;
+using MongoDbGui.Utils;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
@@ -296,7 +297,7 @@ namespace MongoDbGui.ViewModel
                     Results.Add(new ResultViewModel() { 
                         Result = result.ToJson(new JsonWriterSettings { Indent = true }), 
                         Index = results.IndexOf(result) + 1,
-                        Elements = new ObservableCollection<BsonElement>(result.ToList())
+                        Elements = new ObservableCollection<ResultItemViewModel>(result.ToResultItemViewModel())
                     });
             });
             
