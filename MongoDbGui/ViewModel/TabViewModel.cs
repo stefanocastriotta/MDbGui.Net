@@ -20,7 +20,7 @@ namespace MongoDbGui.ViewModel
     {
         public TabViewModel()
         {
-            _results = new ObservableCollection<ResultItemViewModel>();
+            _results = new ObservableCollection<ResultViewModel>();
             ExecutingTimer.Tick += ExecutingTimer_Tick;
             ExecutingTimer.Interval = TimeSpan.FromMilliseconds(100);
 
@@ -135,8 +135,8 @@ namespace MongoDbGui.ViewModel
         }
 
 
-        private ObservableCollection<ResultItemViewModel> _results;
-        public ObservableCollection<ResultItemViewModel> Results
+        private ObservableCollection<ResultViewModel> _results;
+        public ObservableCollection<ResultViewModel> Results
         {
             get { return _results; }
             set
@@ -293,8 +293,13 @@ namespace MongoDbGui.ViewModel
             {
                 Results.Clear();
                 foreach (var result in results)
-                    Results.Add(new ResultItemViewModel() { Result = result.ToJson(new JsonWriterSettings { Indent = true }), Index = results.IndexOf(result) + 1 });
+                    Results.Add(new ResultViewModel() { 
+                        Result = result.ToJson(new JsonWriterSettings { Indent = true }), 
+                        Index = results.IndexOf(result) + 1,
+                        Elements = new ObservableCollection<BsonElement>(result.ToList())
+                    });
             });
+            
         }
 
         public RelayCommand ExecuteCount { get; set; }
@@ -310,7 +315,7 @@ namespace MongoDbGui.ViewModel
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 Results.Clear();
-                Results.Add(new ResultItemViewModel() { Result = result.ToString(), Index = 1 });
+                Results.Add(new ResultViewModel() { Result = result.ToString(), Index = 1 });
             });
         }
 
@@ -350,7 +355,7 @@ namespace MongoDbGui.ViewModel
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     Results.Clear();
-                    Results.Add(new ResultItemViewModel() { Result = result.ToString(), Index = 1 });
+                    Results.Add(new ResultViewModel() { Result = result.ToString(), Index = 1 });
                 });
             }
             catch (Exception ex)

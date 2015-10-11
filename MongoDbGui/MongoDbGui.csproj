@@ -63,6 +63,9 @@
     <Reference Include="MongoDB.Driver.Core">
       <HintPath>..\packages\MongoDB.Driver.Core.2.0.1\lib\net45\MongoDB.Driver.Core.dll</HintPath>
     </Reference>
+    <Reference Include="ObjectListView">
+      <HintPath>..\packages\ObjectListView.Official.2.8.1\lib\net20\ObjectListView.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -106,7 +109,7 @@
     <Compile Include="ViewModel\MongoDbDatabaseViewModel.cs" />
     <Compile Include="ViewModel\MongoDbIndexViewModel.cs" />
     <Compile Include="ViewModel\MongoDbServerViewModel.cs" />
-    <Compile Include="ViewModel\ResultItemViewModel.cs" />
+    <Compile Include="ViewModel\ResultViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Views\Controls\ResultItem.xaml.cs">
       <DependentUpon>ResultItem.xaml</DependentUpon>

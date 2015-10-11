@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using MongoDB.Bson;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace MongoDbGui.ViewModel
@@ -10,7 +12,7 @@ namespace MongoDbGui.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class ResultItemViewModel : ViewModelBase
+    public class ResultViewModel : ViewModelBase
     {
         protected string _result = string.Empty;
 
@@ -23,6 +25,20 @@ namespace MongoDbGui.ViewModel
             set
             {
                 Set(ref _result, value);
+            }
+        }
+
+        protected string _id = string.Empty;
+
+        public string Id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                Set(ref _id, value);
             }
         }
 
@@ -40,6 +56,17 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        private ObservableCollection<BsonElement> _elements;
+        public ObservableCollection<BsonElement> Elements
+        {
+            get { return _elements; }
+            set
+            {
+                _elements = value;
+                RaisePropertyChanged("Elements");
+            }
+        }
+
         public RelayCommand EditResult { get; set; }
 
         public RelayCommand ConfirmDeleteResult { get; set; }
@@ -49,12 +76,13 @@ namespace MongoDbGui.ViewModel
         /// <summary>
         /// Initializes a new instance of the ResultItemViewModel class.
         /// </summary>
-        public ResultItemViewModel()
+        public ResultViewModel()
         {
             CopyToClipboard = new RelayCommand(() =>
             {
                 Clipboard.SetText(Result);
             });
+            _elements = new ObservableCollection<BsonElement>();
         }
     }
 }

@@ -9,6 +9,9 @@
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:utils="clr-namespace:MongoDbGui.Utils"
+             xmlns:vm="clr-namespace:MongoDbGui.ViewModel"
+             xmlns:mongodb="clr-namespace:MongoDB.Bson;assembly=MongoDB.Bson"
+             xmlns:listview="clr-namespace:BrightIdeasSoftware;assembly=ObjectListView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="700">
 
@@ -76,7 +79,7 @@
             </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
-    
+
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
@@ -98,7 +101,7 @@
                 </Style>
             </ContentControl.Style>
         </ContentControl>
-        
+
         <DockPanel Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" LastChildFill="False">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                 <fa:ImageAwesome Spin="True" Icon="Refresh" Height="18" Width="18" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></fa:ImageAwesome>
@@ -107,6 +110,12 @@
                 <Label Content="{Binding ExecutingTime}"></Label>
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <Button Height="18" Width="22" Command="{Binding ExecuteFind}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:ImageAwesome Icon="CaretLeft"></fa:ImageAwesome>
+                        <fa:ImageAwesome Icon="CaretLeft"></fa:ImageAwesome>
+                    </StackPanel>
+                </Button>
                 <Button Height="18" Width="18" Command="{Binding PageBack}">
                     <fa:ImageAwesome Icon="CaretLeft"></fa:ImageAwesome>
                 </Button>
@@ -125,38 +134,54 @@
                 </Button>
             </StackPanel>
         </DockPanel>
-        <avalonEdit:TextEditor Name="txtEditor" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+        <TabControl Grid.Row="2">
+            <TabItem Header="Treeview">
+                <TreeView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Results}">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            <Setter Property="FontWeight" Value="Normal" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:ResultItemViewModel}"  ItemsSource="{Binding Elements}">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding Index, StringFormat=# {0:#}}">
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Copy to clipboard" Command="{Binding Path=CopyToClipboard}" />
+                                        <Separator/>
+                                        <MenuItem Header="Edit..." Command="{Binding Path=EditResult}" />
+                                        <MenuItem Header="Delete..." Command="{Binding Path=ConfirmDeleteResult}" />
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
+                            </TextBlock>
+                        </HierarchicalDataTemplate>
+                        <DataTemplate DataType="{x:Type mongodb:BsonElement}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="5,0,0,0" Text="{Binding Name}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </TabItem>
+            <TabItem Header="Raw">
+                <avalonEdit:TextEditor Name="txtEditor" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
             Visibility="{Binding RawResult, Converter={StaticResource NullValueToVisibilityConverter}, ConverterParameter=false}" 
             Document="{Binding RawResult, Converter={StaticResource StringToDocumentTextConverter}}" HorizontalScrollBarVisibility="Disabled"
             Background="Black" Foreground="White" FontFamily="Courier New" IsReadOnly="True" SyntaxHighlighting="Bson">
-            <ContextMenuService.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Copy to clipboard" Command="{Binding Path=CopyToClipboard}" />
-                </ContextMenu>
-            </ContextMenuService.ContextMenu>            
-        </avalonEdit:TextEditor>
-
-        <!--<TreeView Grid.Row="2" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding TreeResults}">
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Setter Property="FontWeight" Value="Normal" />
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="FontWeight" Value="Bold" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </TreeView.ItemContainerStyle>
-
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Elements}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding RawValue}" />
-                    </StackPanel>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>-->
+                    <ContextMenuService.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Copy to clipboard" Command="{Binding Path=CopyToClipboard}" />
+                        </ContextMenu>
+                    </ContextMenuService.ContextMenu>
+                </avalonEdit:TextEditor>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>

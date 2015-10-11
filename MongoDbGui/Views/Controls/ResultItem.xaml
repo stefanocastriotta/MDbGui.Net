@@ -18,20 +18,19 @@
     </UserControl.Resources>
 
     <Border BorderThickness="0,0,0,1" Padding="0, 10" BorderBrush="White">
-        <StackPanel>
-            <DockPanel LastChildFill="False">
-                <TextBlock DockPanel.Dock="Left" Text="{Binding Index, StringFormat=# {0:#}}" Style="{StaticResource ResultsViewTextBlock}"></TextBlock>
-                <Button DockPanel.Dock="Right" Width="20" Command="{Binding Path=CopyToClipboard}">
-                    <fa:FontAwesome Icon="Clipboard" ToolTip="Copy to clipboard"></fa:FontAwesome>
-                </Button>
-                <Button DockPanel.Dock="Right" Width="20" Command="{Binding Path=ConfirmDeleteResult}">
-                    <fa:FontAwesome Icon="Minus" ToolTip="Delete"></fa:FontAwesome>
-                </Button>
-                <Button DockPanel.Dock="Right" Width="20" Command="{Binding Path=EditResult}">
-                    <fa:FontAwesome Icon="Edit" ToolTip="Edit"></fa:FontAwesome>
-                </Button>
-            </DockPanel>
-
-        </StackPanel>
+        <DockPanel LastChildFill="False">
+            <TextBlock DockPanel.Dock="Left" Text="{Binding Index, StringFormat=# {0:#}}" Style="{StaticResource ResultsViewTextBlock}">
+                    
+            </TextBlock>
+            <Button DockPanel.Dock="Right" Width="20" Command="{Binding Path=CopyToClipboard}">
+                <fa:FontAwesome Icon="Clipboard" ToolTip="Copy to clipboard"></fa:FontAwesome>
+            </Button>
+            <Button DockPanel.Dock="Right" Width="20" Command="{Binding Path=ConfirmDeleteResult}">
+                <fa:FontAwesome Icon="Minus" ToolTip="Delete"></fa:FontAwesome>
+            </Button>
+            <Button DockPanel.Dock="Right" Width="20" Command="{Binding Path=EditResult}">
+                <fa:FontAwesome Icon="Edit" ToolTip="Edit"></fa:FontAwesome>
+            </Button>
+        </DockPanel>
     </Border>
 </UserControl>
