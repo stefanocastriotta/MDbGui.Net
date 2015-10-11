@@ -37,18 +37,10 @@ namespace MongoDbGui.Design
             return new List<BsonDocument>();
         }
 
-        public async Task<BsonDocument> GetCollectionStatsAsync(string databaseName, string collection)
-        {
-            // Use this to create design time data
-
-            return new BsonDocument();
-        }
-
-
         public async Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command)
         {
             // Use this to create design time data
-             
+
             return new BsonDocument();
         }
 

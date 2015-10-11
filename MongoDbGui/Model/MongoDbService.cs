@@ -43,7 +43,7 @@ namespace MongoDbGui.Model
         public async Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command)
         {
             var db = client.GetDatabase(databaseName);
-            var result = await db.RunCommandAsync(new BsonDocumentCommand<BsonDocument>(BsonDocument.Parse(command)));
+            var result = await db.RunCommandAsync(new JsonCommand<BsonDocument>(command));
             return result;
         }
 
@@ -58,14 +58,6 @@ namespace MongoDbGui.Model
             var listCollections = await collections.ToListAsync();
             return listCollections;
         }
-
-        public async Task<BsonDocument> GetCollectionStats(string databaseName, string collection)
-        {
-            var db = client.GetDatabase(databaseName);
-            var stats = await db.RunCommandAsync(new JsonCommand<BsonDocument>("{ collStats: \"" +collection + "\", verbose: true }"));
-            return stats;
-        }
-
 
         public async Task CreateCollectionAsync(string databaseName, string collection)
         {

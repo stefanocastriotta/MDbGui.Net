@@ -122,12 +122,13 @@ namespace MongoDbGui.ViewModel
         {
             switch (message.Notification)
             {
-                case "OpenCollectionTab":
+                case "OpenTab":
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     Tabs.Add(message.Content);
                     SelectedTab = message.Content;
-                    message.Content.ExecuteFind.Execute(null);
+                    if (message.Content.CommandType == "Find")
+                        message.Content.ExecuteFind.Execute(null);
                 });
                 break;
                 case "CloseTab":

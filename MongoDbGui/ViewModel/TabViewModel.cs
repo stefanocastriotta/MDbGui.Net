@@ -27,15 +27,15 @@ namespace MongoDbGui.ViewModel
             _sort = "{}";
             _find = "{}";
             _size = 50;
+
+            _command = "{}";
+            
             ExecuteFind = new RelayCommand(() =>
             {
                 Skip = 0;
                 InnerExecuteFind();
             });
-            DoPaging = new RelayCommand(() =>
-            {
-                InnerExecuteFind();
-            });
+            DoPaging = new RelayCommand(InnerExecuteFind);
             ExecuteCount = new RelayCommand(InnerExecuteCount);
             ExecuteClose = new RelayCommand(InnerExecuteClose);
             PageBack = new RelayCommand(InnerPageBack);
@@ -44,9 +44,26 @@ namespace MongoDbGui.ViewModel
             {
                 Clipboard.SetText(RawResult);
             });
+
+            ExecuteCommand = new RelayCommand(InnerExecuteCommand);
         }
 
-                private string _name = string.Empty;
+        private string _commandType = string.Empty;
+
+        public string CommandType
+        {
+            get
+            {
+                return _commandType;
+            }
+            set
+            {
+                Set(ref _commandType, value);
+            }
+        }
+
+
+        private string _name = string.Empty;
 
         public string Name
         {
@@ -135,6 +152,26 @@ namespace MongoDbGui.ViewModel
         }
 
 
+        private MongoDbServerViewModel _server;
+        public MongoDbServerViewModel Server
+        {
+            get { return _server; }
+            set
+            {
+                Set(ref _server, value);
+            }
+        }
+
+        private MongoDbDatabaseViewModel _database;
+        public MongoDbDatabaseViewModel Database
+        {
+            get { return _database; }
+            set
+            {
+                Set(ref _database, value);
+            }
+        }
+
         private MongoDbCollectionViewModel _collection;
         public MongoDbCollectionViewModel Collection
         {
@@ -201,6 +238,22 @@ namespace MongoDbGui.ViewModel
                 Set(ref _size, value);
             }
         }
+
+
+        private string _command = string.Empty;
+
+        public string Command
+        {
+            get
+            {
+                return _command;
+            }
+            set
+            {
+                Set(ref _command, value);
+            }
+        }
+
 
         public RelayCommand ExecuteClose { get; set; }
 
@@ -281,6 +334,39 @@ namespace MongoDbGui.ViewModel
         public RelayCommand DoPaging { get; set; }
 
         public RelayCommand CopyToClipboard { get; set; }
+
+
+        public RelayCommand ExecuteCommand { get; set; }
+
+        public async void InnerExecuteCommand()
+        {
+            Executing = true;
+            try
+            {
+                var result = await Database.Server.MongoDbService.ExecuteRawCommandAsync(Database.Name, Command);
+
+                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    Results.Clear();
+                    Results.Add(new ResultItemViewModel() { Result = result.ToString(), Index = 1 });
+                });
+            }
+            catch (Exception ex)
+            {
+                RawResult = ex.Message;
+
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    Results.Clear();
+                });
+            }
+            finally
+            {
+                Executing = false;
+            }
+        }
 
     }
 }

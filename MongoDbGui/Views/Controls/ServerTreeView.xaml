@@ -45,6 +45,7 @@
                         <TextBlock.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Create database" Command="{Binding Path=CreateNewDatabase}" />
+                                <MenuItem Header="Run Command" Command="{Binding Path=RunCommand}" />
                                 <Separator/>
                                 <MenuItem Header="Disconnect" Command="{Binding Path=Disconnect}" />
                             </ContextMenu>
@@ -82,6 +83,7 @@
                                 <MenuItem Header="Create collection" Command="{Binding Path=CreateNewCollection}" />
                                 <MenuItem Header="Drop database"/>
                                 <Separator/>
+                                <MenuItem Header="Run Command" Command="{Binding Path=RunCommand}" />
                             </ContextMenu>
                         </TextBlock.ContextMenu>
                         <TextBlock.ToolTip>

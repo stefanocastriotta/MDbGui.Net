@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 
 namespace MongoDbGui.ViewModel
 {
@@ -67,6 +68,9 @@ namespace MongoDbGui.ViewModel
                 return !string.IsNullOrWhiteSpace(Name) && IsNew;
             });
             CreateNewCollection = new RelayCommand(InnerCreateNewCollection);
+
+            RunCommand = new RelayCommand(InnerOpenRunCommand);
+
             Messenger.Default.Register<PropertyChangedMessage<bool>>(this, (message) =>
             {
                 if (message.Sender == _collections && message.PropertyName == "IsExpanded" && _collections.IsExpanded)
@@ -139,6 +143,8 @@ namespace MongoDbGui.ViewModel
 
         public RelayCommand CreateNewCollection { get; set; }
 
+        public RelayCommand RunCommand { get; set; }
+
         public async void InnerCreateDatabase()
         {
             if (IsNew)
@@ -160,6 +166,16 @@ namespace MongoDbGui.ViewModel
             {
                 _collections.Children.Add(newCollection);
             });
+        }
+
+        private void InnerOpenRunCommand()
+        {
+            TabViewModel tabVm = new TabViewModel();
+            tabVm.CommandType = "Command";
+            tabVm.Database = this;
+            tabVm.Server = this.Server;
+            tabVm.Name = this.Name;
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 
         public override void Cleanup()

@@ -78,10 +78,13 @@ namespace MongoDbGui.ViewModel
 
         private void InternalOpenTab()
         {
-            TabViewModel collectionTabVm = new TabViewModel();
-            collectionTabVm.Collection = this;
-            collectionTabVm.Name = this.Name;
-            Messenger.Default.Send(new NotificationMessage<TabViewModel>(collectionTabVm, "OpenCollectionTab"));
+            TabViewModel tabVm = new TabViewModel();
+            tabVm.CommandType = "Find";
+            tabVm.Database = this.Database;
+            tabVm.Server = this.Database.Server;
+            tabVm.Collection = this;
+            tabVm.Name = this.Name;
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 
         private void InternalRenameCollection()

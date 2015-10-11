@@ -39,11 +39,14 @@ namespace MongoDbGui.ViewModel
             _items = new ObservableCollection<BaseTreeviewViewModel>();
             CreateNewDatabase = new RelayCommand(InnerCreateNewDatabase);
             Disconnect = new RelayCommand(InnerDisconnect);
+            RunCommand = new RelayCommand(InnerOpenRunCommand);
         }
 
         public RelayCommand CreateNewDatabase { get; set; }
 
         public RelayCommand Disconnect { get; set; }
+
+        public RelayCommand RunCommand { get; set; }
 
         public void InnerCreateNewDatabase()
         {
@@ -60,6 +63,17 @@ namespace MongoDbGui.ViewModel
         public void InnerDisconnect()
         {
             Messenger.Default.Send(new NotificationMessage<MongoDbServerViewModel>(this, "Disconnect"));
+        }
+
+
+        private void InnerOpenRunCommand()
+        {
+            TabViewModel tabVm = new TabViewModel();
+            tabVm.CommandType = "Command";
+            tabVm.Server = this;
+            tabVm.Database = new MongoDbDatabaseViewModel(this, "admin");
+            tabVm.Name = this.Name;
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 
         public override void Cleanup()
