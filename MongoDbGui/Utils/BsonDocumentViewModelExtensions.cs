@@ -25,9 +25,9 @@ namespace MongoDbGui.Utils
             ResultItemViewModel item = new ResultItemViewModel();
             item.Name = element.Name;
             item.Type = element.Value.BsonType.ToString();
-            item.Value = element.Value.ToString();
             if (element.Value.IsBsonArray)
             {
+                item.Value = string.Format("{0} ({1} items)", element.Value.BsonType.ToString(), element.Value.AsBsonArray.Count);
                 foreach (var child in element.Value.AsBsonArray)
                 {
                     var childrenVm = GetChildren(child);
@@ -37,11 +37,14 @@ namespace MongoDbGui.Utils
             }
             else if (element.Value.IsBsonDocument)
             {
+                item.Value = string.Format("{0} ({1} fields)", element.Value.BsonType.ToString(), element.Value.AsBsonDocument.ElementCount);
                 foreach (var child in element.Value.AsBsonDocument)
                 {
                     item.Children.Add(GetChildren(child));
                 }
             }
+            else
+                item.Value = element.Value.ToString().Replace(Environment.NewLine, " ").Replace("\r", " ");
             return item;
         }
 
@@ -49,9 +52,9 @@ namespace MongoDbGui.Utils
         {
             ResultItemViewModel item = new ResultItemViewModel();
             item.Type = value.BsonType.ToString();
-            item.Value = value.ToString();
             if (value.IsBsonArray)
             {
+                item.Value = string.Format("{0} ({1} items)", value.BsonType.ToString(), value.AsBsonArray.Count);
                 foreach (var child in value.AsBsonArray)
                 {
                     item.Children.Add(GetChildren(child));
@@ -59,11 +62,14 @@ namespace MongoDbGui.Utils
             }
             else if (value.IsBsonDocument)
             {
+                item.Value = string.Format("{0} ({1} fields)", value.BsonType.ToString(), value.AsBsonDocument.ElementCount);
                 foreach (var child in value.AsBsonDocument)
                 {
                     item.Children.Add(GetChildren(child));
                 }
             }
+            else
+                item.Value = value.ToString().Replace(Environment.NewLine, " ").Replace("\r", " ");
             return item;
         }
     }

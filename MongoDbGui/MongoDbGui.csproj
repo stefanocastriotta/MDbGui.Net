@@ -63,9 +63,6 @@
     <Reference Include="MongoDB.Driver.Core">
       <HintPath>..\packages\MongoDB.Driver.Core.2.0.1\lib\net45\MongoDB.Driver.Core.dll</HintPath>
     </Reference>
-    <Reference Include="ObjectListView">
-      <HintPath>..\packages\ObjectListView.Official.2.8.1\lib\net20\ObjectListView.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -100,6 +97,7 @@
     <Compile Include="Utils\NullValueToVisibilityConverter.cs" />
     <Compile Include="Utils\StringToDocumentTextConverter.cs" />
     <Compile Include="Utils\StringUtils.cs" />
+    <Compile Include="ViewModel\BaseResultViewModel.cs" />
     <Compile Include="ViewModel\BaseTreeviewViewModel.cs" />
     <Compile Include="ViewModel\ResultItemViewModel.cs" />
     <Compile Include="ViewModel\TabViewModel.cs" />
@@ -113,9 +111,6 @@
     <Compile Include="ViewModel\MongoDbServerViewModel.cs" />
     <Compile Include="ViewModel\ResultViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="Views\Controls\ResultItem.xaml.cs">
-      <DependentUpon>ResultItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Controls\ResultsView.xaml.cs">
       <DependentUpon>ResultsView.xaml</DependentUpon>
     </Compile>
@@ -128,10 +123,6 @@
     <Compile Include="Views\Spinner.xaml.cs">
       <DependentUpon>Spinner.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\Controls\ResultItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Dialogs\InsertDocumentsView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>

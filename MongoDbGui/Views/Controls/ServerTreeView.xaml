@@ -14,8 +14,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <utils:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <utils:NullValueToVisibilityConverter x:Key="NullValueToVisibilityConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
 

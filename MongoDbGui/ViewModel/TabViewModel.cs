@@ -135,6 +135,20 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        private int _selectedViewIndex = 0;
+
+        public int SelectedViewIndex
+        {
+            get
+            {
+                return _selectedViewIndex;
+            }
+            set
+            {
+                Set(ref _selectedViewIndex, value);
+            }
+        }
+
 
         private ObservableCollection<ResultViewModel> _results;
         public ObservableCollection<ResultViewModel> Results
@@ -295,8 +309,11 @@ namespace MongoDbGui.ViewModel
                 Results.Clear();
                 foreach (var result in results)
                     Results.Add(new ResultViewModel() { 
-                        Result = result.ToJson(new JsonWriterSettings { Indent = true }), 
-                        Index = results.IndexOf(result) + 1,
+                        Result = result.ToJson(new JsonWriterSettings { Indent = true }),
+                        Name = "#" + (results.IndexOf(result) + 1) + " (" + result["_id"].ToString() + ")",
+                        Id = result["_id"].ToString(),
+                        Value = "(" + result.ElementCount + ") fields",
+                        Type = result.BsonType.ToString(),
                         Elements = new ObservableCollection<ResultItemViewModel>(result.ToResultItemViewModel())
                     });
             });
@@ -312,11 +329,11 @@ namespace MongoDbGui.ViewModel
             Executing = false;
 
             RawResult = result.ToString();
+            SelectedViewIndex = 0;
             
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 Results.Clear();
-                Results.Add(new ResultViewModel() { Result = result.ToString(), Index = 1 });
             });
         }
 
@@ -356,13 +373,19 @@ namespace MongoDbGui.ViewModel
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     Results.Clear();
-                    Results.Add(new ResultViewModel() { Result = result.ToString(), Index = 1 });
+                    Results.Add(new ResultViewModel()
+                    {
+                        Result = result.ToJson(new JsonWriterSettings { Indent = true }),
+                        Name = "#1",
+                        Value = "(" + result.ElementCount + ") fields",
+                        Type = result.BsonType.ToString(),
+                    });
                 });
             }
             catch (Exception ex)
             {
                 RawResult = ex.Message;
-
+                SelectedViewIndex = 0;
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     Results.Clear();

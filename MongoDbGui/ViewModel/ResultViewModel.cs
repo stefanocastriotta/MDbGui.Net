@@ -12,7 +12,7 @@ namespace MongoDbGui.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class ResultViewModel : ViewModelBase
+    public class ResultViewModel : BaseResultViewModel
     {
         protected string _result = string.Empty;
 
@@ -39,20 +39,6 @@ namespace MongoDbGui.ViewModel
             set
             {
                 Set(ref _id, value);
-            }
-        }
-
-        protected int _index = 0;
-
-        public int Index
-        {
-            get
-            {
-                return _index;
-            }
-            set
-            {
-                Set(ref _index, value);
             }
         }
 
