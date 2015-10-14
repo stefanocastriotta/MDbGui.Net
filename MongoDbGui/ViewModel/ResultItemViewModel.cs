@@ -1,33 +1,21 @@
-﻿using GalaSoft.MvvmLight;
+﻿using ICSharpCode.TreeView;
+using MongoDB.Bson;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace MongoDbGui.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
-    public class ResultItemViewModel : BaseResultViewModel
+    public class ResultItemViewModel : SharpTreeNode
     {
-        private ObservableCollection<ResultItemViewModel> _children;
-        public ObservableCollection<ResultItemViewModel> Children
-        {
-            get { return _children; }
-            set
-            {
-                _children = value;
-                RaisePropertyChanged("Elements");
-            }
-        }
+        private BsonElement Element { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the ResultItemViewModel class.
-        /// </summary>
-        public ResultItemViewModel()
+        public string Value { get; set; }
+
+        public string Type { get; set; }
+
+        public ResultItemViewModel(BsonElement element)
         {
-            _children = new ObservableCollection<ResultItemViewModel>();
+            Element = element;
         }
     }
 }

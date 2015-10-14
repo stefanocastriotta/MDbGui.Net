@@ -21,7 +21,6 @@ namespace MongoDbGui.ViewModel
     {
         public TabViewModel()
         {
-            _results = new ObservableCollection<ResultViewModel>();
             ExecutingTimer.Tick += ExecutingTimer_Tick;
             ExecutingTimer.Interval = TimeSpan.FromMilliseconds(100);
 
@@ -150,14 +149,17 @@ namespace MongoDbGui.ViewModel
         }
 
 
-        private ObservableCollection<ResultViewModel> _results;
-        public ObservableCollection<ResultViewModel> Results
+        private ResultsViewModel _root;
+
+        public ResultsViewModel Root
         {
-            get { return _results; }
+            get
+            {
+                return _root;
+            }
             set
             {
-                _results = value;
-                RaisePropertyChanged("Results");
+                Set(ref _root, value);
             }
         }
 
@@ -304,19 +306,7 @@ namespace MongoDbGui.ViewModel
 
             RawResult = sb.ToString();
 
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                Results.Clear();
-                foreach (var result in results)
-                    Results.Add(new ResultViewModel() { 
-                        Result = result.ToJson(new JsonWriterSettings { Indent = true }),
-                        Name = "#" + (results.IndexOf(result) + 1) + " (" + result["_id"].ToString() + ")",
-                        Id = result["_id"].ToString(),
-                        Value = "(" + result.ElementCount + ") fields",
-                        Type = result.BsonType.ToString(),
-                        Elements = new ObservableCollection<ResultItemViewModel>(result.ToResultItemViewModel())
-                    });
-            });
+            Root = new ResultsViewModel(results);
             
         }
 
@@ -330,11 +320,8 @@ namespace MongoDbGui.ViewModel
 
             RawResult = result.ToString();
             SelectedViewIndex = 0;
-            
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                Results.Clear();
-            });
+
+            Root = null;
         }
 
         public RelayCommand PageBack { get; set; }
@@ -370,26 +357,13 @@ namespace MongoDbGui.ViewModel
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
 
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                {
-                    Results.Clear();
-                    Results.Add(new ResultViewModel()
-                    {
-                        Result = result.ToJson(new JsonWriterSettings { Indent = true }),
-                        Name = "#1",
-                        Value = "(" + result.ElementCount + ") fields",
-                        Type = result.BsonType.ToString(),
-                    });
-                });
+                Root = new ResultsViewModel(new List<BsonDocument>() { result });
             }
             catch (Exception ex)
             {
                 RawResult = ex.Message;
                 SelectedViewIndex = 0;
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                {
-                    Results.Clear();
-                });
+                Root = null;
             }
             finally
             {

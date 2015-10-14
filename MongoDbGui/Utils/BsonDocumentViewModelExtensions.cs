@@ -44,7 +44,11 @@ namespace MongoDbGui.Utils
                 }
             }
             else
-                item.Value = element.Value.ToString().Replace(Environment.NewLine, " ").Replace("\r", " ");
+            {
+                item.Value = element.Value.ToString().Replace("\n", " ").Replace("\r", " ").Replace("\\n", " ").Replace("\\r", " ");
+                if (item.Value.Length > 100)
+                    item.Value = item.Value.Substring(0, 100) + "...";
+            }
             return item;
         }
 
@@ -69,7 +73,11 @@ namespace MongoDbGui.Utils
                 }
             }
             else
-                item.Value = value.ToString().Replace(Environment.NewLine, " ").Replace("\r", " ");
+            {
+                item.Value = value.ToString().Replace("\n", " ").Replace("\r", " ").Replace("\\n", " ").Replace("\\r", " ");
+                if (item.Value.Length > 100)
+                    item.Value = item.Value.Substring(0, 100) + "...";
+            }
             return item;
         }
     }

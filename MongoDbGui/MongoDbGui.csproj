@@ -51,6 +51,9 @@
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>..\packages\AvalonEdit.5.0.2\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.TreeView">
+      <HintPath>..\References\ICSharpCode.TreeView.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -94,11 +97,12 @@
     <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utils\BsonDocumentViewModelExtensions.cs" />
     <Compile Include="Utils\FocusExtension.cs" />
+    <Compile Include="Utils\LevelConverter.cs" />
     <Compile Include="Utils\NullValueToVisibilityConverter.cs" />
     <Compile Include="Utils\StringToDocumentTextConverter.cs" />
     <Compile Include="Utils\StringUtils.cs" />
-    <Compile Include="ViewModel\BaseResultViewModel.cs" />
     <Compile Include="ViewModel\BaseTreeviewViewModel.cs" />
+    <Compile Include="ViewModel\DocumentResultViewModel.cs" />
     <Compile Include="ViewModel\ResultItemViewModel.cs" />
     <Compile Include="ViewModel\TabViewModel.cs" />
     <Compile Include="ViewModel\FolderViewModel.cs" />
@@ -109,7 +113,7 @@
     <Compile Include="ViewModel\MongoDbDatabaseViewModel.cs" />
     <Compile Include="ViewModel\MongoDbIndexViewModel.cs" />
     <Compile Include="ViewModel\MongoDbServerViewModel.cs" />
-    <Compile Include="ViewModel\ResultViewModel.cs" />
+    <Compile Include="ViewModel\ResultsViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Views\Controls\ResultsView.xaml.cs">
       <DependentUpon>ResultsView.xaml</DependentUpon>

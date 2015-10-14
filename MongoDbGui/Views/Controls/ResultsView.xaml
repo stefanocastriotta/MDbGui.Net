@@ -10,6 +10,7 @@
              xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:utils="clr-namespace:MongoDbGui.Utils"
              xmlns:vm="clr-namespace:MongoDbGui.ViewModel"
+             xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="700">
 
@@ -130,52 +131,37 @@
                 </Button>
             </StackPanel>
         </DockPanel>
-                <TreeView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Results}">
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                            <Setter Property="FontWeight" Value="Normal" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="FontWeight" Value="Bold" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.Resources>
-                        <HierarchicalDataTemplate DataType="{x:Type vm:ResultViewModel}" ItemsSource="{Binding Elements}">
-                            <TextBlock DockPanel.Dock="Left" Text="{Binding Index, StringFormat=# {0:#}}">
-                                <TextBlock.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Copy to clipboard" Command="{Binding Path=CopyToClipboard}" />
-                                        <Separator/>
-                                        <MenuItem Header="Edit..." Command="{Binding Path=EditResult}" />
-                                        <MenuItem Header="Delete..." Command="{Binding Path=ConfirmDeleteResult}" />
-                                    </ContextMenu>
-                                </TextBlock.ContextMenu>
-                            </TextBlock>
-                        </HierarchicalDataTemplate>
-                        <HierarchicalDataTemplate DataType="{x:Type vm:ResultItemViewModel}" ItemsSource="{Binding Children}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Margin="5,0,0,0" Text="{Binding Name}" />
-                                <TextBlock Margin="5,0,0,0" Text="{Binding Value}" />
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                    </TreeView.Resources>
-                </TreeView>
         <TabControl Grid.Row="2" SelectedIndex="{Binding SelectedViewIndex}">
-            <TabItem Header="Treeview" Height="22" VerticalAlignment="Bottom">
-                <TabItem.Style>
-                    <Style TargetType="TabItem">
-                        <Setter Property="Visibility" Value="Visible" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Results.Count}" Value="0">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TabItem.Style>
+            <TabItem Header="Treeview" Visibility="{Binding Root, Converter={StaticResource NullValueToVisibilityConverter}}">
+                <tv:SharpTreeView Root="{Binding Root}">
+                    <ListView.View>
+                        <tv:SharpGridView>
+                            <GridView.Columns>
+                                <GridViewColumn Header="Name">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <tv:SharpTreeNodeView />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Value">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Value}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Type">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Type}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView.Columns>
+                        </tv:SharpGridView>
+                    </ListView.View>
+                </tv:SharpTreeView>
             </TabItem>
             <TabItem Header="Raw">
                 <avalonEdit:TextEditor Name="txtEditor" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
