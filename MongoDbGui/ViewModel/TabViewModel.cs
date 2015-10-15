@@ -307,7 +307,6 @@ namespace MongoDbGui.ViewModel
             RawResult = sb.ToString();
 
             Root = new ResultsViewModel(results);
-            
         }
 
         public RelayCommand ExecuteCount { get; set; }

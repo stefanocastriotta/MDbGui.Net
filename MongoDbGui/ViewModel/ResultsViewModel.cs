@@ -20,42 +20,9 @@ namespace MongoDbGui.ViewModel
         public ResultsViewModel(List<BsonDocument> documents)
         {
             _documents = documents;
+            LazyLoading = true;
         }
 
-        public override bool CanCopy(SharpTreeNode[] nodes)
-        {
-            return false;
-        }
-
-        protected override IDataObject GetDataObject(SharpTreeNode[] nodes)
-        {
-            var data = new DataObject();
-            var paths = nodes.Select(n => n.Text).ToArray();
-            data.SetData(DataFormats.FileDrop, paths);
-            return data;
-        }
-
-        public override bool CanDelete(SharpTreeNode[] nodes)
-        {
-            return false;
-        }
-
-        public override void Delete(SharpTreeNode[] nodes)
-        {
-        }
-
-        public override void DeleteWithoutConfirmation(SharpTreeNode[] nodes)
-        {
-        }
-
-        public override bool CanPaste(IDataObject data)
-        {
-            return data.GetDataPresent(DataFormats.FileDrop);
-        }
-
-        public override void Paste(IDataObject data)
-        {
-        }
 
         public override void Drop(DragEventArgs e, int index)
         {

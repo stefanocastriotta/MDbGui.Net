@@ -133,7 +133,7 @@
         </DockPanel>
         <TabControl Grid.Row="2" SelectedIndex="{Binding SelectedViewIndex}">
             <TabItem Header="Treeview" Visibility="{Binding Root, Converter={StaticResource NullValueToVisibilityConverter}}">
-                <tv:SharpTreeView Root="{Binding Root}">
+                <tv:SharpTreeView Root="{Binding Root}" ShowRoot="False">
                     <ListView.View>
                         <tv:SharpGridView>
                             <GridView.Columns>

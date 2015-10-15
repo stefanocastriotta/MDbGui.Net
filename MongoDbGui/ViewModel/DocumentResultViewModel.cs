@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace MongoDbGui.ViewModel
 {
@@ -66,6 +67,8 @@ namespace MongoDbGui.ViewModel
         /// </summary>
         public DocumentResultViewModel(BsonDocument result, int index)
         {
+            LazyLoading = true;
+            IsChecked = false;
             Result = result;
             Index = index;
             Id = result["_id"].ToString();
@@ -107,5 +110,16 @@ namespace MongoDbGui.ViewModel
             {
             }
         }
+
+        public override void ShowContextMenu(ContextMenuEventArgs e)
+        {
+            ContextMenu menu = new ContextMenu();
+            menu.Items.Add(new MenuItem() { Header = "CopyToClipboard", Command = CopyToClipboard });
+            menu.Items.Add(new MenuItem() { Header = "Edit", Command = EditResult });
+            menu.Items.Add(new MenuItem() { Header = "Delete", Command = ConfirmDeleteResult });
+            menu.PlacementTarget = (UIElement)e.OriginalSource;
+            menu.IsOpen = true;
+        }
+
     }
 }
