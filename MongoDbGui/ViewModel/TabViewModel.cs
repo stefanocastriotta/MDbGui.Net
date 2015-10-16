@@ -24,6 +24,14 @@ namespace MongoDbGui.ViewModel
             ExecutingTimer.Tick += ExecutingTimer_Tick;
             ExecutingTimer.Interval = TimeSpan.FromMilliseconds(100);
 
+            CommandTypes = new Dictionary<CommandType, string>();
+            CommandTypes.Add(Model.CommandType.Find, "Find / Count");
+            CommandTypes.Add(Model.CommandType.Insert, "Insert");
+            CommandTypes.Add(Model.CommandType.Update, "Update");
+            CommandTypes.Add(Model.CommandType.Remove, "Remove");
+            CommandTypes.Add(Model.CommandType.Aggregate, "Aggregate");
+            CommandTypes.Add(Model.CommandType.RunCommand, "RunCommand");
+
             _sort = "{}";
             _find = "{}";
             _size = 50;
@@ -48,9 +56,11 @@ namespace MongoDbGui.ViewModel
             ExecuteCommand = new RelayCommand(InnerExecuteCommand);
         }
 
-        private string _commandType = string.Empty;
+        public Dictionary<CommandType, string> CommandTypes { get; private set; }
+ 
+        private CommandType _commandType;
 
-        public string CommandType
+        public CommandType CommandType
         {
             get
             {
@@ -179,25 +189,34 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private MongoDbDatabaseViewModel _database;
-        public MongoDbDatabaseViewModel Database
+        private string _database = string.Empty;
+
+        public string Database
         {
-            get { return _database; }
+            get
+            {
+                return _database;
+            }
             set
             {
                 Set(ref _database, value);
             }
         }
 
-        private MongoDbCollectionViewModel _collection;
-        public MongoDbCollectionViewModel Collection
+        private string _collection = string.Empty;
+
+        public string Collection
         {
-            get { return _collection; }
+            get
+            {
+                return _collection;
+            }
             set
             {
                 Set(ref _collection, value);
             }
         }
+
 
         private string _find = string.Empty;
 
@@ -284,7 +303,7 @@ namespace MongoDbGui.ViewModel
         public async void InnerExecuteFind()
         {
             Executing = true;
-            var results = await Collection.Database.Server.MongoDbService.FindAsync(Collection.Database.Name, Collection.Name, Find, Sort, Size, Skip);
+            var results = await Server.MongoDbService.FindAsync(Database, Collection, Find, Sort, Size, Skip);
             Executing = false;
             StringBuilder sb = new StringBuilder();
             int index = 1;
@@ -305,6 +324,7 @@ namespace MongoDbGui.ViewModel
             sb.Append("]");
 
             RawResult = sb.ToString();
+            SelectedViewIndex = 0;
 
             Root = new ResultsViewModel(results);
         }
@@ -314,11 +334,11 @@ namespace MongoDbGui.ViewModel
         public async void InnerExecuteCount()
         {
             Executing = true;
-            var result = await Collection.Database.Server.MongoDbService.CountAsync(Collection.Database.Name, Collection.Name, Find);
+            var result = await Server.MongoDbService.CountAsync(Database, Collection, Find);
             Executing = false;
 
             RawResult = result.ToString();
-            SelectedViewIndex = 0;
+            SelectedViewIndex = 1;
 
             Root = null;
         }
@@ -352,16 +372,17 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             try
             {
-                var result = await Database.Server.MongoDbService.ExecuteRawCommandAsync(Database.Name, Command);
+                var result = await Server.MongoDbService.ExecuteRawCommandAsync(Database, Command);
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
 
+                SelectedViewIndex = 1;
                 Root = new ResultsViewModel(new List<BsonDocument>() { result });
             }
             catch (Exception ex)
             {
                 RawResult = ex.Message;
-                SelectedViewIndex = 0;
+                SelectedViewIndex = 1;
                 Root = null;
             }
             finally

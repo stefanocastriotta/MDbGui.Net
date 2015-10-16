@@ -90,11 +90,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Design\DesignMongoDbService.cs" />
+    <Compile Include="Model\CommandType.cs" />
     <Compile Include="Model\ConnectionInfo.cs" />
     <Compile Include="Model\InsertDocumentsModel.cs" />
     <Compile Include="Model\MongoDbServer.cs" />
     <Compile Include="Model\MongoDbService.cs" />
     <Compile Include="Model\IMongoDbService.cs" />
+    <Compile Include="Utils\AvalonEditBehavior.cs" />
     <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utils\FocusExtension.cs" />
     <Compile Include="Utils\LevelConverter.cs" />

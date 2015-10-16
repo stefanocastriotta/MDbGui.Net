@@ -79,10 +79,10 @@ namespace MongoDbGui.ViewModel
         private void InternalOpenTab()
         {
             TabViewModel tabVm = new TabViewModel();
-            tabVm.CommandType = "Find";
-            tabVm.Database = this.Database;
+            tabVm.CommandType = Model.CommandType.Find;
+            tabVm.Database = this.Database.Name;
             tabVm.Server = this.Database.Server;
-            tabVm.Collection = this;
+            tabVm.Collection = this.Name;
             tabVm.Name = this.Name;
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }

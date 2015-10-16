@@ -49,10 +49,25 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Label Content="Find"></Label>
-                    <TextBox Grid.Column="1" Text="{Binding Find}" Style="{StaticResource ResultsView}"></TextBox>
+
+                    <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
+                        Document="{Binding Find, Converter={StaticResource StringToDocumentTextConverter}, Mode=OneTime}"
+                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
+                        <i:Interaction.Behaviors>
+                            <utils:AvalonEditBehavior GiveMeTheText="{Binding Find, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </i:Interaction.Behaviors>
+                    </avalonEdit:TextEditor>
 
                     <Label Grid.Row="1" Content="Sort"></Label>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Sort}" Style="{StaticResource ResultsView}"></TextBox>
+                    <avalonEdit:TextEditor Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
+                        Document="{Binding Sort, Converter={StaticResource StringToDocumentTextConverter}, Mode=OneTime}"
+                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
+                        <i:Interaction.Behaviors>
+                            <utils:AvalonEditBehavior GiveMeTheText="{Binding Sort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </i:Interaction.Behaviors>
+                    </avalonEdit:TextEditor>
                     <StackPanel Grid.Row="2" Orientation="Horizontal">
                         <Button Command="{Binding ExecuteFind}" Content="Find"></Button>
                         <Button Command="{Binding ExecuteCount}" Content="Count"></Button>
@@ -70,7 +85,14 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Label Content="Command"></Label>
-                    <TextBox Grid.Column="1" Text="{Binding Command}" Style="{StaticResource ResultsView}"></TextBox>
+                    <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
+                        Document="{Binding Command, Converter={StaticResource StringToDocumentTextConverter}, Mode=OneTime}"
+                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
+                        <i:Interaction.Behaviors>
+                            <utils:AvalonEditBehavior GiveMeTheText="{Binding Command, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </i:Interaction.Behaviors>
+                    </avalonEdit:TextEditor>
                     <Button Grid.Row="1" Command="{Binding ExecuteCommand}" Content="Execute"></Button>
                 </Grid>
             </DataTemplate>
@@ -80,18 +102,41 @@
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="25"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <ContentControl Content="{Binding}">
+        <Grid HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <fa:ImageAwesome Icon="Server" Width="16" Height="16"></fa:ImageAwesome>
+            <ComboBox Grid.Column="1" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Main.ActiveConnections, Source={StaticResource Locator}}" SelectedItem="{Binding Server}" DisplayMemberPath="Name"></ComboBox>
+            <fa:ImageAwesome Grid.Column="2" Icon="Database" Width="16" Height="16"></fa:ImageAwesome>
+            <TextBox Grid.Column="3" Text="{Binding Database}"></TextBox>
+            <fa:ImageAwesome Grid.Column="4" Icon="Table" Width="16" Height="16"></fa:ImageAwesome>
+            <TextBox Grid.Column="5" Text="{Binding Collection}"></TextBox>
+        </Grid>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBlock Text="Operation"></TextBlock>
+            <ComboBox ItemsSource="{Binding CommandTypes}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=CommandType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            </ComboBox>
+        </StackPanel>
+        <ContentControl Grid.Row="2" Content="{Binding}">
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding CommandType}" Value="Find">
                             <Setter Property="ContentTemplate" Value="{StaticResource FindTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding CommandType}" Value="Command">
+                        <DataTrigger Binding="{Binding CommandType}" Value="RunCommand">
                             <Setter Property="ContentTemplate" Value="{StaticResource CommandTemplate}" />
                         </DataTrigger>
                     </Style.Triggers>
@@ -99,7 +144,7 @@
             </ContentControl.Style>
         </ContentControl>
 
-        <DockPanel Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" LastChildFill="False">
+        <DockPanel Grid.Row="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" LastChildFill="False">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                 <fa:ImageAwesome Spin="True" Icon="Refresh" Height="18" Width="18" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></fa:ImageAwesome>
                 <Label Content="Executing command" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></Label>
@@ -131,7 +176,7 @@
                 </Button>
             </StackPanel>
         </DockPanel>
-        <TabControl Grid.Row="2" SelectedIndex="{Binding SelectedViewIndex}">
+        <TabControl Grid.Row="4" SelectedIndex="{Binding SelectedViewIndex}">
             <TabItem Header="Treeview" Visibility="{Binding Root, Converter={StaticResource NullValueToVisibilityConverter}}">
                 <tv:SharpTreeView Root="{Binding Root}" ShowRoot="False">
                     <ListView.View>

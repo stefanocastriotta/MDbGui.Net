@@ -44,6 +44,9 @@
                             <ContextMenu>
                                 <MenuItem Header="Create database" Command="{Binding Path=CreateNewDatabase}" />
                                 <MenuItem Header="Run Command" Command="{Binding Path=RunCommand}" />
+                                <MenuItem Header="Server status" Command="{Binding Path=RunCommand}" CommandParameter="serverStatus" />
+                                <MenuItem Header="HostInfo" Command="{Binding Path=RunCommand}" CommandParameter="hostInfo" />
+                                <MenuItem Header="Replication status" Command="{Binding Path=RunCommand}" CommandParameter="replSetGetStatus" />
                                 <Separator/>
                                 <MenuItem Header="Disconnect" Command="{Binding Path=Disconnect}" />
                             </ContextMenu>

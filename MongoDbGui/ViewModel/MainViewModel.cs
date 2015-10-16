@@ -127,7 +127,7 @@ namespace MongoDbGui.ViewModel
                 {
                     Tabs.Add(message.Content);
                     SelectedTab = message.Content;
-                    if (message.Content.CommandType == "Find")
+                    if (message.Content.CommandType == CommandType.Find)
                         message.Content.ExecuteFind.Execute(null);
                 });
                 break;

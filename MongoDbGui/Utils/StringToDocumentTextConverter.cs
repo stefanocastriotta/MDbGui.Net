@@ -20,7 +20,7 @@ namespace MongoDbGui.Utils
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value != null)
-                return ((ICSharpCode.AvalonEdit.Document.TextDocument)value).ToString();
+                return ((ICSharpCode.AvalonEdit.Document.TextDocument)value).Text;
             return null;
         }
     }

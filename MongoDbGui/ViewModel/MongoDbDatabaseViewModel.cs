@@ -171,8 +171,8 @@ namespace MongoDbGui.ViewModel
         private void InnerOpenRunCommand()
         {
             TabViewModel tabVm = new TabViewModel();
-            tabVm.CommandType = "Command";
-            tabVm.Database = this;
+            tabVm.CommandType = CommandType.RunCommand;
+            tabVm.Database = this.Name;
             tabVm.Server = this.Server;
             tabVm.Name = this.Name;
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
