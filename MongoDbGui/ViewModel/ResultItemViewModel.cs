@@ -1,7 +1,11 @@
-﻿using ICSharpCode.TreeView;
+﻿using GalaSoft.MvvmLight.CommandWpf;
+using ICSharpCode.TreeView;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace MongoDbGui.ViewModel
 {
@@ -54,7 +58,13 @@ namespace MongoDbGui.ViewModel
         public string Value { get; set; }
 
         public string Type { get; set; }
-        
+
+        public RelayCommand CopyToClipboard { get; set; }
+
+        public RelayCommand CopyName { get; set; }
+
+        public RelayCommand CopyValue { get; set; }
+
         public ResultItemViewModel(BsonElement element)
         {
             LazyLoading = true;
@@ -70,6 +80,31 @@ namespace MongoDbGui.ViewModel
                 if (Value.Length > 100)
                     Value = Value.Substring(0, 100) + "...";
             }
+
+            CopyToClipboard = new RelayCommand(() =>
+            {
+                string res = "";
+                if (Element.Value.IsBsonDocument)
+                {
+                    res = Element.Value.ToJson(new JsonWriterSettings { Indent = true });
+                }
+                else
+                {
+                    BsonDocument document = new BsonDocument();
+                    document.Add(Element);
+                    res = document.ToJson(new JsonWriterSettings { Indent = true });
+                }
+                Clipboard.SetText(res);
+            });
+            CopyName = new RelayCommand(() =>
+            {
+                Clipboard.SetText(Element.Name);
+            });
+            CopyValue = new RelayCommand(() =>
+            {
+                string res = Element.Value.ToJson(new JsonWriterSettings { Indent = true });
+                Clipboard.SetText(res);
+            });
         }
 
         public override string ToString()
@@ -101,6 +136,16 @@ namespace MongoDbGui.ViewModel
             catch
             {
             }
+        }
+
+        public override void ShowContextMenu(ContextMenuEventArgs e)
+        {
+            ContextMenu menu = new ContextMenu();
+            menu.Items.Add(new MenuItem() { Header = "Copy to clipboard", Command = CopyToClipboard });
+            menu.Items.Add(new MenuItem() { Header = "Copy name", Command = CopyName });
+            menu.Items.Add(new MenuItem() { Header = "Copy value", Command = CopyValue });
+            menu.PlacementTarget = (UIElement)e.OriginalSource;
+            menu.IsOpen = true;
         }
     }
 }

@@ -114,7 +114,7 @@ namespace MongoDbGui.ViewModel
         public override void ShowContextMenu(ContextMenuEventArgs e)
         {
             ContextMenu menu = new ContextMenu();
-            menu.Items.Add(new MenuItem() { Header = "CopyToClipboard", Command = CopyToClipboard });
+            menu.Items.Add(new MenuItem() { Header = "Copy to clipboard", Command = CopyToClipboard });
             menu.Items.Add(new MenuItem() { Header = "Edit", Command = EditResult });
             menu.Items.Add(new MenuItem() { Header = "Delete", Command = ConfirmDeleteResult });
             menu.PlacementTarget = (UIElement)e.OriginalSource;
