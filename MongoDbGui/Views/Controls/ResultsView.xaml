@@ -37,65 +37,6 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            <DataTemplate x:Key="FindTemplate">
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Grid.RowDefinitions>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Label Content="Find"></Label>
-
-                    <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
-                        Document="{Binding Find, Converter={StaticResource StringToDocumentTextConverter}, Mode=OneTime}"
-                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
-                        <i:Interaction.Behaviors>
-                            <utils:AvalonEditBehavior GiveMeTheText="{Binding Find, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        </i:Interaction.Behaviors>
-                    </avalonEdit:TextEditor>
-
-                    <Label Grid.Row="1" Content="Sort"></Label>
-                    <avalonEdit:TextEditor Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
-                        Document="{Binding Sort, Converter={StaticResource StringToDocumentTextConverter}, Mode=OneTime}"
-                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
-                        <i:Interaction.Behaviors>
-                            <utils:AvalonEditBehavior GiveMeTheText="{Binding Sort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        </i:Interaction.Behaviors>
-                    </avalonEdit:TextEditor>
-                    <StackPanel Grid.Row="2" Orientation="Horizontal">
-                        <Button Command="{Binding ExecuteFind}" Content="Find"></Button>
-                        <Button Command="{Binding ExecuteCount}" Content="Count"></Button>
-                    </StackPanel>
-                </Grid>
-            </DataTemplate>
-            <DataTemplate x:Key="CommandTemplate">
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Grid.RowDefinitions>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Label Content="Command"></Label>
-                    <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
-                        Document="{Binding Command, Converter={StaticResource StringToDocumentTextConverter}, Mode=OneTime}"
-                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
-                        <i:Interaction.Behaviors>
-                            <utils:AvalonEditBehavior GiveMeTheText="{Binding Command, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        </i:Interaction.Behaviors>
-                    </avalonEdit:TextEditor>
-                    <Button Grid.Row="1" Command="{Binding ExecuteCommand}" Content="Execute"></Button>
-                </Grid>
-            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -130,6 +71,66 @@
             </ComboBox>
         </StackPanel>
         <ContentControl Grid.Row="2" Content="{Binding}">
+            <ContentControl.Resources>
+                <DataTemplate x:Key="FindTemplate">
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Find"></Label>
+
+                        <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
+                        Document="{Binding Find, Converter={StaticResource StringToDocumentTextConverter}, Mode=OneTime}"
+                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
+                            <i:Interaction.Behaviors>
+                                <utils:AvalonEditBehavior GiveMeTheText="{Binding Find, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </i:Interaction.Behaviors>
+                        </avalonEdit:TextEditor>
+
+                        <Label Grid.Row="1" Content="Sort"></Label>
+                        <avalonEdit:TextEditor Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
+                        Document="{Binding Sort, Converter={StaticResource StringToDocumentTextConverter}, Mode=OneTime}"
+                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
+                            <i:Interaction.Behaviors>
+                                <utils:AvalonEditBehavior GiveMeTheText="{Binding Sort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </i:Interaction.Behaviors>
+                        </avalonEdit:TextEditor>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <Button Command="{Binding ExecuteFind}" Content="Find"></Button>
+                            <Button Command="{Binding ExecuteCount}" Content="Count"></Button>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+                <DataTemplate x:Key="CommandTemplate">
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Command"></Label>
+                        <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
+                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
+                            <i:Interaction.Behaviors>
+                                <utils:AvalonEditBehavior GiveMeTheText="{Binding Command, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </i:Interaction.Behaviors>
+                        </avalonEdit:TextEditor>
+                        <Button Grid.Row="1" Command="{Binding ExecuteCommand}" Content="Execute"></Button>
+                    </Grid>
+                </DataTemplate>
+            </ContentControl.Resources>
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
                     <Style.Triggers>

@@ -92,6 +92,7 @@
     <Compile Include="Design\DesignMongoDbService.cs" />
     <Compile Include="Model\CommandType.cs" />
     <Compile Include="Model\ConnectionInfo.cs" />
+    <Compile Include="Model\DatabaseCommand.cs" />
     <Compile Include="Model\InsertDocumentsModel.cs" />
     <Compile Include="Model\MongoDbServer.cs" />
     <Compile Include="Model\MongoDbService.cs" />

@@ -46,7 +46,10 @@ namespace MongoDbGui.ViewModel
         {
             get
             {
-                return "#" + Index + " (" + Result["_id"].ToString() + ")";
+                if (!string.IsNullOrWhiteSpace(Id))
+                    return "#" + Index + " (" + Id + ")";
+                else
+                    return "#" + Index;
             }
         }
 
@@ -71,7 +74,8 @@ namespace MongoDbGui.ViewModel
             IsChecked = false;
             Result = result;
             Index = index;
-            Id = result["_id"].ToString();
+            if (result.Contains("_id"))
+                Id = result["_id"].ToString();
             Value = "(" + result.ElementCount + ") fields";
             Type = result.BsonType.ToString();
             CopyToClipboard = new RelayCommand(() =>

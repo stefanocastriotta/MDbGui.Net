@@ -19,6 +19,9 @@ namespace MongoDbGui.ViewModel
     {
         public readonly IMongoDbService MongoDbService;
 
+        public Dictionary<string, DatabaseCommand> DatabaseCommands { get; set; }
+
+
         private ObservableCollection<BaseTreeviewViewModel> _items;
         public ObservableCollection<BaseTreeviewViewModel> Items
         {
@@ -39,14 +42,18 @@ namespace MongoDbGui.ViewModel
             _items = new ObservableCollection<BaseTreeviewViewModel>();
             CreateNewDatabase = new RelayCommand(InnerCreateNewDatabase);
             Disconnect = new RelayCommand(InnerDisconnect);
-            RunCommand = new RelayCommand<string>(InnerOpenRunCommand);
+            RunCommand = new RelayCommand<DatabaseCommand>(InnerOpenRunCommand);
+            DatabaseCommands = new Dictionary<string, DatabaseCommand>();
+            DatabaseCommands.Add("serverStatus", new DatabaseCommand() { Command = "{ serverStatus: 1 }", ExecuteImmediately = true });
+            DatabaseCommands.Add("hostInfo", new DatabaseCommand() { Command = "{ hostInfo: 1 }", ExecuteImmediately = true });
+            DatabaseCommands.Add("replSetGetStatus", new DatabaseCommand() { Command = "{ replSetGetStatus: 1 }", ExecuteImmediately = true });
         }
 
         public RelayCommand CreateNewDatabase { get; set; }
 
         public RelayCommand Disconnect { get; set; }
 
-        public RelayCommand<string> RunCommand { get; set; }
+        public RelayCommand<DatabaseCommand> RunCommand { get; set; }
 
         public void InnerCreateNewDatabase()
         {
@@ -66,17 +73,21 @@ namespace MongoDbGui.ViewModel
         }
 
 
-        private void InnerOpenRunCommand(string param)
+        private void InnerOpenRunCommand(DatabaseCommand param)
         {
             TabViewModel tabVm = new TabViewModel();
             tabVm.CommandType = CommandType.RunCommand;
             tabVm.Server = this;
             tabVm.Database = "admin";
             tabVm.Name = this.Name;
-            if (string.IsNullOrWhiteSpace(param))
+            if (param == null)
                 tabVm.Command = "{}";
             else
-                tabVm.Command = "{" + param + ": 1 }";
+            {
+                tabVm.Command = param.Command;
+                tabVm.ExecuteOnOpen = param.ExecuteImmediately;
+            }
+            tabVm.SelectedViewIndex = 1;
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 

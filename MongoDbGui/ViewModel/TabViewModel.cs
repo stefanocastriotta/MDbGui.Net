@@ -129,6 +129,20 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        private bool _executeOnOpen;
+
+        public bool ExecuteOnOpen
+        {
+            get
+            {
+                return _executeOnOpen;
+            }
+            set
+            {
+                Set(ref _executeOnOpen, value);
+            }
+        }
+
 
         private string _rawResult = string.Empty;
 

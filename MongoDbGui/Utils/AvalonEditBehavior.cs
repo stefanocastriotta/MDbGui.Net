@@ -28,7 +28,10 @@ namespace MongoDbGui.Utils
         {
             base.OnAttached();
             if (AssociatedObject != null)
+            {
+                AssociatedObject.Document.Text = GiveMeTheText;
                 AssociatedObject.TextChanged += AssociatedObjectOnTextChanged;
+            }
         }
 
         protected override void OnDetaching()
@@ -59,8 +62,16 @@ namespace MongoDbGui.Utils
                 if (editor.Document != null)
                 {
                     var caretOffset = editor.CaretOffset;
-                    editor.Document.Text = dependencyPropertyChangedEventArgs.NewValue.ToString();
-                    editor.CaretOffset = caretOffset;
+                    if (dependencyPropertyChangedEventArgs.NewValue != null)
+                    {
+                        editor.Document.Text = dependencyPropertyChangedEventArgs.NewValue.ToString();
+                        editor.CaretOffset = caretOffset;
+                    }
+                    else
+                    {
+                        editor.Document.Text = "";
+                        editor.CaretOffset = 0;
+                    }
                 }
             }
         }

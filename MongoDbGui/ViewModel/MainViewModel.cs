@@ -127,8 +127,18 @@ namespace MongoDbGui.ViewModel
                 {
                     Tabs.Add(message.Content);
                     SelectedTab = message.Content;
-                    if (message.Content.CommandType == CommandType.Find)
-                        message.Content.ExecuteFind.Execute(null);
+                    if (message.Content.ExecuteOnOpen)
+                    {
+                        switch (message.Content.CommandType)
+                        {
+                            case CommandType.Find:
+                                message.Content.ExecuteFind.Execute(null);
+                                break;
+                            case CommandType.RunCommand:
+                                message.Content.ExecuteCommand.Execute(null);
+                                break;
+                        }
+                    }
                 });
                 break;
                 case "CloseTab":
