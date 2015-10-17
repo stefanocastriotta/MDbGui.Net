@@ -19,6 +19,8 @@ namespace MongoDbGui.ViewModel
     /// </summary>
     public class MongoDbDatabaseViewModel : BaseTreeviewViewModel
     {
+        public Dictionary<string, DatabaseCommand> DatabaseCommands { get; set; }
+
         private MongoDbServerViewModel _server;
         public MongoDbServerViewModel Server
         {
@@ -69,7 +71,10 @@ namespace MongoDbGui.ViewModel
             });
             CreateNewCollection = new RelayCommand(InnerCreateNewCollection);
 
-            RunCommand = new RelayCommand(InnerOpenRunCommand);
+            RunCommand = new RelayCommand<DatabaseCommand>(InnerOpenRunCommand);
+
+            DatabaseCommands = new Dictionary<string, DatabaseCommand>();
+            DatabaseCommands.Add("repairDatabase", new DatabaseCommand() { Command = "{ repairDatabase: 1 }" });
 
             Messenger.Default.Register<PropertyChangedMessage<bool>>(this, (message) =>
             {
@@ -143,7 +148,7 @@ namespace MongoDbGui.ViewModel
 
         public RelayCommand CreateNewCollection { get; set; }
 
-        public RelayCommand RunCommand { get; set; }
+        public RelayCommand<DatabaseCommand> RunCommand { get; set; }
 
         public async void InnerCreateDatabase()
         {
@@ -168,13 +173,17 @@ namespace MongoDbGui.ViewModel
             });
         }
 
-        private void InnerOpenRunCommand()
+        private void InnerOpenRunCommand(DatabaseCommand param)
         {
             TabViewModel tabVm = new TabViewModel();
             tabVm.CommandType = CommandType.RunCommand;
             tabVm.Database = this.Name;
             tabVm.Server = this.Server;
             tabVm.Name = this.Name;
+            if (param == null)
+                tabVm.Command = "{}";
+            else
+                tabVm.Command = param.Command;
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 

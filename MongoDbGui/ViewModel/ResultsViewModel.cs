@@ -17,9 +17,12 @@ namespace MongoDbGui.ViewModel
     {
         List<BsonDocument> _documents;
 
-        public ResultsViewModel(List<BsonDocument> documents)
+        public TabViewModel Owner { get; set; }
+
+        public ResultsViewModel(List<BsonDocument> documents, TabViewModel owner)
         {
             _documents = documents;
+            Owner = owner;
             LazyLoading = true;
         }
 

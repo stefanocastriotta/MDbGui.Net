@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Messaging;
 using ICSharpCode.TreeView;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
@@ -125,5 +126,10 @@ namespace MongoDbGui.ViewModel
             menu.IsOpen = true;
         }
 
+        protected override void OnExpanding()
+        {
+            base.OnExpanding();
+            Messenger.Default.Send(new NotificationMessage(this, ((ResultsViewModel)this.Parent).Owner, "ItemExpanding"));
+        }
     }
 }

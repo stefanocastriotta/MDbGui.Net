@@ -87,7 +87,6 @@
 
                         <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                         HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
-                        Document="{Binding Find, Converter={StaticResource StringToDocumentTextConverter}, Mode=OneTime}"
                         Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
                             <i:Interaction.Behaviors>
                                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Find, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -97,7 +96,6 @@
                         <Label Grid.Row="1" Content="Sort"></Label>
                         <avalonEdit:TextEditor Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                         HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
-                        Document="{Binding Sort, Converter={StaticResource StringToDocumentTextConverter}, Mode=OneTime}"
                         Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
                             <i:Interaction.Behaviors>
                                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Sort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -145,14 +143,14 @@
             </ContentControl.Style>
         </ContentControl>
 
-        <DockPanel Grid.Row="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" LastChildFill="False">
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+        <DockPanel Grid.Row="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" LastChildFill="False" >
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Visibility="{Binding ShowProgress, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <fa:ImageAwesome Spin="True" Icon="Refresh" Height="18" Width="18" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></fa:ImageAwesome>
                 <Label Content="Executing command" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></Label>
                 <Label Content="Execution completed" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"></Label>
                 <Label Content="{Binding ExecutingTime}"></Label>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Visibility="{Binding ShowPager, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Button Height="18" Width="22" Command="{Binding ExecuteFind}">
                     <StackPanel Orientation="Horizontal">
                         <fa:ImageAwesome Icon="CaretLeft"></fa:ImageAwesome>
@@ -177,11 +175,11 @@
                 </Button>
             </StackPanel>
         </DockPanel>
-        <TabControl Grid.Row="4" SelectedIndex="{Binding SelectedViewIndex}">
+        <TabControl Grid.Row="4" SelectedIndex="{Binding SelectedViewIndex}" Visibility="{Binding RawResult, Converter={StaticResource NullValueToVisibilityConverter}}">
             <TabItem Header="Treeview" Visibility="{Binding Root, Converter={StaticResource NullValueToVisibilityConverter}}">
                 <tv:SharpTreeView Root="{Binding Root}" ShowRoot="False">
                     <ListView.View>
-                        <tv:SharpGridView>
+                        <tv:SharpGridView x:Name="grdView">
                             <GridView.Columns>
                                 <GridViewColumn Header="Name">
                                     <GridViewColumn.CellTemplate>

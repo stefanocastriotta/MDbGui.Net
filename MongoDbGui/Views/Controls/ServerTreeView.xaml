@@ -43,10 +43,12 @@
                         <TextBlock.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Create database" Command="{Binding Path=CreateNewDatabase}" />
-                                <MenuItem Header="Run Command" Command="{Binding Path=RunCommand}" />
+                                <Separator/>
                                 <MenuItem Header="Server status" Command="{Binding Path=RunCommand}" CommandParameter="{Binding Path=DatabaseCommands[serverStatus]}" />
-                                <MenuItem Header="HostInfo" Command="{Binding Path=RunCommand}" CommandParameter="{Binding Path=DatabaseCommands[hostInfo]}" />
+                                <MenuItem Header="Host Info" Command="{Binding Path=RunCommand}" CommandParameter="{Binding Path=DatabaseCommands[hostInfo]}" />
+                                <MenuItem Header="Server logs" Command="{Binding Path=RunCommand}" CommandParameter="{Binding Path=DatabaseCommands[getLog]}" />
                                 <MenuItem Header="Replication status" Command="{Binding Path=RunCommand}" CommandParameter="{Binding Path=DatabaseCommands[replSetGetStatus]}" />
+                                <MenuItem Header="Run Command..." Command="{Binding Path=RunCommand}" />
                                 <Separator/>
                                 <MenuItem Header="Disconnect" Command="{Binding Path=Disconnect}" />
                             </ContextMenu>
@@ -84,7 +86,8 @@
                                 <MenuItem Header="Create collection" Command="{Binding Path=CreateNewCollection}" />
                                 <MenuItem Header="Drop database"/>
                                 <Separator/>
-                                <MenuItem Header="Run Command" Command="{Binding Path=RunCommand}" />
+                                <MenuItem Header="Run Command..." Command="{Binding Path=RunCommand}" />
+                                <MenuItem Header="Repair..." Command="{Binding Path=RunCommand}" CommandParameter="{Binding Path=DatabaseCommands[repairDatabase]}" />
                             </ContextMenu>
                         </TextBlock.ContextMenu>
                         <TextBlock.ToolTip>

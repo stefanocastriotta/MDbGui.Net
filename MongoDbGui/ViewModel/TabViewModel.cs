@@ -97,6 +97,7 @@ namespace MongoDbGui.ViewModel
             }
             set
             {
+                ShowProgress = true;
                 if (value && !_executing)
                 {
                     ExecutingTime = TimeSpan.Zero.ToString("hh':'mm':'ss'.'fff");
@@ -143,8 +144,36 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        private bool _showProgress;
 
-        private string _rawResult = string.Empty;
+        public bool ShowProgress
+        {
+            get
+            {
+                return _showProgress;
+            }
+            set
+            {
+                Set(ref _showProgress, value);
+            }
+        }
+
+        private bool _showPager;
+
+        public bool ShowPager
+        {
+            get
+            {
+                return _showPager;
+            }
+            set
+            {
+                Set(ref _showPager, value);
+            }
+        }
+
+
+        private string _rawResult = null;
 
         public string RawResult
         {
@@ -319,6 +348,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             var results = await Server.MongoDbService.FindAsync(Database, Collection, Find, Sort, Size, Skip);
             Executing = false;
+            ShowPager = true;
             StringBuilder sb = new StringBuilder();
             int index = 1;
             sb.Append("[");
@@ -340,7 +370,7 @@ namespace MongoDbGui.ViewModel
             RawResult = sb.ToString();
             SelectedViewIndex = 0;
 
-            Root = new ResultsViewModel(results);
+            Root = new ResultsViewModel(results, this);
         }
 
         public RelayCommand ExecuteCount { get; set; }
@@ -350,6 +380,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             var result = await Server.MongoDbService.CountAsync(Database, Collection, Find);
             Executing = false;
+            ShowPager = false;
 
             RawResult = result.ToString();
             SelectedViewIndex = 1;
@@ -391,7 +422,7 @@ namespace MongoDbGui.ViewModel
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
 
                 SelectedViewIndex = 1;
-                Root = new ResultsViewModel(new List<BsonDocument>() { result });
+                Root = new ResultsViewModel(new List<BsonDocument>() { result }, this);
             }
             catch (Exception ex)
             {
@@ -402,6 +433,7 @@ namespace MongoDbGui.ViewModel
             finally
             {
                 Executing = false;
+                ShowPager = false;
             }
         }
 

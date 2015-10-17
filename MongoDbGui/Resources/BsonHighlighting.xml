@@ -104,6 +104,7 @@
 			<Word>NumberLong</Word>
 			<Word>NumberInt</Word>
       <Word>CSUUID</Word>
+      <Word>Timestamp</Word>
     </Keywords>
 		<Span color="Comment">
 			<Begin>//</Begin>

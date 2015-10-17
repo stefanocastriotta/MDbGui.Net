@@ -46,6 +46,7 @@ namespace MongoDbGui.ViewModel
             DatabaseCommands = new Dictionary<string, DatabaseCommand>();
             DatabaseCommands.Add("serverStatus", new DatabaseCommand() { Command = "{ serverStatus: 1 }", ExecuteImmediately = true });
             DatabaseCommands.Add("hostInfo", new DatabaseCommand() { Command = "{ hostInfo: 1 }", ExecuteImmediately = true });
+            DatabaseCommands.Add("getLog", new DatabaseCommand() { Command = "{ getLog: 'global' }", ExecuteImmediately = true });
             DatabaseCommands.Add("replSetGetStatus", new DatabaseCommand() { Command = "{ replSetGetStatus: 1 }", ExecuteImmediately = true });
         }
 

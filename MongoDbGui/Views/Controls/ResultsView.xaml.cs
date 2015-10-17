@@ -26,6 +26,19 @@ namespace MongoDbGui.Views.Controls
             InitializeComponent();
             txtEditor.Options.EnableHyperlinks = false;
             txtEditor.Options.EnableEmailHyperlinks = false;
+            Messenger.Default.Register<NotificationMessage>(this, (message) => NotificationMessageHandler(message));
+        }
+
+        private void NotificationMessageHandler(NotificationMessage message)
+        {
+            if (message.Notification == "ItemExpanding")
+            {
+                foreach (var col in grdView.Columns)
+                {
+                    if (double.IsNaN(col.Width)) col.Width = col.ActualWidth;
+                    col.Width = double.NaN;
+                }
+            }
         }
     }
 }

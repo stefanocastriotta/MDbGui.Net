@@ -29,7 +29,7 @@ namespace MongoDbGui.Utils
             base.OnAttached();
             if (AssociatedObject != null)
             {
-                AssociatedObject.Document.Text = GiveMeTheText;
+                AssociatedObject.Document.Text = GiveMeTheText; 
                 AssociatedObject.TextChanged += AssociatedObjectOnTextChanged;
             }
         }
@@ -61,11 +61,14 @@ namespace MongoDbGui.Utils
                 var editor = behavior.AssociatedObject as TextEditor;
                 if (editor.Document != null)
                 {
-                    var caretOffset = editor.CaretOffset;
                     if (dependencyPropertyChangedEventArgs.NewValue != null)
                     {
+                        var caretOffset = editor.CaretOffset;
                         editor.Document.Text = dependencyPropertyChangedEventArgs.NewValue.ToString();
-                        editor.CaretOffset = caretOffset;
+                        if (caretOffset > editor.Document.Text.Length)
+                            editor.CaretOffset = editor.Document.Text.Length;
+                        else
+                            editor.CaretOffset = caretOffset;
                     }
                     else
                     {
