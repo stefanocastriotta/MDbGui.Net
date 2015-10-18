@@ -156,7 +156,7 @@ namespace MongoDbGui.ViewModel
         public RelayCommand<DatabaseCommand> RunCommand { get; set; }
 
         public RelayCommand<MongoDbDatabaseViewModel> OpenCreateNewCollection { get; set; }
-        
+
         public async void InnerCreateDatabase()
         {
             if (IsNew)
@@ -194,7 +194,14 @@ namespace MongoDbGui.ViewModel
                     _collections.Children.Add(newCollection);
                 });
 
-                var options = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<MongoDB.Driver.CreateCollectionOptions>(message.Content.Options);
+                MongoDB.Driver.CreateCollectionOptions options = new MongoDB.Driver.CreateCollectionOptions();
+                options.AutoIndexId = message.Content.AutoIndexId;
+                options.Capped = message.Content.Capped;
+                options.MaxDocuments = message.Content.MaxDocuments;
+                options.MaxSize = message.Content.MaxSize;
+                options.UsePowerOf2Sizes = message.Content.UsePowerOf2Sizes;
+                if (!string.IsNullOrWhiteSpace(message.Content.StorageEngine))
+                    options.StorageEngine = BsonDocument.Parse(message.Content.StorageEngine);
                 await Server.MongoDbService.CreateCollectionAsync(Name, message.Content.Name, options);
                 newCollection.IsBusy = false;
             }

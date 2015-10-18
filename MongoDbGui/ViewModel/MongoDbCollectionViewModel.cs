@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
 using Microsoft.Practices.ServiceLocation;
 using System.Collections.ObjectModel;
 
@@ -57,6 +58,8 @@ namespace MongoDbGui.ViewModel
 
         public RelayCommand InsertDocuments { get; set; }
 
+        public RelayCommand ConfirmDropCollection { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the MongoDbCollectionViewModel class.
         /// </summary>
@@ -70,6 +73,13 @@ namespace MongoDbGui.ViewModel
                 return !string.IsNullOrWhiteSpace(Name);
             });
             InsertDocuments = new RelayCommand(InternalInsertDocuments);
+            ConfirmDropCollection = new RelayCommand(
+            () =>
+            {
+                Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, "ConfirmDropCollection"));
+            });
+
+            Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, InnerDropCollection);
 
             Database = database;
             _name = collectionName;
@@ -105,6 +115,17 @@ namespace MongoDbGui.ViewModel
             Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, "OpenInsertDocuments"));
         }
 
+        public async void InnerDropCollection(NotificationMessage<MongoDbCollectionViewModel> message)
+        {
+            if (message.Notification == "DropCollection" && message.Content == this)
+            {
+                Database.IsBusy = true;
+                this.IsBusy = true;
+                await Database.Server.MongoDbService.DropCollectionAsync(Database.Name, this.Name);
+                Database.IsBusy = false;
+                Database.LoadCollections();
+            }
+        }
 
         public override void Cleanup()
         {

@@ -15,6 +15,7 @@ namespace MongoDbGui.Model
         Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command);
         Task CreateCollectionAsync(string databaseName, string collection, CreateCollectionOptions options);
         Task RenameCollectionAsync(string databaseName, string oldName, string newName);
+        Task DropCollectionAsync(string databaseName, string collection);
         Task<List<BsonDocument>> GetCollectionsAsync(string databaseName);
         Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip);
         Task<long> CountAsync(string databaseName, string collection, string filter);

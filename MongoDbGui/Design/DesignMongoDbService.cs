@@ -30,6 +30,10 @@ namespace MongoDbGui.Design
         {
         }
 
+        public async Task DropCollectionAsync(string databaseName, string collection)
+        {
+        }
+
         public async Task<List<BsonDocument>> GetCollectionsAsync(string databaseName)
         {
             // Use this to create design time data

@@ -8,19 +8,68 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:utils="clr-namespace:MongoDbGui.Utils"
         mc:Ignorable="d ignore"
-        Height="250" Width="400">
+        Width="400" Height="300">
 
-    <Grid>
-        <Label Content="Collection name" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="111,13,0,0" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top" Width="270"/>
-        <Label Content="Options" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
-        <avalonEdit:TextEditor HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
-                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson" Margin="0,72,0,0">
-            <i:Interaction.Behaviors>
-                <utils:AvalonEditBehavior GiveMeTheText="{Binding Options, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            </i:Interaction.Behaviors>
-        </avalonEdit:TextEditor>
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label Content="Collection name" />
+        <TextBox HorizontalAlignment="Stretch" Height="23" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top" />
 
+        <Label Margin="0,5,0,0" Content="AutoIndexId" Grid.Row="1" />
+        <ComboBox Margin="0,5,0,0" Grid.Column="1" Height="23" Grid.Row="1" SelectedValue="{Binding AutoIndexId}" SelectedValuePath="Content">
+            <ComboBoxItem></ComboBoxItem>
+            <ComboBoxItem>True</ComboBoxItem>
+            <ComboBoxItem>False</ComboBoxItem>
+        </ComboBox>
+        
+        <Label Margin="0,5,0,0" Content="Capped" Grid.Row="2" />
+        <ComboBox Margin="0,5,0,0" Grid.Column="2" Height="23" Grid.Row="2" SelectedValue="{Binding Capped}" SelectedValuePath="Content">
+            <ComboBoxItem></ComboBoxItem>
+            <ComboBoxItem>True</ComboBoxItem>
+            <ComboBoxItem>False</ComboBoxItem>
+        </ComboBox>
+
+        <Label Content="MaxDocuments" Grid.Row="3" Margin="0,5,0,0" />
+        <TextBox Grid.Column="1" Grid.Row="3" Height="23" Margin="0,5,0,0" Text="{Binding MaxDocuments}">
+        </TextBox>
+
+        <Label Content="MaxSize" Grid.Row="4" Margin="0,5,0,0" />
+        <TextBox Grid.Column="1" Grid.Row="4" Height="23" Margin="0,5,0,0" Text="{Binding MaxSize}">
+        </TextBox>
+
+        <Label Margin="0,5,0,0" Content="UsePowerOf2Sizes" Grid.Row="5" />
+        <ComboBox Margin="0,5,0,0" Grid.Column="1" Height="23" Grid.Row="5" SelectedValue="{Binding UsePowerOf2Sizes}" SelectedValuePath="Content">
+            <ComboBoxItem></ComboBoxItem>
+            <ComboBoxItem>True</ComboBoxItem>
+            <ComboBoxItem>False</ComboBoxItem>
+        </ComboBox>
+
+        <Label Content="Storage engine" Grid.Row="6" Margin="0,5,0,0" />
+        <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="6" Margin="0,5,0,0">
+            <avalonEdit:TextEditor HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                        FontFamily="Courier New" SyntaxHighlighting="Bson">
+                <i:Interaction.Behaviors>
+                    <utils:AvalonEditBehavior GiveMeTheText="{Binding StorageEngine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </i:Interaction.Behaviors>
+            </avalonEdit:TextEditor>
+        </Border>
+        <StackPanel Margin="0,5,0,0" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="2">
+            <Button Content="Create" Command="{Binding CreateCollection}"></Button>
+            <Button Margin="10,0,0,0" Content="Close" Click="Button_Click"></Button>
+        </StackPanel>
     </Grid>
 </Window>

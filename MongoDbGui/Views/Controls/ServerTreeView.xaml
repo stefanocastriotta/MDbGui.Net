@@ -120,7 +120,7 @@
                             <ContextMenu>
                                 <MenuItem Header="Open collection" Command="{Binding Path=OpenTab}" />
                                 <MenuItem Header="Rename collection" Command="{Binding Path=RenameCollection}" />
-                                <MenuItem Header="Delete collection"/>
+                                <MenuItem Header="Drop collection..." Command="{Binding Path=ConfirmDropCollection}" />
                                 <Separator/>
                                 <MenuItem Header="Insert documents" Command="{Binding Path=InsertDocuments}" />
                             </ContextMenu>

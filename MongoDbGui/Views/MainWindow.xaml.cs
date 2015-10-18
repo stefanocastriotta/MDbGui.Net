@@ -20,7 +20,7 @@ namespace MongoDbGui.Views
         {
             InitializeComponent();
             Closing += (s, e) => ViewModelLocator.Cleanup();
-            Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, (message) => OpenInsertDocumentsMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, (message) => CollectionMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbDatabaseViewModel>>(this, (message) => OpenCreateNewCollectionMessageHandler(message));
         }
 
@@ -36,7 +36,7 @@ namespace MongoDbGui.Views
             wnd.ShowDialog();
         }
 
-        private void OpenInsertDocumentsMessageHandler(NotificationMessage<MongoDbCollectionViewModel> message)
+        private void CollectionMessageHandler(NotificationMessage<MongoDbCollectionViewModel> message)
         {
             if (message.Notification == "OpenInsertDocuments")
             {
@@ -45,6 +45,14 @@ namespace MongoDbGui.Views
                 vm.Collection = message.Content;
                 wnd.DataContext = vm;
                 wnd.ShowDialog();
+            }
+            else if (message.Notification == "ConfirmDropCollection")
+            {
+                var result = MessageBox.Show("Drop collection " + message.Content.Name + "?", "Drop confirm", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(message.Content, "DropCollection"));
+                }
             }
         }
 

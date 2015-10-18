@@ -71,6 +71,12 @@ namespace MongoDbGui.Model
             await db.RenameCollectionAsync(oldName, newName);
         }
 
+        public async Task DropCollectionAsync(string databaseName, string collection)
+        {
+            var db = client.GetDatabase(databaseName);
+            await db.DropCollectionAsync(collection);
+        }
+
         #endregion
 
         public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip)

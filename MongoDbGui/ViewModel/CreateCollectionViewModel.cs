@@ -36,17 +36,81 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        protected string _options = string.Empty;
-
-        public string Options
+        private bool? _autoIndexId;
+        public bool? AutoIndexId
         {
             get
             {
-                return _options;
+                return _autoIndexId;
             }
             set
             {
-                Set(ref _options, value);
+                Set(ref _autoIndexId, value);
+            }
+        }
+
+        private bool? _capped;
+        public bool? Capped
+        {
+            get
+            {
+                return _capped;
+            }
+            set
+            {
+                Set(ref _capped, value);
+            }
+        }
+
+        private long? _maxDocuments;
+        public long? MaxDocuments
+        {
+            get
+            {
+                return _maxDocuments;
+            }
+            set
+            {
+                Set(ref _maxDocuments, value);
+            }
+        }
+
+        private long? _maxSize;
+        public long? MaxSize
+        {
+            get
+            {
+                return _maxSize;
+            }
+            set
+            {
+                Set(ref _maxSize, value);
+            }
+        }
+
+        private bool? _usePowerOf2Sizes;
+        public bool? UsePowerOf2Sizes
+        {
+            get
+            {
+                return _usePowerOf2Sizes;
+            }
+            set
+            {
+                Set(ref _usePowerOf2Sizes, value);
+            }
+        }
+
+        protected string _storageEngine = string.Empty;
+        public string StorageEngine
+        {
+            get
+            {
+                return _storageEngine;
+            }
+            set
+            {
+                Set(ref _storageEngine, value);
             }
         }
 
@@ -66,6 +130,12 @@ namespace MongoDbGui.ViewModel
         public void InnerCreateCollection()
         {
             Messenger.Default.Send(new NotificationMessage<CreateCollectionViewModel>(this, this, "CreateCollection"));
+        }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            MessengerInstance.Unregister(this);
         }
     }
 }
