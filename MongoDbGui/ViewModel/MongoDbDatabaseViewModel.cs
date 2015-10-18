@@ -69,9 +69,14 @@ namespace MongoDbGui.ViewModel
             {
                 return !string.IsNullOrWhiteSpace(Name) && IsNew;
             });
-            CreateNewCollection = new RelayCommand(InnerCreateNewCollection);
 
             RunCommand = new RelayCommand<DatabaseCommand>(InnerOpenRunCommand);
+
+            OpenCreateNewCollection = new RelayCommand<MongoDbDatabaseViewModel>(
+            database =>
+            {
+                Messenger.Default.Send(new NotificationMessage<MongoDbDatabaseViewModel>(this, "OpenCreateNewCollection"));
+            });
 
             DatabaseCommands = new Dictionary<string, DatabaseCommand>();
             DatabaseCommands.Add("repairDatabase", new DatabaseCommand() { Command = "{ repairDatabase: 1 }" });
@@ -84,6 +89,8 @@ namespace MongoDbGui.ViewModel
                         LoadCollections();
                 }
             });
+
+            Messenger.Default.Register<NotificationMessage<CreateCollectionViewModel>>(this, InnerCreateNewCollection);
         }
 
         public async void LoadCollections()
@@ -146,10 +153,10 @@ namespace MongoDbGui.ViewModel
 
         public RelayCommand CreateDatabase { get; set; }
 
-        public RelayCommand CreateNewCollection { get; set; }
-
         public RelayCommand<DatabaseCommand> RunCommand { get; set; }
 
+        public RelayCommand<MongoDbDatabaseViewModel> OpenCreateNewCollection { get; set; }
+        
         public async void InnerCreateDatabase()
         {
             if (IsNew)
@@ -157,20 +164,6 @@ namespace MongoDbGui.ViewModel
                 await Server.MongoDbService.CreateNewDatabaseAsync(this.Name);
                 IsNew = false;
             }
-        }
-
-        public void InnerCreateNewCollection()
-        {
-            var newCollection = new MongoDbCollectionViewModel(this, "");
-            newCollection.IsSelected = true;
-            newCollection.IsNew = true;
-            newCollection.IsEditing = true;
-            this.IsExpanded = true;
-            this._collections.IsExpanded = true;
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                _collections.Children.Add(newCollection);
-            });
         }
 
         private void InnerOpenRunCommand(DatabaseCommand param)
@@ -185,6 +178,26 @@ namespace MongoDbGui.ViewModel
             else
                 tabVm.Command = param.Command;
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
+        }
+
+        private async void InnerCreateNewCollection(NotificationMessage<CreateCollectionViewModel> message)
+        {
+            if (message.Notification == "CreateCollection")
+            {
+                var newCollection = new MongoDbCollectionViewModel(this, message.Content.Name);
+                newCollection.IsSelected = true;
+                newCollection.IsBusy = true;
+                this.IsExpanded = true;
+                this._collections.IsExpanded = true;
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    _collections.Children.Add(newCollection);
+                });
+
+                var options = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<MongoDB.Driver.CreateCollectionOptions>(message.Content.Options);
+                await Server.MongoDbService.CreateCollectionAsync(Name, message.Content.Name, options);
+                newCollection.IsBusy = false;
+            }
         }
 
         public override void Cleanup()

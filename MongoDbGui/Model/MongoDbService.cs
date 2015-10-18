@@ -59,10 +59,10 @@ namespace MongoDbGui.Model
             return listCollections;
         }
 
-        public async Task CreateCollectionAsync(string databaseName, string collection)
+        public async Task CreateCollectionAsync(string databaseName, string collection, CreateCollectionOptions options)
         {
             var db = client.GetDatabase(databaseName);
-            await db.CreateCollectionAsync(collection);
+            await db.CreateCollectionAsync(collection, options);
         }
 
         public async Task RenameCollectionAsync(string databaseName, string oldName, string newName)

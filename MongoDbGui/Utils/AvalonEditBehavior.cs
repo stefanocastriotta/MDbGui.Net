@@ -29,7 +29,8 @@ namespace MongoDbGui.Utils
             base.OnAttached();
             if (AssociatedObject != null)
             {
-                AssociatedObject.Document.Text = GiveMeTheText; 
+                if (GiveMeTheText != null)
+                    AssociatedObject.Document.Text = GiveMeTheText; 
                 AssociatedObject.TextChanged += AssociatedObjectOnTextChanged;
             }
         }

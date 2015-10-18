@@ -83,7 +83,7 @@
                     <TextBlock Margin="5,0,0,0" Text="{Binding Name}" Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
                         <TextBlock.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Create collection" Command="{Binding Path=CreateNewCollection}" />
+                                <MenuItem Header="Create collection" Command="{Binding Path=OpenCreateNewCollection}" />
                                 <MenuItem Header="Drop database"/>
                                 <Separator/>
                                 <MenuItem Header="Run Command..." Command="{Binding Path=RunCommand}" />

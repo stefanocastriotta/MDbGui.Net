@@ -22,7 +22,7 @@ namespace MongoDbGui.Design
             return null;
         }
 
-        public async Task CreateCollectionAsync(string databaseName, string collection)
+        public async Task CreateCollectionAsync(string databaseName, string collection, CreateCollectionOptions options)
         {
         }
 

@@ -105,6 +105,7 @@
     <Compile Include="Utils\StringToDocumentTextConverter.cs" />
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="ViewModel\BaseTreeviewViewModel.cs" />
+    <Compile Include="ViewModel\CreateCollectionViewModel.cs" />
     <Compile Include="ViewModel\DocumentResultViewModel.cs" />
     <Compile Include="ViewModel\ResultItemViewModel.cs" />
     <Compile Include="ViewModel\TabViewModel.cs" />
@@ -124,12 +125,19 @@
     <Compile Include="Views\Controls\ServerTreeView.xaml.cs">
       <DependentUpon>ServerTreeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Dialogs\CreateCollectionDialog.xaml.cs">
+      <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dialogs\InsertDocumentsView.xaml.cs">
       <DependentUpon>InsertDocumentsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Spinner.xaml.cs">
       <DependentUpon>Spinner.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\Dialogs\CreateCollectionDialog.xaml">
+      <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Dialogs\InsertDocumentsView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>

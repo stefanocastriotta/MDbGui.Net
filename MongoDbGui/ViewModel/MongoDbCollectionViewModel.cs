@@ -95,15 +95,7 @@ namespace MongoDbGui.ViewModel
 
         public async void InnerSaveCollection()
         {
-            if (IsNew)
-            {
-                await Database.Server.MongoDbService.CreateCollectionAsync(Database.Name, this.Name);
-                IsNew = false;
-            }
-            else
-            {
-                await Database.Server.MongoDbService.RenameCollectionAsync(Database.Name, this._oldName, this.Name);
-            }
+            await Database.Server.MongoDbService.RenameCollectionAsync(Database.Name, this._oldName, this.Name);
             _oldName = this.Name;
             IsEditing = false;
         }
