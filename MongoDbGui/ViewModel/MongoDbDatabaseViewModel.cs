@@ -149,24 +149,29 @@ namespace MongoDbGui.ViewModel
             {
                 try
                 {
-                    var stats = await Server.MongoDbService.ExecuteRawCommandAsync(Name, "{ collStats: \"" + collection.Name + "\", verbose: true }");
-                    switch (stats["storageSize"].BsonType)
-                    {
-                        case MongoDB.Bson.BsonType.Int32:
-                            collection.SizeOnDisk = stats["storageSize"].AsInt32;
-                            break;
-                        case MongoDB.Bson.BsonType.Int64:
-                            collection.SizeOnDisk = stats["storageSize"].AsInt64;
-                            break;
-                        case MongoDB.Bson.BsonType.Double:
-                            collection.SizeOnDisk = stats["storageSize"].AsDouble;
-                            break;
-                    }
+                    await LoadCollectionStats(collection);
                 }
                 catch (Exception ex)
                 {
                     //TODO: log error
                 }
+            }
+        }
+
+        private async Task LoadCollectionStats(MongoDbCollectionViewModel collection)
+        {
+            collection.Stats = await Server.MongoDbService.ExecuteRawCommandAsync(Name, "{ collStats: \"" + collection.Name + "\", verbose: true }");
+            switch (collection.Stats["storageSize"].BsonType)
+            {
+                case MongoDB.Bson.BsonType.Int32:
+                    collection.SizeOnDisk = collection.Stats["storageSize"].AsInt32;
+                    break;
+                case MongoDB.Bson.BsonType.Int64:
+                    collection.SizeOnDisk = collection.Stats["storageSize"].AsInt64;
+                    break;
+                case MongoDB.Bson.BsonType.Double:
+                    collection.SizeOnDisk = collection.Stats["storageSize"].AsDouble;
+                    break;
             }
         }
 
@@ -212,6 +217,17 @@ namespace MongoDbGui.ViewModel
             {
                 try
                 {
+                    IsBusy = true;
+                    MongoDB.Driver.CreateCollectionOptions options = new MongoDB.Driver.CreateCollectionOptions();
+                    options.AutoIndexId = message.Content.AutoIndexId;
+                    options.Capped = message.Content.Capped;
+                    options.MaxDocuments = message.Content.MaxDocuments;
+                    options.MaxSize = message.Content.MaxSize;
+                    options.UsePowerOf2Sizes = message.Content.UsePowerOf2Sizes;
+                    if (!string.IsNullOrWhiteSpace(message.Content.StorageEngine))
+                        options.StorageEngine = BsonDocument.Parse(message.Content.StorageEngine);
+                    await Server.MongoDbService.CreateCollectionAsync(Name, message.Content.Name, options);
+
                     var newCollection = new MongoDbCollectionViewModel(this, message.Content.Name);
                     newCollection.IsSelected = true;
                     newCollection.IsBusy = true;
@@ -222,21 +238,15 @@ namespace MongoDbGui.ViewModel
                         _collections.Children.Add(newCollection);
                         _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
                     });
-
-                    MongoDB.Driver.CreateCollectionOptions options = new MongoDB.Driver.CreateCollectionOptions();
-                    options.AutoIndexId = message.Content.AutoIndexId;
-                    options.Capped = message.Content.Capped;
-                    options.MaxDocuments = message.Content.MaxDocuments;
-                    options.MaxSize = message.Content.MaxSize;
-                    options.UsePowerOf2Sizes = message.Content.UsePowerOf2Sizes;
-                    if (!string.IsNullOrWhiteSpace(message.Content.StorageEngine))
-                        options.StorageEngine = BsonDocument.Parse(message.Content.StorageEngine);
-                    await Server.MongoDbService.CreateCollectionAsync(Name, message.Content.Name, options);
-                    newCollection.IsBusy = false;
+                    await LoadCollectionStats(newCollection);
                 }
                 catch (Exception ex)
                 {
                     //TODO: log error
+                }
+                finally
+                {
+                    IsBusy = false;
                 }
             }
         }

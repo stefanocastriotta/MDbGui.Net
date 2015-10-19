@@ -26,7 +26,7 @@
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Content="Collection name" />
-        <TextBox HorizontalAlignment="Stretch" Height="23" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top" />
+        <TextBox HorizontalAlignment="Stretch" Height="23" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
 
         <Label Margin="0,5,0,0" Content="AutoIndexId" Grid.Row="1" />
         <CheckBox Margin="0,5,0,0" Grid.Column="1" Height="23" Grid.Row="1" IsThreeState="True" IsChecked="{Binding AutoIndexId}">
@@ -37,11 +37,11 @@
         </CheckBox>
 
         <Label Content="MaxDocuments" Grid.Row="3" Margin="0,5,0,0" />
-        <TextBox Grid.Column="1" Grid.Row="3" Height="23" Margin="0,5,0,0" Text="{Binding MaxDocuments}">
+        <TextBox Grid.Column="1" Grid.Row="3" Height="23" Margin="0,5,0,0" Text="{Binding MaxDocuments, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
 
         <Label Content="MaxSize" Grid.Row="4" Margin="0,5,0,0" />
-        <TextBox Grid.Column="1" Grid.Row="4" Height="23" Margin="0,5,0,0" Text="{Binding MaxSize}">
+        <TextBox Grid.Column="1" Grid.Row="4" Height="23" Margin="0,5,0,0" Text="{Binding MaxSize, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
 
         <Label Margin="0,5,0,0" Content="UsePowerOf2Sizes" Grid.Row="5" />

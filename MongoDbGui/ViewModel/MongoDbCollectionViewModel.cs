@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using Microsoft.Practices.ServiceLocation;
+using MongoDB.Bson;
 using System;
 using System.Collections.ObjectModel;
 
@@ -25,6 +26,19 @@ namespace MongoDbGui.ViewModel
             set
             {
                 Set(ref _iconVisible, value);
+            }
+        }
+
+        private BsonDocument _stats;
+        public BsonDocument Stats
+        {
+            get
+            {
+                return _stats;
+            }
+            set
+            {
+                Set(ref _stats, value);
             }
         }
 
