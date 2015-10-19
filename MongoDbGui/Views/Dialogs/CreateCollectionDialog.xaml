@@ -29,18 +29,12 @@
         <TextBox HorizontalAlignment="Stretch" Height="23" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top" />
 
         <Label Margin="0,5,0,0" Content="AutoIndexId" Grid.Row="1" />
-        <ComboBox Margin="0,5,0,0" Grid.Column="1" Height="23" Grid.Row="1" SelectedValue="{Binding AutoIndexId}" SelectedValuePath="Content">
-            <ComboBoxItem></ComboBoxItem>
-            <ComboBoxItem>True</ComboBoxItem>
-            <ComboBoxItem>False</ComboBoxItem>
-        </ComboBox>
+        <CheckBox Margin="0,5,0,0" Grid.Column="1" Height="23" Grid.Row="1" IsThreeState="True" IsChecked="{Binding AutoIndexId}">
+        </CheckBox>
         
         <Label Margin="0,5,0,0" Content="Capped" Grid.Row="2" />
-        <ComboBox Margin="0,5,0,0" Grid.Column="2" Height="23" Grid.Row="2" SelectedValue="{Binding Capped}" SelectedValuePath="Content">
-            <ComboBoxItem></ComboBoxItem>
-            <ComboBoxItem>True</ComboBoxItem>
-            <ComboBoxItem>False</ComboBoxItem>
-        </ComboBox>
+        <CheckBox Margin="0,5,0,0" Grid.Column="2" Height="23" Grid.Row="2" IsThreeState="True" IsChecked="{Binding Capped}">
+        </CheckBox>
 
         <Label Content="MaxDocuments" Grid.Row="3" Margin="0,5,0,0" />
         <TextBox Grid.Column="1" Grid.Row="3" Height="23" Margin="0,5,0,0" Text="{Binding MaxDocuments}">
@@ -51,11 +45,8 @@
         </TextBox>
 
         <Label Margin="0,5,0,0" Content="UsePowerOf2Sizes" Grid.Row="5" />
-        <ComboBox Margin="0,5,0,0" Grid.Column="1" Height="23" Grid.Row="5" SelectedValue="{Binding UsePowerOf2Sizes}" SelectedValuePath="Content">
-            <ComboBoxItem></ComboBoxItem>
-            <ComboBoxItem>True</ComboBoxItem>
-            <ComboBoxItem>False</ComboBoxItem>
-        </ComboBox>
+        <CheckBox Margin="0,5,0,0" Grid.Column="1" Height="23" Grid.Row="5" IsThreeState="True" IsChecked="{Binding UsePowerOf2Sizes}">
+        </CheckBox>
 
         <Label Content="Storage engine" Grid.Row="6" Margin="0,5,0,0" />
         <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="6" Margin="0,5,0,0">

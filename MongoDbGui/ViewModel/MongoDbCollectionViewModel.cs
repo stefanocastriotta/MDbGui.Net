@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Collections.ObjectModel;
 
 namespace MongoDbGui.ViewModel
@@ -76,10 +77,8 @@ namespace MongoDbGui.ViewModel
             ConfirmDropCollection = new RelayCommand(
             () =>
             {
-                Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, "ConfirmDropCollection"));
+                Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, "ConfirmDropCollection"));
             });
-
-            Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, InnerDropCollection);
 
             Database = database;
             _name = collectionName;
@@ -105,26 +104,26 @@ namespace MongoDbGui.ViewModel
 
         public async void InnerSaveCollection()
         {
-            await Database.Server.MongoDbService.RenameCollectionAsync(Database.Name, this._oldName, this.Name);
-            _oldName = this.Name;
-            IsEditing = false;
+            try
+            {
+                IsBusy = true;
+                await Database.Server.MongoDbService.RenameCollectionAsync(Database.Name, this._oldName, this.Name);
+                _oldName = this.Name;
+                IsEditing = false;
+            }
+            catch (Exception ex)
+            {
+                //TODO: log error
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private void InternalInsertDocuments()
         {
             Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, "OpenInsertDocuments"));
-        }
-
-        public async void InnerDropCollection(NotificationMessage<MongoDbCollectionViewModel> message)
-        {
-            if (message.Notification == "DropCollection" && message.Content == this)
-            {
-                Database.IsBusy = true;
-                this.IsBusy = true;
-                await Database.Server.MongoDbService.DropCollectionAsync(Database.Name, this.Name);
-                Database.IsBusy = false;
-                Database.LoadCollections();
-            }
         }
 
         public override void Cleanup()

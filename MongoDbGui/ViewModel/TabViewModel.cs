@@ -346,31 +346,42 @@ namespace MongoDbGui.ViewModel
         public async void InnerExecuteFind()
         {
             Executing = true;
-            var results = await Server.MongoDbService.FindAsync(Database, Collection, Find, Sort, Size, Skip);
-            Executing = false;
-            ShowPager = true;
-            StringBuilder sb = new StringBuilder();
-            int index = 1;
-            sb.Append("[");
-            foreach (var result in results)
+            try
             {
+                var results = await Server.MongoDbService.FindAsync(Database, Collection, Find, Sort, Size, Skip);
+                Executing = false;
+                ShowPager = true;
+                StringBuilder sb = new StringBuilder();
+                int index = 1;
+                sb.Append("[");
+                foreach (var result in results)
+                {
+                    sb.AppendLine();
+                    sb.Append("/* # ");
+                    sb.Append(index.ToString());
+                    sb.AppendLine(" */");
+                    sb.AppendLine(result.ToJson(new JsonWriterSettings { Indent = true }));
+                    sb.Append(",");
+                    index++;
+                }
+                if (results.Count > 0)
+                    sb.Length -= 1;
                 sb.AppendLine();
-                sb.Append("/* # ");
-                sb.Append(index.ToString());
-                sb.AppendLine(" */");
-                sb.AppendLine(result.ToJson(new JsonWriterSettings { Indent = true }));
-                sb.Append(",");
-                index++;
+                sb.Append("]");
+
+                RawResult = sb.ToString();
+                SelectedViewIndex = 0;
+
+                Root = new ResultsViewModel(results, this);
             }
-            if (results.Count > 0)
-                sb.Length -= 1;
-            sb.AppendLine();
-            sb.Append("]");
-
-            RawResult = sb.ToString();
-            SelectedViewIndex = 0;
-
-            Root = new ResultsViewModel(results, this);
+            catch (Exception ex)
+            {
+                //TODO: log error
+            }
+            finally
+            {
+                Executing = false;
+            }
         }
 
         public RelayCommand ExecuteCount { get; set; }
@@ -378,14 +389,25 @@ namespace MongoDbGui.ViewModel
         public async void InnerExecuteCount()
         {
             Executing = true;
-            var result = await Server.MongoDbService.CountAsync(Database, Collection, Find);
-            Executing = false;
-            ShowPager = false;
+            try
+            {
+                var result = await Server.MongoDbService.CountAsync(Database, Collection, Find);
+                Executing = false;
+                ShowPager = false;
 
-            RawResult = result.ToString();
-            SelectedViewIndex = 1;
+                RawResult = result.ToString();
+                SelectedViewIndex = 1;
 
-            Root = null;
+                Root = null;
+            }
+            catch (Exception ex)
+            {
+                //TODO: log error
+            }
+            finally
+            {
+                Executing = false;
+            }
         }
 
         public RelayCommand PageBack { get; set; }

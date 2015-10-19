@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
+using System;
 
 namespace MongoDbGui.ViewModel
 {
@@ -91,62 +92,80 @@ namespace MongoDbGui.ViewModel
             });
 
             Messenger.Default.Register<NotificationMessage<CreateCollectionViewModel>>(this, InnerCreateNewCollection);
+            Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, InnerDropCollection);
         }
 
         public async void LoadCollections()
         {
             _collections.IsBusy = true;
-            var collections = await Server.MongoDbService.GetCollectionsAsync(Name);
-
-            List<MongoDbCollectionViewModel> systemCollections = new List<MongoDbCollectionViewModel>();
-            List<MongoDbCollectionViewModel> standardCollections = new List<MongoDbCollectionViewModel>();
-            foreach (var collection in collections)
+            try
             {
-                var collectionVm = new MongoDbCollectionViewModel(this, collection["name"].AsString);
-                collectionVm.Database = this;
-                    
-                if (collection["name"].AsString.StartsWith("system."))
-                    systemCollections.Add(collectionVm);
-                else
-                    standardCollections.Add(collectionVm);
+                var collections = await Server.MongoDbService.GetCollectionsAsync(Name);
+
+                List<MongoDbCollectionViewModel> systemCollections = new List<MongoDbCollectionViewModel>();
+                List<MongoDbCollectionViewModel> standardCollections = new List<MongoDbCollectionViewModel>();
+                foreach (var collection in collections)
+                {
+                    var collectionVm = new MongoDbCollectionViewModel(this, collection["name"].AsString);
+                    collectionVm.Database = this;
+
+                    if (collection["name"].AsString.StartsWith("system."))
+                        systemCollections.Add(collectionVm);
+                    else
+                        standardCollections.Add(collectionVm);
+                }
+                FolderViewModel systemCollectionsFolder = new FolderViewModel("System", this);
+                foreach (var systemCollection in systemCollections.OrderBy(o => o.Name))
+                    systemCollectionsFolder.Children.Add(systemCollection);
+
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    _collections.Children.Clear();
+
+                    _collections.Children.Add(systemCollectionsFolder);
+
+                    foreach (var collection in standardCollections.OrderBy(o => o.Name))
+                        _collections.Children.Add(collection);
+
+                    _collectionsLoaded = true;
+                    _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
+                });
+
+                await LoadCollectionsStats(systemCollections.Union(standardCollections));
             }
-            FolderViewModel systemCollectionsFolder = new FolderViewModel("System", this);
-            foreach (var systemCollection in systemCollections.OrderBy(o => o.Name))
-                systemCollectionsFolder.Children.Add(systemCollection);
-
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            catch (Exception ex)
             {
-                _collections.Children.Clear();
-
-                _collections.Children.Add(systemCollectionsFolder);
-
-                foreach (var collection in standardCollections.OrderBy(o => o.Name))
-                    _collections.Children.Add(collection);
-
-                _collectionsLoaded = true;
-                _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
+                //TODO: log error
+            }
+            finally
+            {
                 _collections.IsBusy = false;
-            });
-
-            await LoadCollectionsStats(systemCollections.Union(standardCollections));
+            }
         }
 
         private async Task LoadCollectionsStats(IEnumerable<MongoDbCollectionViewModel> collections)
         {
             foreach (var collection in collections.OrderBy(o => o.Name))
             {
-                var stats = await Server.MongoDbService.ExecuteRawCommandAsync(Name, "{ collStats: \"" + collection.Name + "\", verbose: true }");
-                switch (stats["storageSize"].BsonType)
+                try
                 {
-                    case MongoDB.Bson.BsonType.Int32:
-                        collection.SizeOnDisk = stats["storageSize"].AsInt32;
-                        break;
-                    case MongoDB.Bson.BsonType.Int64:
-                        collection.SizeOnDisk = stats["storageSize"].AsInt64;
-                        break;
-                    case MongoDB.Bson.BsonType.Double:
-                        collection.SizeOnDisk = stats["storageSize"].AsDouble;
-                        break;
+                    var stats = await Server.MongoDbService.ExecuteRawCommandAsync(Name, "{ collStats: \"" + collection.Name + "\", verbose: true }");
+                    switch (stats["storageSize"].BsonType)
+                    {
+                        case MongoDB.Bson.BsonType.Int32:
+                            collection.SizeOnDisk = stats["storageSize"].AsInt32;
+                            break;
+                        case MongoDB.Bson.BsonType.Int64:
+                            collection.SizeOnDisk = stats["storageSize"].AsInt64;
+                            break;
+                        case MongoDB.Bson.BsonType.Double:
+                            collection.SizeOnDisk = stats["storageSize"].AsDouble;
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //TODO: log error
                 }
             }
         }
@@ -161,8 +180,15 @@ namespace MongoDbGui.ViewModel
         {
             if (IsNew)
             {
-                await Server.MongoDbService.CreateNewDatabaseAsync(this.Name);
-                IsNew = false;
+                try
+                {
+                    await Server.MongoDbService.CreateNewDatabaseAsync(this.Name);
+                    IsNew = false;
+                }
+                catch (Exception ex)
+                {
+                    //TODO: log error
+                }
             }
         }
 
@@ -182,28 +208,61 @@ namespace MongoDbGui.ViewModel
 
         private async void InnerCreateNewCollection(NotificationMessage<CreateCollectionViewModel> message)
         {
-            if (message.Notification == "CreateCollection")
+            if (message.Notification == "CreateCollection" && message.Target == this)
             {
-                var newCollection = new MongoDbCollectionViewModel(this, message.Content.Name);
-                newCollection.IsSelected = true;
-                newCollection.IsBusy = true;
-                this.IsExpanded = true;
-                this._collections.IsExpanded = true;
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                try
                 {
-                    _collections.Children.Add(newCollection);
-                });
+                    var newCollection = new MongoDbCollectionViewModel(this, message.Content.Name);
+                    newCollection.IsSelected = true;
+                    newCollection.IsBusy = true;
+                    this.IsExpanded = true;
+                    this._collections.IsExpanded = true;
+                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                    {
+                        _collections.Children.Add(newCollection);
+                        _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
+                    });
 
-                MongoDB.Driver.CreateCollectionOptions options = new MongoDB.Driver.CreateCollectionOptions();
-                options.AutoIndexId = message.Content.AutoIndexId;
-                options.Capped = message.Content.Capped;
-                options.MaxDocuments = message.Content.MaxDocuments;
-                options.MaxSize = message.Content.MaxSize;
-                options.UsePowerOf2Sizes = message.Content.UsePowerOf2Sizes;
-                if (!string.IsNullOrWhiteSpace(message.Content.StorageEngine))
-                    options.StorageEngine = BsonDocument.Parse(message.Content.StorageEngine);
-                await Server.MongoDbService.CreateCollectionAsync(Name, message.Content.Name, options);
-                newCollection.IsBusy = false;
+                    MongoDB.Driver.CreateCollectionOptions options = new MongoDB.Driver.CreateCollectionOptions();
+                    options.AutoIndexId = message.Content.AutoIndexId;
+                    options.Capped = message.Content.Capped;
+                    options.MaxDocuments = message.Content.MaxDocuments;
+                    options.MaxSize = message.Content.MaxSize;
+                    options.UsePowerOf2Sizes = message.Content.UsePowerOf2Sizes;
+                    if (!string.IsNullOrWhiteSpace(message.Content.StorageEngine))
+                        options.StorageEngine = BsonDocument.Parse(message.Content.StorageEngine);
+                    await Server.MongoDbService.CreateCollectionAsync(Name, message.Content.Name, options);
+                    newCollection.IsBusy = false;
+                }
+                catch (Exception ex)
+                {
+                    //TODO: log error
+                }
+            }
+        }
+
+        public async void InnerDropCollection(NotificationMessage<MongoDbCollectionViewModel> message)
+        {
+            if (message.Notification == "DropCollection" && message.Target == this)
+            {
+                IsBusy = true;
+                message.Content.IsBusy = true;
+                try
+                {
+                    await Server.MongoDbService.DropCollectionAsync(Name, message.Content.Name);
+                    _collections.Children.Remove(message.Content);
+                    _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
+                    message.Content.Cleanup();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: log error
+                }
+                finally
+                {
+                    IsBusy = false;
+                    message.Content.IsBusy = false;
+                }
             }
         }
 

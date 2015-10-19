@@ -111,7 +111,7 @@ namespace MongoDbGui.ViewModel
                 }
                 catch (Exception ex)
                 {
-
+                    //TODO: log error
                 }
                 serverVm.IsBusy = false;
             }

@@ -51,7 +51,7 @@ namespace MongoDbGui.Views
                 var result = MessageBox.Show("Drop collection " + message.Content.Name + "?", "Drop confirm", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
-                    Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(message.Content, "DropCollection"));
+                    Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, message.Content.Database, message.Content, "DropCollection"));
                 }
             }
         }

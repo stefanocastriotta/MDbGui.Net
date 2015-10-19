@@ -129,7 +129,7 @@ namespace MongoDbGui.ViewModel
 
         public void InnerCreateCollection()
         {
-            Messenger.Default.Send(new NotificationMessage<CreateCollectionViewModel>(this, this, "CreateCollection"));
+            Messenger.Default.Send(new NotificationMessage<CreateCollectionViewModel>(this, Database, this, "CreateCollection"));
         }
 
         public override void Cleanup()
