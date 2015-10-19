@@ -27,6 +27,13 @@ namespace MongoDbGui.Model
             return server;
         }
 
+        public async Task<List<BsonDocument>> ListDatabasesAsync()
+        {
+            var databases = await client.ListDatabasesAsync();
+            var databaseList = await databases.ToListAsync();
+            return databaseList;
+        }
+
         public async Task<IMongoDatabase> CreateNewDatabaseAsync(string databaseName)
         {
             var databases = await client.ListDatabasesAsync();

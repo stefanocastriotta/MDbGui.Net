@@ -17,6 +17,11 @@ namespace MongoDbGui.Design
             return server;
         }
 
+        public async Task<List<BsonDocument>> ListDatabasesAsync()
+        {
+            return new List<BsonDocument>();
+        }
+
         public async Task<IMongoDatabase> CreateNewDatabaseAsync(string databaseName)
         {
             return null;

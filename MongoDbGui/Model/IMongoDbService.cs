@@ -11,6 +11,7 @@ namespace MongoDbGui.Model
     public interface IMongoDbService
     {
         Task<MongoDbServer> ConnectAsync(ConnectionInfo connectionInfo);
+        Task<List<BsonDocument>> ListDatabasesAsync();
         Task<IMongoDatabase> CreateNewDatabaseAsync(string databaseName);
         Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command);
         Task CreateCollectionAsync(string databaseName, string collection, CreateCollectionOptions options);
