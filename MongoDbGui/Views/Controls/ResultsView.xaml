@@ -128,6 +128,27 @@
                         <Button Grid.Row="1" Command="{Binding ExecuteCommand}" Content="Execute"></Button>
                     </Grid>
                 </DataTemplate>
+                <DataTemplate x:Key="InsertTemplate">
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Documents"></Label>
+                        <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Height="200" MaxHeight="300"
+                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
+                            <i:Interaction.Behaviors>
+                                <utils:AvalonEditBehavior GiveMeTheText="{Binding Insert, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </i:Interaction.Behaviors>
+                        </avalonEdit:TextEditor>
+                        <Button Grid.Row="1" Command="{Binding ExecuteInsert}" Content="Insert"></Button>
+                    </Grid>
+                </DataTemplate>
             </ContentControl.Resources>
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
@@ -137,6 +158,9 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding CommandType}" Value="RunCommand">
                             <Setter Property="ContentTemplate" Value="{StaticResource CommandTemplate}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CommandType}" Value="Insert">
+                            <Setter Property="ContentTemplate" Value="{StaticResource InsertTemplate}" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

@@ -110,7 +110,6 @@
     <Compile Include="ViewModel\ResultItemViewModel.cs" />
     <Compile Include="ViewModel\TabViewModel.cs" />
     <Compile Include="ViewModel\FolderViewModel.cs" />
-    <Compile Include="ViewModel\InsertDocumentsViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MongoDbCollectionViewModel.cs" />

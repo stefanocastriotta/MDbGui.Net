@@ -137,7 +137,14 @@ namespace MongoDbGui.ViewModel
 
         private void InternalInsertDocuments()
         {
-            Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, "OpenInsertDocuments"));
+            TabViewModel tabVm = new TabViewModel();
+            tabVm.CommandType = Model.CommandType.Insert;
+            tabVm.Database = this.Database.Name;
+            tabVm.Server = this.Database.Server;
+            tabVm.Collection = this.Name;
+            tabVm.Name = this.Name;
+            tabVm.ExecuteOnOpen = true;
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 
         public override void Cleanup()

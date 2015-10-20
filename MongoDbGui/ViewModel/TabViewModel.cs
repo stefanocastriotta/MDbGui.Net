@@ -54,6 +54,8 @@ namespace MongoDbGui.ViewModel
             });
 
             ExecuteCommand = new RelayCommand(InnerExecuteCommand);
+
+            ExecuteInsert = new RelayCommand(InnerExecuteInsert);
         }
 
         public Dictionary<CommandType, string> CommandTypes { get; private set; }
@@ -459,5 +461,54 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+
+        private string _insert = "[" + Environment.NewLine + "\t" + Environment.NewLine + "]";
+
+        public string Insert
+        {
+            get
+            {
+                return _insert;
+            }
+            set
+            {
+                Set(ref _insert, value);
+            }
+        }
+
+        public RelayCommand ExecuteInsert { get; set; }
+
+        public async void InnerExecuteInsert()
+        {
+            Executing = true;
+            try
+            {
+                BsonArray array = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(Insert);
+                var result = await Server.MongoDbService.InsertAsync(Database, Collection, array.Select(i => i.AsBsonDocument));
+
+                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+                RawResult += Environment.NewLine;
+                RawResult += Environment.NewLine;
+                RawResult += "Inserted Count: " + result.InsertedCount;
+                RawResult += Environment.NewLine;
+                RawResult += Environment.NewLine;
+                if (result.ProcessedRequests != null && result.ProcessedRequests.Count > 0)
+                    RawResult += "Processed requests: " + Environment.NewLine + string.Join(Environment.NewLine, result.ProcessedRequests.Cast<MongoDB.Driver.InsertOneModel<BsonDocument>>().Select(s => s.Document.ToJson(new JsonWriterSettings { Indent = true })));
+
+                SelectedViewIndex = 1;
+                Root = null;
+            }
+            catch (Exception ex)
+            {
+                RawResult = ex.Message;
+                SelectedViewIndex = 1;
+                Root = null;
+            }
+            finally
+            {
+                Executing = false;
+                ShowPager = false;
+            }
+        }
     }
 }

@@ -38,15 +38,7 @@ namespace MongoDbGui.Views
 
         private void CollectionMessageHandler(NotificationMessage<MongoDbCollectionViewModel> message)
         {
-            if (message.Notification == "OpenInsertDocuments")
-            {
-                InsertDocumentsView wnd = new InsertDocumentsView();
-                var vm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<InsertDocumentsViewModel>();
-                vm.Collection = message.Content;
-                wnd.DataContext = vm;
-                wnd.ShowDialog();
-            }
-            else if (message.Notification == "ConfirmDropCollection")
+            if (message.Notification == "ConfirmDropCollection")
             {
                 var result = MessageBox.Show("Drop collection " + message.Content.Name + "?", "Drop confirm", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
