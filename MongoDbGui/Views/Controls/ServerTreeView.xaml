@@ -89,6 +89,8 @@
                                 <Separator/>
                                 <MenuItem Header="Run Command..." Command="{Binding Path=RunCommand}" />
                                 <MenuItem Header="Repair..." Command="{Binding Path=RunCommand}" CommandParameter="{Binding Path=DatabaseCommands[repairDatabase]}" />
+                                <Separator />
+                                <MenuItem Header="Refresh" Command="{Binding Path=Refresh}" />
                             </ContextMenu>
                         </TextBlock.ContextMenu>
                         <TextBlock.ToolTip>

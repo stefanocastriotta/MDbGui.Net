@@ -85,29 +85,7 @@ namespace MongoDbGui.ViewModel
                 try
                 {
                     var serverInfo = await _mongoDbService.ConnectAsync(message.Content);
-                    List<MongoDbDatabaseViewModel> systemDatabases = new List<MongoDbDatabaseViewModel>();
-                    List<MongoDbDatabaseViewModel> standardDatabases = new List<MongoDbDatabaseViewModel>();
-
-                    FolderViewModel systemDbFolder = new FolderViewModel("System", serverVm);
-                    foreach (var database in serverInfo.Databases)
-                    {
-                        var databaseVm = new MongoDbDatabaseViewModel(serverVm, database["name"].AsString);
-                        databaseVm.SizeOnDisk = database["sizeOnDisk"].AsDouble;
-                        if (databaseVm.Name == "local")
-                            systemDatabases.Add(databaseVm);
-                        else
-                            standardDatabases.Add(databaseVm);
-                    }
-
-                    foreach (var systemDb in systemDatabases.OrderBy(o => o.Name))
-                        systemDbFolder.Children.Add(systemDb);
-
-                    serverVm.Items.Add(systemDbFolder);
-
-                    foreach (var db in standardDatabases.OrderBy(o => o.Name))
-                        serverVm.Items.Add(db);
-
-                    serverVm.IsExpanded = true;
+                    serverVm.LoadDatabases(serverInfo.Databases);
                 }
                 catch (Exception ex)
                 {

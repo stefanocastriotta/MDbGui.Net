@@ -79,6 +79,8 @@ namespace MongoDbGui.ViewModel
                 Messenger.Default.Send(new NotificationMessage<MongoDbDatabaseViewModel>(this, "OpenCreateNewCollection"));
             });
 
+            Refresh = new RelayCommand(LoadCollections);
+
             DatabaseCommands = new Dictionary<string, DatabaseCommand>();
             DatabaseCommands.Add("repairDatabase", new DatabaseCommand() { Command = "{ repairDatabase: 1 }" });
 
@@ -130,6 +132,7 @@ namespace MongoDbGui.ViewModel
                     _collectionsLoaded = true;
                     _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
                 });
+                _collections.IsBusy = false;
 
                 await LoadCollectionsStats(systemCollections.Union(standardCollections));
             }
@@ -180,6 +183,8 @@ namespace MongoDbGui.ViewModel
         public RelayCommand<DatabaseCommand> RunCommand { get; set; }
 
         public RelayCommand<MongoDbDatabaseViewModel> OpenCreateNewCollection { get; set; }
+
+        public RelayCommand Refresh { get; set; }
 
         public async void InnerCreateDatabase()
         {

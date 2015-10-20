@@ -2,12 +2,14 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDbGui.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MongoDbGui.ViewModel
 {
@@ -45,7 +47,7 @@ namespace MongoDbGui.ViewModel
             CreateNewDatabase = new RelayCommand(InnerCreateNewDatabase);
             Disconnect = new RelayCommand(InnerDisconnect);
             RunCommand = new RelayCommand<DatabaseCommand>(InnerOpenRunCommand);
-            Refresh = new RelayCommand(LoadDatabases);
+            Refresh = new RelayCommand(GetDatabases);
             DatabaseCommands = new Dictionary<string, DatabaseCommand>();
             DatabaseCommands.Add("serverStatus", new DatabaseCommand() { Command = "{ serverStatus: 1 }", ExecuteImmediately = true });
             DatabaseCommands.Add("hostInfo", new DatabaseCommand() { Command = "{ hostInfo: 1 }", ExecuteImmediately = true });
@@ -96,12 +98,28 @@ namespace MongoDbGui.ViewModel
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 
-        public async void LoadDatabases()
+        private async void GetDatabases()
         {
             try
             {
                 this.IsBusy = true;
                 var databases = await MongoDbService.ListDatabasesAsync();
+                LoadDatabases(databases);
+            }
+            catch (Exception ex)
+            {
+                //TODO: log error
+            }
+            finally
+            {
+                this.IsBusy = false;
+            }
+        }
+
+        public void LoadDatabases(List<BsonDocument> databases)
+        {
+            try
+            {
                 this.Items.Clear();
                 List<MongoDbDatabaseViewModel> systemDatabases = new List<MongoDbDatabaseViewModel>();
                 List<MongoDbDatabaseViewModel> standardDatabases = new List<MongoDbDatabaseViewModel>();
@@ -130,10 +148,6 @@ namespace MongoDbGui.ViewModel
             catch (Exception ex)
             {
                 //TODO: log error
-            }
-            finally
-            {
-                IsBusy = false;
             }
         }
 
