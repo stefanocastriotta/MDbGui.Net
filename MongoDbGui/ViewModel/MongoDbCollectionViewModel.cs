@@ -143,7 +143,6 @@ namespace MongoDbGui.ViewModel
             tabVm.Server = this.Database.Server;
             tabVm.Collection = this.Name;
             tabVm.Name = this.Name;
-            tabVm.ExecuteOnOpen = true;
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 

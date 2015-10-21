@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Threading;
 
 namespace MongoDbGui.Model
 {
@@ -86,11 +87,11 @@ namespace MongoDbGui.Model
 
         #endregion
 
-        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip)
+        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.Find(BsonDocument.Parse(filter)).Sort(BsonDocument.Parse(sort)).Limit(limit).Skip(skip).ToListAsync();
+            var result = await mongoCollection.Find(BsonDocument.Parse(filter)).Sort(BsonDocument.Parse(sort)).Limit(limit).Skip(skip).ToListAsync(token);
             return result;
         }
 
@@ -110,5 +111,20 @@ namespace MongoDbGui.Model
             return result;
         }
 
+        public async Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            var result = await mongoCollection.UpdateManyAsync(BsonDocument.Parse(filter), document);
+            return result;
+        }
+
+        public async Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            var result = await mongoCollection.ReplaceOneAsync(BsonDocument.Parse(filter), document);
+            return result;
+        }
     }
 }

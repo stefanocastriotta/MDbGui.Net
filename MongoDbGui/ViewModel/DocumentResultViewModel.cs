@@ -19,6 +19,12 @@ namespace MongoDbGui.ViewModel
 
         private int Index = 0;
 
+        private MongoDbServerViewModel Server;
+
+        private string Database;
+
+        private string Collection;
+
         public override object Icon
         {
             get
@@ -69,7 +75,7 @@ namespace MongoDbGui.ViewModel
         /// <summary>
         /// Initializes a new instance of the ResultItemViewModel class.
         /// </summary>
-        public DocumentResultViewModel(BsonDocument result, int index)
+        public DocumentResultViewModel(BsonDocument result, MongoDbServerViewModel server, string database, string collection, int index)
         {
             LazyLoading = true;
             IsChecked = false;
@@ -79,6 +85,21 @@ namespace MongoDbGui.ViewModel
                 Id = result["_id"].ToString();
             Value = "(" + result.ElementCount + ") fields";
             Type = result.BsonType.ToString();
+            Server = server;
+            Database = database;
+            Collection = collection;
+            EditResult = new RelayCommand(() =>
+            {
+                TabViewModel tabVm = new TabViewModel();
+                tabVm.CommandType = MongoDbGui.Model.CommandType.Replace;
+                tabVm.Database = Database;
+                tabVm.Server = Server;
+                tabVm.Collection = Collection;
+                tabVm.Name = Collection;
+                tabVm.DocumentToReplaceId = Id;
+                tabVm.DocumentToReplace = Result.ToJson(new JsonWriterSettings() { Indent = true });
+                Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
+            });
             CopyToClipboard = new RelayCommand(() =>
             {
                 Clipboard.SetText(Result.ToJson(new JsonWriterSettings { Indent = true }));

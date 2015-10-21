@@ -8,6 +8,6 @@ namespace MongoDbGui.Model
 {
     public enum CommandType
     {
-        Find, Insert, Update, Remove, Aggregate, RunCommand
+        Find, Insert, Update, Replace, Remove, Aggregate, RunCommand
     }
 }

@@ -14,11 +14,14 @@ using GalaSoft.MvvmLight.Messaging;
 using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
+using System.Threading;
 
 namespace MongoDbGui.ViewModel
 {
     public class TabViewModel : ViewModelBase
     {
+        CancellationTokenSource cts = new CancellationTokenSource();
+
         public TabViewModel()
         {
             ExecutingTimer.Tick += ExecutingTimer_Tick;
@@ -28,6 +31,7 @@ namespace MongoDbGui.ViewModel
             CommandTypes.Add(Model.CommandType.Find, "Find / Count");
             CommandTypes.Add(Model.CommandType.Insert, "Insert");
             CommandTypes.Add(Model.CommandType.Update, "Update");
+            CommandTypes.Add(Model.CommandType.Replace, "Replace");
             CommandTypes.Add(Model.CommandType.Remove, "Remove");
             CommandTypes.Add(Model.CommandType.Aggregate, "Aggregate");
             CommandTypes.Add(Model.CommandType.RunCommand, "RunCommand");
@@ -40,9 +44,15 @@ namespace MongoDbGui.ViewModel
             
             ExecuteFind = new RelayCommand(() =>
             {
+                cts = new CancellationTokenSource();
                 Skip = 0;
                 InnerExecuteFind();
             });
+            ExecuteStop = new RelayCommand(() =>
+            {
+                cts.Cancel();
+            });
+
             DoPaging = new RelayCommand(InnerExecuteFind);
             ExecuteCount = new RelayCommand(InnerExecuteCount);
             ExecuteClose = new RelayCommand(InnerExecuteClose);
@@ -56,6 +66,8 @@ namespace MongoDbGui.ViewModel
             ExecuteCommand = new RelayCommand(InnerExecuteCommand);
 
             ExecuteInsert = new RelayCommand(InnerExecuteInsert);
+
+            ExecuteReplace = new RelayCommand(InnerExecuteInsert);
         }
 
         public Dictionary<CommandType, string> CommandTypes { get; private set; }
@@ -335,6 +347,33 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        private string _documentToReplaceId = string.Empty;
+
+        public string DocumentToReplaceId
+        {
+            get
+            {
+                return _documentToReplaceId;
+            }
+            set
+            {
+                Set(ref _documentToReplaceId, value);
+            }
+        }
+
+        private string _documentToReplace = string.Empty;
+
+        public string DocumentToReplace
+        {
+            get
+            {
+                return _documentToReplace;
+            }
+            set
+            {
+                Set(ref _documentToReplace, value);
+            }
+        }
 
         public RelayCommand ExecuteClose { get; set; }
 
@@ -343,6 +382,9 @@ namespace MongoDbGui.ViewModel
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(this, "CloseTab"));
         }
 
+        public RelayCommand ExecuteStop { get; set; }
+
+
         public RelayCommand ExecuteFind { get; set; }
 
         public async void InnerExecuteFind()
@@ -350,7 +392,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             try
             {
-                var results = await Server.MongoDbService.FindAsync(Database, Collection, Find, Sort, Size, Skip);
+                var results = await Server.MongoDbService.FindAsync(Database, Collection, Find, Sort, Size, Skip, cts.Token);
                 Executing = false;
                 ShowPager = true;
                 StringBuilder sb = new StringBuilder();
@@ -494,6 +536,36 @@ namespace MongoDbGui.ViewModel
                 RawResult += Environment.NewLine;
                 if (result.ProcessedRequests != null && result.ProcessedRequests.Count > 0)
                     RawResult += "Processed requests: " + Environment.NewLine + string.Join(Environment.NewLine, result.ProcessedRequests.Cast<MongoDB.Driver.InsertOneModel<BsonDocument>>().Select(s => s.Document.ToJson(new JsonWriterSettings { Indent = true })));
+
+                SelectedViewIndex = 1;
+                Root = null;
+            }
+            catch (Exception ex)
+            {
+                RawResult = ex.Message;
+                SelectedViewIndex = 1;
+                Root = null;
+            }
+            finally
+            {
+                Executing = false;
+                ShowPager = false;
+            }
+        }
+
+        public RelayCommand ExecuteReplace { get; set; }
+
+        public async void InnerExecuteReplace()
+        {
+            Executing = true;
+            try
+            {
+                var result = await Server.MongoDbService.ReplaceOneAsync(Database, Collection, DocumentToReplaceId, BsonDocument.Parse(DocumentToReplace));
+
+                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+                RawResult += Environment.NewLine;
+                RawResult += Environment.NewLine;
+                RawResult += "ModifiedCount Count: " + result.ModifiedCount;
 
                 SelectedViewIndex = 1;
                 Root = null;

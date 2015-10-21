@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Threading;
 
 namespace MongoDbGui.Design
 {
@@ -53,7 +54,7 @@ namespace MongoDbGui.Design
             return new BsonDocument();
         }
 
-        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip)
+        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip, CancellationToken token)
         {
             // Use this to create design time data
 
@@ -68,6 +69,11 @@ namespace MongoDbGui.Design
         }
 
         public async Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents)
+        {
+            return null;
+        }
+
+        public async Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document)
         {
             return null;
         }

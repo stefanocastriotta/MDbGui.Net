@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MongoDbGui.Model
@@ -18,8 +19,9 @@ namespace MongoDbGui.Model
         Task RenameCollectionAsync(string databaseName, string oldName, string newName);
         Task DropCollectionAsync(string databaseName, string collection);
         Task<List<BsonDocument>> GetCollectionsAsync(string databaseName);
-        Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip);
+        Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip, CancellationToken token);
         Task<long> CountAsync(string databaseName, string collection, string filter);
         Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents);
+        Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document);
     }
 }
