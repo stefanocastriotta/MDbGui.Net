@@ -62,8 +62,8 @@ namespace MongoDbGui.Model
             {
                 var server = client.GetServer();
                 var database = server.GetDatabase("local");
-                var result = database.GetCurrentOp();
-                return result;
+                var currentOp = database.Eval("function() { return db.currentOP(); }");
+                return currentOp.AsBsonDocument;
             });
         }
 
