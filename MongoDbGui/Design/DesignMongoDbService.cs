@@ -23,6 +23,11 @@ namespace MongoDbGui.Design
             return new List<BsonDocument>();
         }
 
+        public async Task<BsonDocument> GetCurrentOp()
+        {
+            return new BsonDocument();
+        }
+
         public async Task<IMongoDatabase> CreateNewDatabaseAsync(string databaseName)
         {
             return null;

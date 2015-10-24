@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
+using MongoDbGui.Utils;
 
 namespace MongoDbGui.Model
 {
@@ -55,6 +56,17 @@ namespace MongoDbGui.Model
             return result;
         }
 
+        public async Task<BsonDocument> GetCurrentOp()
+        {
+            return await Task.Run(() =>
+            {
+                var server = client.GetServer();
+                var database = server.GetDatabase("local");
+                var result = database.GetCurrentOp();
+                return result;
+            });
+        }
+
         #endregion
 
         #region Database Admin
@@ -89,10 +101,44 @@ namespace MongoDbGui.Model
 
         public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip, CancellationToken token)
         {
+
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.Find(BsonDocument.Parse(filter)).Sort(BsonDocument.Parse(sort)).Limit(limit).Skip(skip).ToListAsync(token);
-            return result;
+            Guid operationComment = Guid.NewGuid();
+            var task = mongoCollection.Find(BsonDocument.Parse(filter), new FindOptions() { Comment = operationComment.ToString() }).Sort(BsonDocument.Parse(sort)).Limit(limit).Skip(skip).ToListAsync(token);
+            try
+            {
+                await task.WithCancellation(token);
+                return task.Result;
+            }
+            catch (OperationCanceledException)
+            {
+                if (!task.IsCompleted)
+                {
+                    task.ContinueWith(t =>
+                    {
+                        if (t.Exception != null)
+                        {
+
+                        }
+                    });
+                    Task.Run(async () =>
+                    {
+                        var server = client.GetServer();
+                        var database = server.GetDatabase(databaseName);
+                        var currentOp = database.Eval("function() { return db.currentOP(); }");
+                        if (currentOp != null)
+                        {
+                            var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationComment.ToString());
+                            if (operation != null)
+                            {
+                                database.Eval(new BsonJavaScript(string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32)));
+                            }
+                        }
+                    });
+                }
+                return null;
+            }
         }
 
         public async Task<long> CountAsync(string databaseName, string collection, string filter)
