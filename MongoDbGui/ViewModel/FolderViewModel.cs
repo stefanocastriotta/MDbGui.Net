@@ -34,20 +34,6 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private int? _count;
-
-        public int? Count
-        {
-            get
-            {
-                return _count;
-            }
-            set
-            {
-                Set(ref _count, value);
-            }
-        }
-
         public FolderViewModel(string name, BaseTreeviewViewModel parent)
         {
             this._name = name;

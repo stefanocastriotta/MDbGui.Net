@@ -115,6 +115,28 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        protected long? _itemsCount;
+
+        public long? ItemsCount
+        {
+            get { return _itemsCount; }
+            set
+            {
+                Set(ref _itemsCount, value);
+                ItemsCountString =value.HasValue ? "Items: " + value : "";
+            }
+        }
+
+        protected string _itemsCountString;
+
+        public string ItemsCountString
+        {
+            get { return _itemsCountString; }
+            set
+            {
+                Set(ref _itemsCountString, value);
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the BaseTreeviewViewModel class.

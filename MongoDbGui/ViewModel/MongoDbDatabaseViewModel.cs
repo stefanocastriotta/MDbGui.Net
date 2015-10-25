@@ -133,7 +133,7 @@ namespace MongoDbGui.ViewModel
                         _collections.Children.Add(collection);
 
                     _collectionsLoaded = true;
-                    _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
+                    _collections.ItemsCount = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
                 });
                 _collections.IsBusy = false;
 
@@ -177,6 +177,16 @@ namespace MongoDbGui.ViewModel
                     break;
                 case MongoDB.Bson.BsonType.Double:
                     collection.SizeOnDisk = collection.Stats["storageSize"].AsDouble;
+                    break;
+            }
+
+            switch (collection.Stats["count"].BsonType)
+            {
+                case MongoDB.Bson.BsonType.Int32:
+                    collection.ItemsCount = collection.Stats["count"].AsInt32;
+                    break;
+                case MongoDB.Bson.BsonType.Int64:
+                    collection.ItemsCount = collection.Stats["count"].AsInt64;
                     break;
             }
         }
@@ -244,7 +254,7 @@ namespace MongoDbGui.ViewModel
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
                         _collections.Children.Add(newCollection);
-                        _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
+                        _collections.ItemsCount = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
                     });
                     await LoadCollectionStats(newCollection);
                 }
@@ -269,7 +279,7 @@ namespace MongoDbGui.ViewModel
                 {
                     await Server.MongoDbService.DropCollectionAsync(Name, message.Content.Name);
                     _collections.Children.Remove(message.Content);
-                    _collections.Count = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
+                    _collections.ItemsCount = _collections.Children.OfType<MongoDbCollectionViewModel>().Count();
                     message.Content.Cleanup();
                 }
                 catch (Exception ex)

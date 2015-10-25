@@ -69,7 +69,7 @@
                     </Grid>
                     <TextBlock Margin="5,0,0,0" Text="{Binding Name}">
                     </TextBlock>
-                    <TextBlock Text="{Binding Path=Count, StringFormat=({0:#})}" Visibility="{Binding Count, Converter={StaticResource NullValueToVisibilityConverter}}">
+                    <TextBlock Text="{Binding Path=ItemsCount, StringFormat=({0:#})}" Visibility="{Binding ItemsCount, Converter={StaticResource NullValueToVisibilityConverter}}">
                     </TextBlock>
                 </StackPanel>
             </HierarchicalDataTemplate>
@@ -132,6 +132,7 @@
                             <StackPanel>
                                 <TextBlock Text="{Binding Name}"></TextBlock>
                                 <TextBlock Text="{Binding SizeOnDiskString}"></TextBlock>
+                                <TextBlock Text="{Binding ItemsCountString}"></TextBlock>
                             </StackPanel>
                         </TextBlock.ToolTip>
                     </TextBlock>
