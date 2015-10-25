@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
+using MongoDbGui.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace MongoDbGui.Views.Controls
             txtEditor.Options.EnableHyperlinks = false;
             txtEditor.Options.EnableEmailHyperlinks = false;
             Messenger.Default.Register<NotificationMessage>(this, (message) => NotificationMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
         }
 
         private void NotificationMessageHandler(NotificationMessage message)
@@ -37,6 +39,19 @@ namespace MongoDbGui.Views.Controls
                 {
                     if (double.IsNaN(col.Width)) col.Width = col.ActualWidth;
                     col.Width = double.NaN;
+                }
+            }
+        }
+
+        private void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
+        {
+            if (message.Notification == "ConfirmDeleteResult")
+            {
+                var result = MessageBox.Show("Delete result with id: " + message.Content.Id + "?", "Delete confirm", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    TabViewModel tabVm = ((ResultsViewModel)message.Content.Parent).Owner;
+                    Messenger.Default.Send(new NotificationMessage<DocumentResultViewModel>(this, tabVm, message.Content, "DeleteResult"));
                 }
             }
         }

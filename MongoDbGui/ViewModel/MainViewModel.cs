@@ -65,7 +65,7 @@ namespace MongoDbGui.ViewModel
             Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<TabViewModel>>(this, (message) => TabMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => MongoDbServerMessageHandler(message));
-            Messenger.Default.Register<NotificationMessage<InsertDocumentsModel>>(this, (message) => InsertDocumentsMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
         }
 
         private async void LoggingInMessageHandler(NotificationMessage<ConnectionInfo> message)
@@ -125,6 +125,23 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        private void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
+        {
+            if (message.Notification == "EditResult")
+            {
+                TabViewModel tabVm = new TabViewModel();
+                tabVm.CommandType = MongoDbGui.Model.CommandType.Replace;
+                tabVm.Database = message.Content.Database;
+                tabVm.Server = message.Content.Server;
+                tabVm.Collection = message.Content.Collection;
+                tabVm.Name = message.Content.Collection;
+                tabVm.ReplaceFilter = "{ _id: ObjectId(\"" + message.Content.Id +  "\") }";
+                tabVm.Replacement = message.Content.Result.ToJson(new MongoDB.Bson.IO.JsonWriterSettings() { Indent = true });
+                Tabs.Insert(Tabs.IndexOf(SelectedTab) + 1, tabVm);
+                SelectedTab = tabVm;
+            }
+        }
+
         private void MongoDbServerMessageHandler(NotificationMessage<MongoDbServerViewModel> message)
         {
             if (message.Notification == "Disconnect")
@@ -133,17 +150,6 @@ namespace MongoDbGui.ViewModel
                 {
                     ActiveConnections.Remove(message.Content);
                 });
-            }
-        }
-
-        private async void InsertDocumentsMessageHandler(NotificationMessage<InsertDocumentsModel> message)
-        {
-            if (message.Notification == "InsertDocuments")
-            {
-                message.Content.Collection.IsBusy = true;
-                BsonArray array = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(message.Content.Documents);
-                await message.Content.Collection.Database.Server.MongoDbService.InsertAsync(message.Content.Collection.Database.Name, message.Content.Collection.Name, array.Select(i => i.AsBsonDocument));
-                message.Content.Collection.IsBusy = false;
             }
         }
 

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using System;
+using System.Threading;
 
 namespace MongoDbGui.ViewModel
 {
@@ -21,6 +22,8 @@ namespace MongoDbGui.ViewModel
     public class MongoDbDatabaseViewModel : BaseTreeviewViewModel
     {
         public Dictionary<string, DatabaseCommand> DatabaseCommands { get; set; }
+
+        CancellationTokenSource cts = new CancellationTokenSource();
 
         private MongoDbServerViewModel _server;
         public MongoDbServerViewModel Server
@@ -163,7 +166,7 @@ namespace MongoDbGui.ViewModel
 
         private async Task LoadCollectionStats(MongoDbCollectionViewModel collection)
         {
-            collection.Stats = await Server.MongoDbService.ExecuteRawCommandAsync(Name, "{ collStats: \"" + collection.Name + "\", verbose: true }");
+            collection.Stats = await Server.MongoDbService.ExecuteRawCommandAsync(Name, "{ collStats: \"" + collection.Name + "\", verbose: true }", cts.Token);
             switch (collection.Stats["storageSize"].BsonType)
             {
                 case MongoDB.Bson.BsonType.Int32:

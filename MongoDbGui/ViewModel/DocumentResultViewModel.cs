@@ -15,16 +15,6 @@ namespace MongoDbGui.ViewModel
 {
     public class DocumentResultViewModel : SharpTreeNode
     {
-        private BsonDocument Result { get; set; }
-
-        private int Index = 0;
-
-        private MongoDbServerViewModel Server;
-
-        private string Database;
-
-        private string Collection;
-
         public override object Icon
         {
             get
@@ -60,11 +50,21 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        public MongoDbServerViewModel Server { get; private set; }
+
+        public string Database { get; private set; }
+
+        public string Collection { get; private set; }
+
+        public BsonDocument Result { get; private set; }
+
         public string Id { get; set; }
 
         public string Value { get; set; }
 
         public string Type { get; set; }
+
+        public int Index { get; private set; }
 
         public RelayCommand EditResult { get; set; }
 
@@ -90,19 +90,15 @@ namespace MongoDbGui.ViewModel
             Collection = collection;
             EditResult = new RelayCommand(() =>
             {
-                TabViewModel tabVm = new TabViewModel();
-                tabVm.CommandType = MongoDbGui.Model.CommandType.Replace;
-                tabVm.Database = Database;
-                tabVm.Server = Server;
-                tabVm.Collection = Collection;
-                tabVm.Name = Collection;
-                tabVm.DocumentToReplaceId = Id;
-                tabVm.DocumentToReplace = Result.ToJson(new JsonWriterSettings() { Indent = true });
-                Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
+                Messenger.Default.Send(new NotificationMessage<DocumentResultViewModel>(this, "EditResult"));
             });
             CopyToClipboard = new RelayCommand(() =>
             {
                 Clipboard.SetText(Result.ToJson(new JsonWriterSettings { Indent = true }));
+            });
+            ConfirmDeleteResult = new RelayCommand(() =>
+            {
+                Messenger.Default.Send(new NotificationMessage<DocumentResultViewModel>(this, "ConfirmDeleteResult"));
             });
         }
 

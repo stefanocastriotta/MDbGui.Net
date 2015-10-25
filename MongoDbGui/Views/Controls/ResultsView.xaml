@@ -125,7 +125,10 @@
                                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Command, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             </i:Interaction.Behaviors>
                         </avalonEdit:TextEditor>
-                        <Button Grid.Row="1" Command="{Binding ExecuteCommand}" Content="Execute"></Button>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <Button Command="{Binding ExecuteCommand}" Content="Execute"></Button>
+                            <Button Command="{Binding ExecuteEval}" Content="Eval"></Button>
+                        </StackPanel>
                     </Grid>
                 </DataTemplate>
                 <DataTemplate x:Key="InsertTemplate">
@@ -160,12 +163,12 @@
                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <Label Content="Replacement"></Label>
+                        <Label Content="Filter"></Label>
                         <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                         HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="50"
                         Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
                             <i:Interaction.Behaviors>
-                                <utils:AvalonEditBehavior GiveMeTheText="{Binding DocumentToReplaceId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <utils:AvalonEditBehavior GiveMeTheText="{Binding ReplaceFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             </i:Interaction.Behaviors>
                         </avalonEdit:TextEditor>
                         <Label Grid.Row="1" Content="Replacement"></Label>
@@ -173,7 +176,7 @@
                         HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Height="200" MaxHeight="300"
                         Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
                             <i:Interaction.Behaviors>
-                                <utils:AvalonEditBehavior GiveMeTheText="{Binding DocumentToReplace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <utils:AvalonEditBehavior GiveMeTheText="{Binding Replacement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             </i:Interaction.Behaviors>
                         </avalonEdit:TextEditor>
                         <Button Grid.Row="2" Command="{Binding ExecuteReplace}" Content="Replace"></Button>

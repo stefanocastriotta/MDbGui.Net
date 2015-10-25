@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
-using MongoDbGui.Utils;
 
 namespace MongoDbGui.Model
 {
@@ -49,21 +48,22 @@ namespace MongoDbGui.Model
             
         }
 
-        public async Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command)
+        public async Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);
-            var result = await db.RunCommandAsync(new JsonCommand<BsonDocument>(command));
+            Guid operationComment = Guid.NewGuid();
+            var result = await db.RunCommandAsync(new JsonCommand<BsonDocument>(command), null, token);
             return result;
         }
 
-        public async Task<BsonDocument> GetCurrentOp()
+        public async Task<BsonValue> Eval(string databaseName, string function)
         {
             return await Task.Run(() =>
             {
                 var server = client.GetServer();
-                var database = server.GetDatabase("local");
-                var currentOp = database.Eval("function() { return db.currentOP(); }");
-                return currentOp.AsBsonDocument;
+                var database = server.GetDatabase(databaseName);
+                var result = database.Eval(function);
+                return result;
             });
         }
 
@@ -99,77 +99,52 @@ namespace MongoDbGui.Model
 
         #endregion
 
-        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip, CancellationToken token)
+        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip, Guid operationComment, CancellationToken token)
         {
 
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            Guid operationComment = Guid.NewGuid();
-            var task = mongoCollection.Find(BsonDocument.Parse(filter), new FindOptions() { Comment = operationComment.ToString() }).Sort(BsonDocument.Parse(sort)).Limit(limit).Skip(skip).ToListAsync(token);
-            try
-            {
-                await task.WithCancellation(token);
-                return task.Result;
-            }
-            catch (OperationCanceledException)
-            {
-                if (!task.IsCompleted)
-                {
-                    task.ContinueWith(t =>
-                    {
-                        if (t.Exception != null)
-                        {
-
-                        }
-                    });
-                    Task.Run(async () =>
-                    {
-                        var server = client.GetServer();
-                        var database = server.GetDatabase(databaseName);
-                        var currentOp = database.Eval("function() { return db.currentOP(); }");
-                        if (currentOp != null)
-                        {
-                            var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationComment.ToString());
-                            if (operation != null)
-                            {
-                                database.Eval(new BsonJavaScript(string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32)));
-                            }
-                        }
-                    });
-                }
-                return null;
-            }
-        }
-
-        public async Task<long> CountAsync(string databaseName, string collection, string filter)
-        {
-            var db = client.GetDatabase(databaseName);
-            var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.CountAsync(BsonDocument.Parse(filter));
+            var result = await mongoCollection.Find(BsonDocument.Parse(filter), new FindOptions() { Comment = operationComment.ToString() }).Sort(BsonDocument.Parse(sort)).Limit(limit).Skip(skip).ToListAsync(token);
             return result;
         }
 
-        public async Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents)
+        public async Task<long> CountAsync(string databaseName, string collection, string filter, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.BulkWriteAsync(documents.Select(d => new InsertOneModel<BsonDocument>(d)));
+            var result = await mongoCollection.CountAsync(BsonDocument.Parse(filter), null, token);
             return result;
         }
 
-        public async Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document)
+        public async Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.UpdateManyAsync(BsonDocument.Parse(filter), document);
+            var result = await mongoCollection.BulkWriteAsync(documents.Select(d => new InsertOneModel<BsonDocument>(d)), null, token);
             return result;
         }
 
-        public async Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document)
+        public async Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.ReplaceOneAsync(BsonDocument.Parse(filter), document);
+            var result = await mongoCollection.UpdateManyAsync(BsonDocument.Parse(filter), document, null, token);
+            return result;
+        }
+
+        public async Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            var result = await mongoCollection.ReplaceOneAsync(BsonDocument.Parse(filter), document, null, token);
+            return result;
+        }
+
+        public async Task<DeleteResult> DeleteOneAsync(string databaseName, string collection, string filter, CancellationToken token)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            var result = await mongoCollection.DeleteOneAsync(BsonDocument.Parse(filter), token);
             return result;
         }
     }

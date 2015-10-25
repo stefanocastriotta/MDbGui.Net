@@ -65,9 +65,13 @@ namespace MongoDbGui.ViewModel
 
             ExecuteCommand = new RelayCommand(InnerExecuteCommand);
 
+            ExecuteEval = new RelayCommand(InnerExecuteEval);
+
             ExecuteInsert = new RelayCommand(InnerExecuteInsert);
 
-            ExecuteReplace = new RelayCommand(InnerExecuteInsert);
+            ExecuteReplace = new RelayCommand(InnerExecuteReplace);
+
+            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
         }
 
         public Dictionary<CommandType, string> CommandTypes { get; private set; }
@@ -347,31 +351,31 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private string _documentToReplaceId = string.Empty;
+        private string _replaceFilter = string.Empty;
 
-        public string DocumentToReplaceId
+        public string ReplaceFilter
         {
             get
             {
-                return _documentToReplaceId;
+                return _replaceFilter;
             }
             set
             {
-                Set(ref _documentToReplaceId, value);
+                Set(ref _replaceFilter, value);
             }
         }
 
-        private string _documentToReplace = string.Empty;
+        private string _replacement = string.Empty;
 
-        public string DocumentToReplace
+        public string Replacement
         {
             get
             {
-                return _documentToReplace;
+                return _replacement;
             }
             set
             {
-                Set(ref _documentToReplace, value);
+                Set(ref _replacement, value);
             }
         }
 
@@ -390,9 +394,11 @@ namespace MongoDbGui.ViewModel
         public async void InnerExecuteFind()
         {
             Executing = true;
+            Guid operationID = Guid.NewGuid();
+            var task = Server.MongoDbService.FindAsync(Database, Collection, Find, Sort, Size, Skip, operationID, cts.Token);
             try
             {
-                var results = await Server.MongoDbService.FindAsync(Database, Collection, Find, Sort, Size, Skip, cts.Token);
+                var results = await task.WithCancellation(cts.Token);
                 Executing = false;
                 ShowPager = true;
                 StringBuilder sb = new StringBuilder();
@@ -418,6 +424,31 @@ namespace MongoDbGui.ViewModel
 
                 Root = new ResultsViewModel(results, this);
             }
+            catch (OperationCanceledException)
+            {
+                if (!task.IsCompleted)
+                {
+                    task.ContinueWith(t =>
+                    {
+                        if (t.Exception != null)
+                        {
+
+                        }
+                    });
+                    var currentOpTask = Server.MongoDbService.Eval(Database, "function() { return db.currentOP(); }");
+                    currentOpTask.Wait();
+                    var currentOp = currentOpTask.Result;
+                    if (currentOp != null)
+                    {
+                        var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationID.ToString());
+                        if (operation != null)
+                        {
+                            var killOpTask = Server.MongoDbService.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
+                            killOpTask.Wait();
+                        }
+                    }
+                }
+            }
             catch (Exception ex)
             {
                 //TODO: log error
@@ -435,7 +466,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             try
             {
-                var result = await Server.MongoDbService.CountAsync(Database, Collection, Find);
+                var result = await Server.MongoDbService.CountAsync(Database, Collection, Find, cts.Token);
                 Executing = false;
                 ShowPager = false;
 
@@ -483,7 +514,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             try
             {
-                var result = await Server.MongoDbService.ExecuteRawCommandAsync(Database, Command);
+                var result = await Server.MongoDbService.ExecuteRawCommandAsync(Database, Command, cts.Token);
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
 
@@ -498,6 +529,31 @@ namespace MongoDbGui.ViewModel
             }
             finally
             {
+                Executing = false;
+                ShowPager = false;
+            }
+        }
+
+        public RelayCommand ExecuteEval { get; set; }
+
+        public async void InnerExecuteEval()
+        {
+            Executing = true;
+            try
+            {
+                var result = await Server.MongoDbService.Eval(Database, Command);
+
+                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+
+            }
+            catch (Exception ex)
+            {
+                RawResult = ex.Message;
+            }
+            finally
+            {
+                SelectedViewIndex = 1;
+                Root = null;
                 Executing = false;
                 ShowPager = false;
             }
@@ -526,7 +582,7 @@ namespace MongoDbGui.ViewModel
             try
             {
                 BsonArray array = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(Insert);
-                var result = await Server.MongoDbService.InsertAsync(Database, Collection, array.Select(i => i.AsBsonDocument));
+                var result = await Server.MongoDbService.InsertAsync(Database, Collection, array.Select(i => i.AsBsonDocument), cts.Token);
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
                 RawResult += Environment.NewLine;
@@ -560,7 +616,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             try
             {
-                var result = await Server.MongoDbService.ReplaceOneAsync(Database, Collection, DocumentToReplaceId, BsonDocument.Parse(DocumentToReplace));
+                var result = await Server.MongoDbService.ReplaceOneAsync(Database, Collection, ReplaceFilter, BsonDocument.Parse(Replacement), cts.Token);
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
                 RawResult += Environment.NewLine;
@@ -582,5 +638,47 @@ namespace MongoDbGui.ViewModel
                 ShowPager = false;
             }
         }
+
+        private async void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
+        {
+            if (message.Notification == "DeleteResult")
+            {
+                Executing = true;
+                try
+                {
+                    var result = await Server.MongoDbService.DeleteOneAsync(Database, Collection, "{_id: ObjectId('" + message.Content.Id + "')}", cts.Token);
+                    if (result.DeletedCount == 1 && Root != null)
+                    {
+                        Root.Children.Remove(message.Content);
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("[");
+                        foreach (var item in Root.Children)
+                        {
+                            sb.AppendLine();
+                            sb.Append("/* # ");
+                            sb.Append(((DocumentResultViewModel)item).Index);
+                            sb.AppendLine(" */");
+                            sb.AppendLine(((DocumentResultViewModel)item).Result.ToJson(new JsonWriterSettings { Indent = true }));
+                            sb.Append(",");
+                        }
+                        if (Root.Children.Count > 0)
+                            sb.Length -= 1;
+                        sb.AppendLine();
+                        sb.Append("]");
+                        RawResult = sb.ToString();
+                    }
+                    else
+                        RawResult = "[" + Environment.NewLine + "\t" + Environment.NewLine + "]";
+                }
+                catch (Exception ex)
+                {
+                }
+                finally
+                {
+                    Executing = false;
+                }
+            }
+        }
+
     }
 }
