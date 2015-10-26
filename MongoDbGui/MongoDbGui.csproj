@@ -96,6 +96,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Design\DesignMongoDbService.cs" />
+    <Compile Include="Model\ActiveConnection.cs" />
     <Compile Include="Model\CommandType.cs" />
     <Compile Include="Model\ConnectionInfo.cs" />
     <Compile Include="Model\DatabaseCommand.cs" />

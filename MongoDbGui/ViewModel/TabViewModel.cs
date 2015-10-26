@@ -29,6 +29,8 @@ namespace MongoDbGui.ViewModel
             ExecutingTimer.Tick += ExecutingTimer_Tick;
             ExecutingTimer.Interval = TimeSpan.FromMilliseconds(100);
 
+            Connections = new List<ActiveConnection>();
+
             CommandTypes = new Dictionary<CommandType, string>();
             CommandTypes.Add(Model.CommandType.Find, "Find / Count");
             CommandTypes.Add(Model.CommandType.Insert, "Insert");
@@ -238,13 +240,24 @@ namespace MongoDbGui.ViewModel
         }
 
 
-        private MongoDbServerViewModel _server;
-        public MongoDbServerViewModel Server
+        private List<ActiveConnection> _connections;
+        public List<ActiveConnection> Connections
         {
-            get { return _server; }
+            get { return _connections; }
             set
             {
-                Set(ref _server, value);
+                Set(ref _connections, value);
+            }
+        }
+
+
+        private IMongoDbService _service;
+        public IMongoDbService Service
+        {
+            get { return _service; }
+            set
+            {
+                Set(ref _service, value);
             }
         }
 
@@ -435,7 +448,7 @@ namespace MongoDbGui.ViewModel
         {
             Executing = true;
             Guid operationID = Guid.NewGuid();
-            var task = Server.MongoDbService.FindAsync(Database, Collection, Find, Sort, Size, Skip, operationID, cts.Token);
+            var task = Service.FindAsync(Database, Collection, Find, Sort, Size, Skip, operationID, cts.Token);
             try
             {
                 var results = await task.WithCancellation(cts.Token);
@@ -475,7 +488,7 @@ namespace MongoDbGui.ViewModel
 
                         }
                     });
-                    var currentOpTask = Server.MongoDbService.Eval(Database, "function() { return db.currentOP(); }");
+                    var currentOpTask = Service.Eval(Database, "function() { return db.currentOP(); }");
                     currentOpTask.Wait();
                     var currentOp = currentOpTask.Result;
                     if (currentOp != null)
@@ -483,7 +496,7 @@ namespace MongoDbGui.ViewModel
                         var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationID.ToString());
                         if (operation != null)
                         {
-                            var killOpTask = Server.MongoDbService.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
+                            var killOpTask = Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
                             killOpTask.Wait();
                         }
                     }
@@ -506,7 +519,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             try
             {
-                var result = await Server.MongoDbService.CountAsync(Database, Collection, Find, cts.Token);
+                var result = await Service.CountAsync(Database, Collection, Find, cts.Token);
                 Executing = false;
                 ShowPager = false;
 
@@ -554,7 +567,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             try
             {
-                var result = await Server.MongoDbService.ExecuteRawCommandAsync(Database, Command, cts.Token);
+                var result = await Service.ExecuteRawCommandAsync(Database, Command, cts.Token);
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
 
@@ -581,7 +594,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             try
             {
-                var result = await Server.MongoDbService.Eval(Database, Command);
+                var result = await Service.Eval(Database, Command);
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
 
@@ -622,7 +635,7 @@ namespace MongoDbGui.ViewModel
             try
             {
                 BsonArray array = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(Insert);
-                var result = await Server.MongoDbService.InsertAsync(Database, Collection, array.Select(i => i.AsBsonDocument), cts.Token);
+                var result = await Service.InsertAsync(Database, Collection, array.Select(i => i.AsBsonDocument), cts.Token);
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
                 RawResult += Environment.NewLine;
@@ -656,7 +669,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             try
             {
-                var result = await Server.MongoDbService.UpdateAsync(Database, Collection, UpdateFilter, BsonDocument.Parse(UpdateDocument), UpdateMulti, cts.Token);
+                var result = await Service.UpdateAsync(Database, Collection, UpdateFilter, BsonDocument.Parse(UpdateDocument), UpdateMulti, cts.Token);
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
                 RawResult += Environment.NewLine;
@@ -686,7 +699,7 @@ namespace MongoDbGui.ViewModel
             Executing = true;
             try
             {
-                var result = await Server.MongoDbService.ReplaceOneAsync(Database, Collection, ReplaceFilter, BsonDocument.Parse(Replacement), cts.Token);
+                var result = await Service.ReplaceOneAsync(Database, Collection, ReplaceFilter, BsonDocument.Parse(Replacement), cts.Token);
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
                 RawResult += Environment.NewLine;
@@ -716,7 +729,7 @@ namespace MongoDbGui.ViewModel
                 Executing = true;
                 try
                 {
-                    var result = await Server.MongoDbService.DeleteOneAsync(Database, Collection, "{_id: ObjectId('" + message.Content.Id + "')}", cts.Token);
+                    var result = await Service.DeleteOneAsync(Database, Collection, "{_id: ObjectId('" + message.Content.Id + "')}", cts.Token);
                     if (result.DeletedCount == 1 && Root != null)
                     {
                         Root.Children.Remove(message.Content);

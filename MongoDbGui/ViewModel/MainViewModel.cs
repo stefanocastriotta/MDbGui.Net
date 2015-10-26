@@ -103,6 +103,7 @@ namespace MongoDbGui.ViewModel
                 case "OpenTab":
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
+                    message.Content.Connections.AddRange(GetActiveConnections());
                     Tabs.Add(message.Content);
                     SelectedTab = message.Content;
                     if (message.Content.ExecuteOnOpen)
@@ -133,7 +134,8 @@ namespace MongoDbGui.ViewModel
                 TabViewModel tabVm = new TabViewModel();
                 tabVm.CommandType = MongoDbGui.Model.CommandType.Replace;
                 tabVm.Database = message.Content.Database;
-                tabVm.Server = message.Content.Server;
+                tabVm.Connections.AddRange(GetActiveConnections());
+                tabVm.Service = message.Content.Service;
                 tabVm.Collection = message.Content.Collection;
                 tabVm.Name = message.Content.Collection;
                 tabVm.ReplaceFilter = "{ _id: ObjectId(\"" + message.Content.Id +  "\") }";
@@ -152,6 +154,14 @@ namespace MongoDbGui.ViewModel
                     ActiveConnections.Remove(message.Content);
                     message.Content.Cleanup();
                 });
+            }
+        }
+
+        private IEnumerable<ActiveConnection> GetActiveConnections()
+        {
+            foreach (var connection in ActiveConnections)
+            {
+                yield return new ActiveConnection() { Name = connection.Name, Service = connection.MongoDbService };
             }
         }
 

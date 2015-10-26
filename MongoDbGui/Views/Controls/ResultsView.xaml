@@ -59,7 +59,7 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <fa:ImageAwesome Icon="Server" Width="16" Height="16"></fa:ImageAwesome>
-            <ComboBox Grid.Column="1" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Main.ActiveConnections, Source={StaticResource Locator}}" SelectedItem="{Binding Server}" DisplayMemberPath="Name"></ComboBox>
+            <ComboBox Grid.Column="1" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Connections}" SelectedValue="{Binding Service}" SelectedValuePath="Service" DisplayMemberPath="Name"></ComboBox>
             <fa:ImageAwesome Grid.Column="2" Icon="Database" Width="16" Height="16"></fa:ImageAwesome>
             <TextBox Grid.Column="3" Text="{Binding Database}"></TextBox>
             <fa:ImageAwesome Grid.Column="4" Icon="Table" Width="16" Height="16"></fa:ImageAwesome>

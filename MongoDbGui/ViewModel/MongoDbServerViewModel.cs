@@ -86,7 +86,7 @@ namespace MongoDbGui.ViewModel
         {
             TabViewModel tabVm = new TabViewModel();
             tabVm.CommandType = CommandType.RunCommand;
-            tabVm.Server = this;
+            tabVm.Service = this.MongoDbService;
             tabVm.Database = "admin";
             tabVm.Name = this.Name;
             if (param == null)

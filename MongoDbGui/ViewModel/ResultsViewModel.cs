@@ -36,7 +36,7 @@ namespace MongoDbGui.ViewModel
             try
             {
                 foreach (var result in _documents)
-                    Children.Add(new DocumentResultViewModel(result, Owner.Server, Owner.Database, Owner.Collection, _documents.IndexOf(result) + 1));
+                    Children.Add(new DocumentResultViewModel(result, Owner.Service, Owner.Database, Owner.Collection, _documents.IndexOf(result) + 1));
             }
             catch
             {

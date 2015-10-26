@@ -104,7 +104,7 @@ namespace MongoDbGui.ViewModel
             TabViewModel tabVm = new TabViewModel();
             tabVm.CommandType = Model.CommandType.Find;
             tabVm.Database = this.Database.Name;
-            tabVm.Server = this.Database.Server;
+            tabVm.Service = this.Database.Server.MongoDbService;
             tabVm.Collection = this.Name;
             tabVm.Name = this.Name;
             tabVm.ExecuteOnOpen = true;
@@ -140,7 +140,7 @@ namespace MongoDbGui.ViewModel
             TabViewModel tabVm = new TabViewModel();
             tabVm.CommandType = Model.CommandType.Insert;
             tabVm.Database = this.Database.Name;
-            tabVm.Server = this.Database.Server;
+            tabVm.Service = this.Database.Server.MongoDbService;
             tabVm.Collection = this.Name;
             tabVm.Name = this.Name;
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));

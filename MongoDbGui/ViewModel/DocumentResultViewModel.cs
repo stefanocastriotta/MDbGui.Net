@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Messaging;
 using ICSharpCode.TreeView;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
+using MongoDbGui.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        public MongoDbServerViewModel Server { get; private set; }
+        public IMongoDbService Service { get; private set; }
 
         public string Database { get; private set; }
 
@@ -75,17 +76,17 @@ namespace MongoDbGui.ViewModel
         /// <summary>
         /// Initializes a new instance of the ResultItemViewModel class.
         /// </summary>
-        public DocumentResultViewModel(BsonDocument result, MongoDbServerViewModel server, string database, string collection, int index)
+        public DocumentResultViewModel(BsonDocument result, IMongoDbService service, string database, string collection, int index)
         {
             LazyLoading = true;
             IsChecked = false;
+            Service = service;
             Result = result;
             Index = index;
             if (result.Contains("_id"))
                 Id = result["_id"].ToString();
             Value = "(" + result.ElementCount + ") fields";
             Type = result.BsonType.ToString();
-            Server = server;
             Database = database;
             Collection = collection;
             EditResult = new RelayCommand(() =>

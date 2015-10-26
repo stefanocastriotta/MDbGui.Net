@@ -229,7 +229,7 @@ namespace MongoDbGui.ViewModel
             TabViewModel tabVm = new TabViewModel();
             tabVm.CommandType = CommandType.RunCommand;
             tabVm.Database = this.Name;
-            tabVm.Server = this.Server;
+            tabVm.Service = this.Server.MongoDbService;
             tabVm.Name = this.Name;
             if (param == null)
                 tabVm.Command = "{}";
