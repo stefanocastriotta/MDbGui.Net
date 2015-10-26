@@ -48,6 +48,11 @@ namespace MongoDbGui.Model
             
         }
 
+        public async Task DropDatabaseAsync(string databaseName)
+        {
+            await client.DropDatabaseAsync(databaseName);
+        }
+
         public async Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);

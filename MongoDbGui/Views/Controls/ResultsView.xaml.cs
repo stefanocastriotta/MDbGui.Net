@@ -47,7 +47,7 @@ namespace MongoDbGui.Views.Controls
         {
             if (message.Notification == "ConfirmDeleteResult")
             {
-                var result = MessageBox.Show("Delete result with id: " + message.Content.Id + "?", "Delete confirm", MessageBoxButton.YesNo);
+                var result = MessageBox.Show("Delete result with id: " + message.Content.Id + "?", "Delete confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     TabViewModel tabVm = ((ResultsViewModel)message.Content.Parent).Owner;

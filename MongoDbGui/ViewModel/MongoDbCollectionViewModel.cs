@@ -150,6 +150,8 @@ namespace MongoDbGui.ViewModel
         {
             base.Cleanup();
             MessengerInstance.Unregister(this);
+            foreach (var index in Indexes)
+                index.Cleanup();
         }
     }
 }

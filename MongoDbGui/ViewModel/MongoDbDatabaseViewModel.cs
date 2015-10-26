@@ -19,11 +19,13 @@ namespace MongoDbGui.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class MongoDbDatabaseViewModel : BaseTreeviewViewModel
+    public class MongoDbDatabaseViewModel : BaseTreeviewViewModel, IDisposable
     {
         public Dictionary<string, DatabaseCommand> DatabaseCommands { get; set; }
 
         CancellationTokenSource cts = new CancellationTokenSource();
+
+        private bool _disposed;
 
         private MongoDbServerViewModel _server;
         public MongoDbServerViewModel Server
@@ -86,6 +88,11 @@ namespace MongoDbGui.ViewModel
 
             DatabaseCommands = new Dictionary<string, DatabaseCommand>();
             DatabaseCommands.Add("repairDatabase", new DatabaseCommand() { Command = "{ repairDatabase: 1 }" });
+
+            ConfirmDropDatabase = new RelayCommand(() =>
+            {
+                Messenger.Default.Send(new NotificationMessage<MongoDbDatabaseViewModel>(this, "ConfirmDropDatabase"));
+            });
 
             Messenger.Default.Register<PropertyChangedMessage<bool>>(this, (message) =>
             {
@@ -199,6 +206,8 @@ namespace MongoDbGui.ViewModel
 
         public RelayCommand Refresh { get; set; }
 
+        public RelayCommand ConfirmDropDatabase { get; set; }
+
         public async void InnerCreateDatabase()
         {
             if (IsNew)
@@ -298,6 +307,30 @@ namespace MongoDbGui.ViewModel
         {
             base.Cleanup();
             MessengerInstance.Unregister(this);
+            foreach (var folder in Folders)
+                folder.Cleanup();
+            this.Dispose();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            // Use SupressFinalize in case a subclass 
+            // of this type implements a finalizer.
+            GC.SuppressFinalize(this);
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                cts.Dispose();
+
+                // Indicate that the instance has been disposed.
+                _disposed = true;
+            }
         }
     }
 }

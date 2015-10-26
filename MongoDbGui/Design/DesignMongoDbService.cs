@@ -23,6 +23,11 @@ namespace MongoDbGui.Design
             return new List<BsonDocument>();
         }
 
+        public async Task DropDatabaseAsync(string databaseName)
+        {
+            
+        }
+
         public async Task<BsonValue> Eval(string databaseName, string function)
         {
             return new BsonDocument();

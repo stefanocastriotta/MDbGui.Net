@@ -85,7 +85,7 @@
                         <TextBlock.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Create collection" Command="{Binding Path=OpenCreateNewCollection}" />
-                                <MenuItem Header="Drop database"/>
+                                <MenuItem Header="Drop database" Command="{Binding Path=ConfirmDropDatabase}"/>
                                 <Separator/>
                                 <MenuItem Header="Run Command..." Command="{Binding Path=RunCommand}" />
                                 <MenuItem Header="Repair..." Command="{Binding Path=RunCommand}" CommandParameter="{Binding Path=DatabaseCommands[repairDatabase]}" />

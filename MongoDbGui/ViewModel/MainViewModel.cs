@@ -121,6 +121,7 @@ namespace MongoDbGui.ViewModel
                 break;
                 case "CloseTab":
                 Tabs.Remove(message.Content);
+                message.Content.Cleanup();
                 break;
             }
         }
@@ -149,6 +150,7 @@ namespace MongoDbGui.ViewModel
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     ActiveConnections.Remove(message.Content);
+                    message.Content.Cleanup();
                 });
             }
         }

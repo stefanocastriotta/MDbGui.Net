@@ -13,6 +13,7 @@ namespace MongoDbGui.Model
     {
         Task<MongoDbServer> ConnectAsync(ConnectionInfo connectionInfo);
         Task<List<BsonDocument>> ListDatabasesAsync();
+        Task DropDatabaseAsync(string databaseName);
         Task<BsonValue> Eval(string databaseName, string function);
         Task<IMongoDatabase> CreateNewDatabaseAsync(string databaseName);
         Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command, CancellationToken token);

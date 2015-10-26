@@ -53,6 +53,8 @@ namespace MongoDbGui.ViewModel
             DatabaseCommands.Add("hostInfo", new DatabaseCommand() { Command = "{ hostInfo: 1 }", ExecuteImmediately = true });
             DatabaseCommands.Add("getLog", new DatabaseCommand() { Command = "{ getLog: 'global' }", ExecuteImmediately = true });
             DatabaseCommands.Add("replSetGetStatus", new DatabaseCommand() { Command = "{ replSetGetStatus: 1 }", ExecuteImmediately = true });
+
+            Messenger.Default.Register<NotificationMessage<MongoDbDatabaseViewModel>>(this, InnerDropDatabase);
         }
 
         public RelayCommand CreateNewDatabase { get; set; }
@@ -151,9 +153,35 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        public async void InnerDropDatabase(NotificationMessage<MongoDbDatabaseViewModel> message)
+        {
+            if (message.Notification == "DropDatabase" && message.Target == this)
+            {
+                IsBusy = true;
+                message.Content.IsBusy = true;
+                try
+                {
+                    await MongoDbService.DropDatabaseAsync(message.Content.Name);
+                    Items.Remove(message.Content);
+                    message.Content.Cleanup();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: log error
+                }
+                finally
+                {
+                    IsBusy = false;
+                    message.Content.IsBusy = false;
+                }
+            }
+        }
+
         public override void Cleanup()
         {
             base.Cleanup();
+            foreach (var item in Items)
+                item.Cleanup();
             MessengerInstance.Unregister(this);
         }
     }

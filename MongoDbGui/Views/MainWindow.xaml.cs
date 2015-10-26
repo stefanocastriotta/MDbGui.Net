@@ -21,7 +21,7 @@ namespace MongoDbGui.Views
             InitializeComponent();
             Closing += (s, e) => ViewModelLocator.Cleanup();
             Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, (message) => CollectionMessageHandler(message));
-            Messenger.Default.Register<NotificationMessage<MongoDbDatabaseViewModel>>(this, (message) => OpenCreateNewCollectionMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<MongoDbDatabaseViewModel>>(this, (message) => DatabaseMessageHandler(message));
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -40,7 +40,7 @@ namespace MongoDbGui.Views
         {
             if (message.Notification == "ConfirmDropCollection")
             {
-                var result = MessageBox.Show("Drop collection " + message.Content.Name + "?", "Drop confirm", MessageBoxButton.YesNo);
+                var result = MessageBox.Show("Drop collection " + message.Content.Name + "?", "Drop confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, message.Content.Database, message.Content, "DropCollection"));
@@ -48,15 +48,24 @@ namespace MongoDbGui.Views
             }
         }
 
-        private void OpenCreateNewCollectionMessageHandler(NotificationMessage<MongoDbDatabaseViewModel> message)
+        private void DatabaseMessageHandler(NotificationMessage<MongoDbDatabaseViewModel> message)
         {
-            if (message.Notification == "OpenCreateNewCollection")
+            switch (message.Notification)
             {
-                CreateCollectionDialog wnd = new CreateCollectionDialog();
-                var vm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<CreateCollectionViewModel>();
-                vm.Database = message.Content;
-                wnd.DataContext = vm;
-                wnd.ShowDialog();
+                case "OpenCreateNewCollection":
+                    CreateCollectionDialog wnd = new CreateCollectionDialog();
+                    var vm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<CreateCollectionViewModel>();
+                    vm.Database = message.Content;
+                    wnd.DataContext = vm;
+                    wnd.ShowDialog();
+                    break;
+                case "ConfirmDropDatabase":
+                    var result = MessageBox.Show("Drop database " + message.Content.Name + "?", "Drop confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        Messenger.Default.Send(new NotificationMessage<MongoDbDatabaseViewModel>(this, message.Content.Server, message.Content, "DropDatabase"));
+                    }
+                    break;
             }
         }
     }

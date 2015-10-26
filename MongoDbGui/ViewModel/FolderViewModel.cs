@@ -40,5 +40,12 @@ namespace MongoDbGui.ViewModel
             this._parent = parent;
             _children = new ObservableCollection<BaseTreeviewViewModel>();
         }
+
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            foreach (var child in Children)
+                child.Cleanup();
+        }
     }
 }
