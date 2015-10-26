@@ -124,12 +124,14 @@ namespace MongoDbGui.Model
             return result;
         }
 
-        public async Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token)
+        public async Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, bool multi, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.UpdateManyAsync(BsonDocument.Parse(filter), document, null, token);
-            return result;
+            if (multi)
+                return await mongoCollection.UpdateManyAsync(BsonDocument.Parse(filter), document, null, token);
+            else
+                return await mongoCollection.UpdateOneAsync(BsonDocument.Parse(filter), document, null, token);
         }
 
         public async Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token)

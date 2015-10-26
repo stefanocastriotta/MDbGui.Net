@@ -23,6 +23,7 @@ namespace MongoDbGui.Model
         Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip, Guid operationComment, CancellationToken token);
         Task<long> CountAsync(string databaseName, string collection, string filter, CancellationToken token);
         Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents, CancellationToken token);
+        Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, bool multi, CancellationToken token);
         Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token);
         Task<DeleteResult> DeleteOneAsync(string databaseName, string collection, string filter, CancellationToken token);
     }

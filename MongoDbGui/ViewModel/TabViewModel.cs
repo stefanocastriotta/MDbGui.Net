@@ -36,12 +36,6 @@ namespace MongoDbGui.ViewModel
             CommandTypes.Add(Model.CommandType.Aggregate, "Aggregate");
             CommandTypes.Add(Model.CommandType.RunCommand, "RunCommand");
 
-            _sort = "{}";
-            _find = "{}";
-            _size = 50;
-
-            _command = "{}";
-            
             ExecuteFind = new RelayCommand(() =>
             {
                 cts = new CancellationTokenSource();
@@ -69,6 +63,8 @@ namespace MongoDbGui.ViewModel
 
             ExecuteInsert = new RelayCommand(InnerExecuteInsert);
 
+            ExecuteUpdate = new RelayCommand(InnerExecuteUpdate);
+            
             ExecuteReplace = new RelayCommand(InnerExecuteReplace);
 
             Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
@@ -279,7 +275,7 @@ namespace MongoDbGui.ViewModel
         }
 
 
-        private string _find = string.Empty;
+        private string _find = "{}";
 
         public string Find
         {
@@ -294,7 +290,7 @@ namespace MongoDbGui.ViewModel
         }
 
 
-        private string _sort = string.Empty;
+        private string _sort = "{}";
 
         public string Sort
         {
@@ -322,7 +318,7 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private int _size;
+        private int _size = 50;
 
         public int Size
         {
@@ -337,7 +333,7 @@ namespace MongoDbGui.ViewModel
         }
 
 
-        private string _command = string.Empty;
+        private string _command = "{}";
 
         public string Command
         {
@@ -351,7 +347,49 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private string _replaceFilter = string.Empty;
+        private string _updateFilter = "{}";
+
+        public string UpdateFilter
+        {
+            get
+            {
+                return _updateFilter;
+            }
+            set
+            {
+                Set(ref _updateFilter, value);
+            }
+        }
+
+        private string _updateDocument = "{}";
+
+        public string UpdateDocument
+        {
+            get
+            {
+                return _updateDocument;
+            }
+            set
+            {
+                Set(ref _updateDocument, value);
+            }
+        }
+
+        private bool _updateMulti;
+
+        public bool UpdateMulti
+        {
+            get
+            {
+                return _updateMulti;
+            }
+            set
+            {
+                Set(ref _updateMulti, value);
+            }
+        }
+
+        private string _replaceFilter = "{}";
 
         public string ReplaceFilter
         {
@@ -365,7 +403,7 @@ namespace MongoDbGui.ViewModel
             }
         }
 
-        private string _replacement = string.Empty;
+        private string _replacement = "{}";
 
         public string Replacement
         {
@@ -609,6 +647,36 @@ namespace MongoDbGui.ViewModel
             }
         }
 
+        public RelayCommand ExecuteUpdate { get; set; }
+
+        public async void InnerExecuteUpdate()
+        {
+            Executing = true;
+            try
+            {
+                var result = await Server.MongoDbService.UpdateAsync(Database, Collection, UpdateFilter, BsonDocument.Parse(UpdateDocument), UpdateMulti, cts.Token);
+
+                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+                RawResult += Environment.NewLine;
+                RawResult += Environment.NewLine;
+                RawResult += "Modified Count: " + result.ModifiedCount;
+
+                SelectedViewIndex = 1;
+                Root = null;
+            }
+            catch (Exception ex)
+            {
+                RawResult = ex.Message;
+                SelectedViewIndex = 1;
+                Root = null;
+            }
+            finally
+            {
+                Executing = false;
+                ShowPager = false;
+            }
+        }
+
         public RelayCommand ExecuteReplace { get; set; }
 
         public async void InnerExecuteReplace()
@@ -621,7 +689,7 @@ namespace MongoDbGui.ViewModel
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
                 RawResult += Environment.NewLine;
                 RawResult += Environment.NewLine;
-                RawResult += "ModifiedCount Count: " + result.ModifiedCount;
+                RawResult += "Modified Count: " + result.ModifiedCount;
 
                 SelectedViewIndex = 1;
                 Root = null;

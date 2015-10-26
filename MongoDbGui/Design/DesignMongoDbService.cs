@@ -83,6 +83,11 @@ namespace MongoDbGui.Design
             return null;
         }
 
+        public async Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, bool multi, CancellationToken token)
+        {
+            return null;
+        }
+
         public async Task<DeleteResult> DeleteOneAsync(string databaseName, string collection, string filter, CancellationToken token)
         {
             return null;
