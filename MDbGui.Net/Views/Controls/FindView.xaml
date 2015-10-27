@@ -16,6 +16,7 @@
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -39,9 +40,18 @@
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Sort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
         </avalonEdit:TextEditor>
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
+        <Label Grid.Row="2" Content="Projection"></Label>
+        <avalonEdit:TextEditor Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
+                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
+            <i:Interaction.Behaviors>
+                <utils:AvalonEditBehavior GiveMeTheText="{Binding Projection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </i:Interaction.Behaviors>
+        </avalonEdit:TextEditor>
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal">
             <Button Command="{Binding ExecuteFind}" Content="Find"></Button>
             <Button Command="{Binding ExecuteCount}" Content="Count"></Button>
+            <Button Command="{Binding ExecuteFindExplain}" Content="Explain"></Button>
         </StackPanel>
     </Grid>
 

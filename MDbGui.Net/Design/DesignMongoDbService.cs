@@ -64,7 +64,7 @@ namespace MDbGui.Net.Design
             return new BsonDocument();
         }
 
-        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip, Guid operationComment, CancellationToken token)
+        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, string projection, int? limit, int? skip, bool explain, Guid operationComment, CancellationToken token)
         {
             // Use this to create design time data
 

@@ -104,13 +104,19 @@ namespace MDbGui.Net.Model
 
         #endregion
 
-        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, int? limit, int? skip, Guid operationComment, CancellationToken token)
+        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, string projection, int? limit, int? skip, bool explain, Guid operationComment, CancellationToken token)
         {
-
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.Find(BsonDocument.Parse(filter), new FindOptions() { Comment = operationComment.ToString() }).Sort(BsonDocument.Parse(sort)).Limit(limit).Skip(skip).ToListAsync(token);
-            return result;
+            var find = mongoCollection.Find(BsonDocument.Parse(string.IsNullOrWhiteSpace(filter) ? "{}" : filter), new FindOptions() { Comment = operationComment.ToString(), Modifiers = explain ? BsonDocument.Parse("{ $explain: true }") : null });
+            if (!string.IsNullOrWhiteSpace(sort))
+                find = find.Sort(BsonDocument.Parse(sort));
+            if (!string.IsNullOrWhiteSpace(projection))
+                find = find.Project(BsonDocument.Parse(projection));
+
+            find = find.Limit(limit).Skip(skip);
+            
+            return await find.ToListAsync();
         }
 
         public async Task<long> CountAsync(string databaseName, string collection, string filter, CancellationToken token)

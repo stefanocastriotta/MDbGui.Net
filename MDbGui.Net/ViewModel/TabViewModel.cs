@@ -41,28 +41,33 @@ namespace MDbGui.Net.ViewModel
             CommandTypes.Add(Model.CommandType.Aggregate, "Aggregate");
             CommandTypes.Add(Model.CommandType.RunCommand, "RunCommand");
 
-            ExecuteFind = new RelayCommand(() =>
             AggregateOptions = new MongoDB.Driver.AggregateOptions();
 
+            CopyToClipboard = new RelayCommand(() =>
             {
-                cts = new CancellationTokenSource();
-                Skip = 0;
-                InnerExecuteFind();
+                Clipboard.SetText(RawResult);
             });
+
             ExecuteStop = new RelayCommand(() =>
             {
                 cts.Cancel();
             });
 
-            DoPaging = new RelayCommand(InnerExecuteFind);
-            ExecuteCount = new RelayCommand(InnerExecuteCount);
             ExecuteClose = new RelayCommand(InnerExecuteClose);
+
+            ExecuteFind = new RelayCommand(() =>
+            {
+                Skip = 0;
+                InnerExecuteFind();
+            });
+
+            ExecuteFindExplain = new RelayCommand(InnerExecuteFindExplain);
+
+            DoPaging = new RelayCommand(InnerExecuteFind);
             PageBack = new RelayCommand(InnerPageBack);
             PageForward = new RelayCommand(InnerPageForward);
-            CopyToClipboard = new RelayCommand(() =>
-            {
-                Clipboard.SetText(RawResult);
-            });
+
+            ExecuteCount = new RelayCommand(InnerExecuteCount);
 
             ExecuteCommand = new RelayCommand(InnerExecuteCommand);
 
@@ -123,6 +128,7 @@ namespace MDbGui.Net.ViewModel
                 ShowProgress = true;
                 if (value && !_executing)
                 {
+                    cts = new CancellationTokenSource();
                     ExecutingTime = TimeSpan.Zero.ToString("hh':'mm':'ss'.'fff");
                     _executingStartTime = DateTime.Now;
                     ExecutingTimer.Start();
@@ -294,6 +300,18 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        public RelayCommand ExecuteClose { get; set; }
+
+        public void InnerExecuteClose()
+        {
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(this, "CloseTab"));
+        }
+
+        public RelayCommand ExecuteStop { get; set; }
+
+        public RelayCommand CopyToClipboard { get; set; }
+
+        #region Find
 
         private string _find = "{}";
 
@@ -309,7 +327,6 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
-
         private string _sort = "{}";
 
         public string Sort
@@ -321,6 +338,20 @@ namespace MDbGui.Net.ViewModel
             set
             {
                 Set(ref _sort, value);
+            }
+        }
+
+        private string _projection = "{}";
+
+        public string Projection
+        {
+            get
+            {
+                return _projection;
+            }
+            set
+            {
+                Set(ref _projection, value);
             }
         }
 
@@ -352,108 +383,13 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
-
-        private string _command = "{}";
-
-        public string Command
-        {
-            get
-            {
-                return _command;
-            }
-            set
-            {
-                Set(ref _command, value);
-            }
-        }
-
-        private string _updateFilter = "{}";
-
-        public string UpdateFilter
-        {
-            get
-            {
-                return _updateFilter;
-            }
-            set
-            {
-                Set(ref _updateFilter, value);
-            }
-        }
-
-        private string _updateDocument = "{}";
-
-        public string UpdateDocument
-        {
-            get
-            {
-                return _updateDocument;
-            }
-            set
-            {
-                Set(ref _updateDocument, value);
-            }
-        }
-
-        private bool _updateMulti;
-
-        public bool UpdateMulti
-        {
-            get
-            {
-                return _updateMulti;
-            }
-            set
-            {
-                Set(ref _updateMulti, value);
-            }
-        }
-
-        private string _replaceFilter = "{}";
-
-        public string ReplaceFilter
-        {
-            get
-            {
-                return _replaceFilter;
-            }
-            set
-            {
-                Set(ref _replaceFilter, value);
-            }
-        }
-
-        private string _replacement = "{}";
-
-        public string Replacement
-        {
-            get
-            {
-                return _replacement;
-            }
-            set
-            {
-                Set(ref _replacement, value);
-            }
-        }
-
-        public RelayCommand ExecuteClose { get; set; }
-
-        public void InnerExecuteClose()
-        {
-            Messenger.Default.Send(new NotificationMessage<TabViewModel>(this, "CloseTab"));
-        }
-
-        public RelayCommand ExecuteStop { get; set; }
-
-
         public RelayCommand ExecuteFind { get; set; }
 
         public async void InnerExecuteFind()
         {
             Executing = true;
             Guid operationID = Guid.NewGuid();
-            var task = Service.FindAsync(Database, Collection, Find, Sort, Size, Skip, operationID, cts.Token);
+            var task = Service.FindAsync(Database, Collection, Find, Sort, Projection, Size, Skip, false, operationID, cts.Token);
             try
             {
                 var results = await task.WithCancellation(cts.Token);
@@ -517,6 +453,85 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        public RelayCommand PageBack { get; set; }
+
+        public void InnerPageBack()
+        {
+            Skip -= Size;
+            Skip = Math.Max(0, Skip);
+            InnerExecuteFind();
+        }
+
+        public RelayCommand PageForward { get; set; }
+
+        public void InnerPageForward()
+        {
+            Skip += Size;
+            InnerExecuteFind();
+        }
+
+        public RelayCommand DoPaging { get; set; }
+
+        public RelayCommand ExecuteFindExplain { get; set; }
+
+        public async void InnerExecuteFindExplain()
+        {
+            Executing = true;
+            Guid operationID = Guid.NewGuid();
+            var task = Service.FindAsync(Database, Collection, Find, Sort, Projection, Size, Skip, true, operationID, cts.Token);
+            try
+            {
+                var results = await task.WithCancellation(cts.Token);
+                Executing = false;
+                ShowPager = false;
+
+                if (results.Count > 0)
+                    RawResult = results[0].ToJson(new JsonWriterSettings { Indent = true });
+                else
+                    RawResult = "";
+                SelectedViewIndex = 0;
+
+                Root = new ResultsViewModel(results, this);
+            }
+            catch (OperationCanceledException)
+            {
+                if (!task.IsCompleted)
+                {
+                    task.ContinueWith(t =>
+                    {
+                        if (t.Exception != null)
+                        {
+
+                        }
+                    });
+                    var currentOpTask = Service.Eval(Database, "function() { return db.currentOP(); }");
+                    currentOpTask.Wait();
+                    var currentOp = currentOpTask.Result;
+                    if (currentOp != null)
+                    {
+                        var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationID.ToString());
+                        if (operation != null)
+                        {
+                            var killOpTask = Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
+                            killOpTask.Wait();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO: log error
+            }
+            finally
+            {
+                Executing = false;
+            }
+        }
+
+        #endregion
+
+        #region Count
+
         public RelayCommand ExecuteCount { get; set; }
 
         public async void InnerExecuteCount()
@@ -543,27 +558,23 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
-        public RelayCommand PageBack { get; set; }
+        #endregion
 
-        public void InnerPageBack()
+        #region Command
+
+        private string _command = "{}";
+
+        public string Command
         {
-            Skip -= Size;
-            Skip = Math.Max(0, Skip);
-            InnerExecuteFind();
+            get
+            {
+                return _command;
+            }
+            set
+            {
+                Set(ref _command, value);
+            }
         }
-
-        public RelayCommand PageForward { get; set; }
-
-        public void InnerPageForward()
-        {
-            Skip += Size;
-            InnerExecuteFind();
-        }
-
-        public RelayCommand DoPaging { get; set; }
-
-        public RelayCommand CopyToClipboard { get; set; }
-
 
         public RelayCommand ExecuteCommand { get; set; }
 
@@ -592,6 +603,10 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        #endregion
+
+        #region Eval
+
         public RelayCommand ExecuteEval { get; set; }
 
         public async void InnerExecuteEval()
@@ -617,6 +632,9 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        #endregion
+
+        #region Insert
 
         private string _insert = "[" + Environment.NewLine + "\t" + Environment.NewLine + "]";
 
@@ -667,6 +685,52 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        #endregion
+
+        #region Update
+
+        private string _updateFilter = "{}";
+
+        public string UpdateFilter
+        {
+            get
+            {
+                return _updateFilter;
+            }
+            set
+            {
+                Set(ref _updateFilter, value);
+            }
+        }
+
+        private string _updateDocument = "{}";
+
+        public string UpdateDocument
+        {
+            get
+            {
+                return _updateDocument;
+            }
+            set
+            {
+                Set(ref _updateDocument, value);
+            }
+        }
+
+        private bool _updateMulti;
+
+        public bool UpdateMulti
+        {
+            get
+            {
+                return _updateMulti;
+            }
+            set
+            {
+                Set(ref _updateMulti, value);
+            }
+        }
+
         public RelayCommand ExecuteUpdate { get; set; }
 
         public async void InnerExecuteUpdate()
@@ -694,6 +758,38 @@ namespace MDbGui.Net.ViewModel
             {
                 Executing = false;
                 ShowPager = false;
+            }
+        }
+
+        #endregion
+
+        #region Replace
+
+        private string _replaceFilter = "{}";
+
+        public string ReplaceFilter
+        {
+            get
+            {
+                return _replaceFilter;
+            }
+            set
+            {
+                Set(ref _replaceFilter, value);
+            }
+        }
+
+        private string _replacement = "{}";
+
+        public string Replacement
+        {
+            get
+            {
+                return _replacement;
+            }
+            set
+            {
+                Set(ref _replacement, value);
             }
         }
 
@@ -726,6 +822,10 @@ namespace MDbGui.Net.ViewModel
                 ShowPager = false;
             }
         }
+
+        #endregion
+
+        #region Delete
 
         private async void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
         {
