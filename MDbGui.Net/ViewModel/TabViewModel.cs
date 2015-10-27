@@ -15,6 +15,7 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using System.Threading;
+using MongoDB.Driver;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -41,6 +42,8 @@ namespace MDbGui.Net.ViewModel
             CommandTypes.Add(Model.CommandType.RunCommand, "RunCommand");
 
             ExecuteFind = new RelayCommand(() =>
+            AggregateOptions = new MongoDB.Driver.AggregateOptions();
+
             {
                 cts = new CancellationTokenSource();
                 Skip = 0;
@@ -70,6 +73,8 @@ namespace MDbGui.Net.ViewModel
             ExecuteUpdate = new RelayCommand(InnerExecuteUpdate);
             
             ExecuteReplace = new RelayCommand(InnerExecuteReplace);
+
+            ExecuteAggregate = new RelayCommand(InnerExecuteAggregate);
 
             Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
         }
@@ -763,6 +768,123 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        #endregion
+
+        #region Aggregate
+
+        private string _aggregatePipeline = "{}";
+
+        public string AggregatePipeline
+        {
+            get
+            {
+                return _aggregatePipeline;
+            }
+            set
+            {
+                Set(ref _aggregatePipeline, value);
+            }
+        }
+
+        private AggregateOptions _aggregateOptions;
+
+        public AggregateOptions AggregateOptions
+        {
+            get
+            {
+                return _aggregateOptions;
+            }
+            set
+            {
+                Set(ref _aggregateOptions, value);
+            }
+        }
+
+        private bool _aggregateExplain;
+
+        public bool AggregateExplain
+        {
+            get
+            {
+                return _aggregateExplain;
+            }
+            set
+            {
+                Set(ref _aggregateExplain, value);
+            }
+        }
+
+        public RelayCommand ExecuteAggregate { get; set; }
+
+        public async void InnerExecuteAggregate()
+        {
+            Executing = true;
+            Guid operationID = Guid.NewGuid();
+            var task = Service.AggregateAsync(Database, Collection, AggregatePipeline, AggregateOptions, AggregateExplain, cts.Token);
+            try
+            {
+                var results = await task.WithCancellation(cts.Token);
+                Executing = false;
+                ShowPager = true;
+                StringBuilder sb = new StringBuilder();
+                int index = 1;
+                sb.Append("[");
+                foreach (var result in results)
+                {
+                    sb.AppendLine();
+                    sb.Append("/* # ");
+                    sb.Append(index.ToString());
+                    sb.AppendLine(" */");
+                    sb.AppendLine(result.ToJson(new JsonWriterSettings { Indent = true }));
+                    sb.Append(",");
+                    index++;
+                }
+                if (results.Count > 0)
+                    sb.Length -= 1;
+                sb.AppendLine();
+                sb.Append("]");
+
+                RawResult = sb.ToString();
+                SelectedViewIndex = 0;
+
+                Root = new ResultsViewModel(results, this);
+            }
+            catch (OperationCanceledException)
+            {
+                if (!task.IsCompleted)
+                {
+                    task.ContinueWith(t =>
+                    {
+                        if (t.Exception != null)
+                        {
+
+                        }
+                    });
+                    var currentOpTask = Service.Eval(Database, "function() { return db.currentOP(); }");
+                    currentOpTask.Wait();
+                    var currentOp = currentOpTask.Result;
+                    if (currentOp != null)
+                    {
+                        var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationID.ToString());
+                        if (operation != null)
+                        {
+                            var killOpTask = Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
+                            killOpTask.Wait();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO: log error
+            }
+            finally
+            {
+                Executing = false;
+            }
+        }
+
+        #endregion
 
         public override void Cleanup()
         {

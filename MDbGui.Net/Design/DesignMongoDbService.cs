@@ -97,5 +97,10 @@ namespace MDbGui.Net.Design
         {
             return null;
         }
+
+        public async Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, string pipeline, AggregateOptions options, bool explain, CancellationToken token)
+        {
+            return null;
+        }
     }
 }

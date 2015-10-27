@@ -27,5 +27,6 @@ namespace MDbGui.Net.Model
         Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, bool multi, CancellationToken token);
         Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token);
         Task<DeleteResult> DeleteOneAsync(string databaseName, string collection, string filter, CancellationToken token);
+        Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, string pipeline, AggregateOptions options, bool explain, CancellationToken token);
     }
 }

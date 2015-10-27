@@ -87,6 +87,9 @@
                 <DataTemplate x:Key="ReplaceTemplate">
                     <local:ReplaceView></local:ReplaceView>
                 </DataTemplate>
+                <DataTemplate x:Key="AggregateTemplate">
+                    <local:AggregateView></local:AggregateView>
+                </DataTemplate>
             </ContentControl.Resources>
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
@@ -105,6 +108,9 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding CommandType}" Value="Replace">
                             <Setter Property="ContentTemplate" Value="{StaticResource ReplaceTemplate}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CommandType}" Value="Aggregate">
+                            <Setter Property="ContentTemplate" Value="{StaticResource AggregateTemplate}" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

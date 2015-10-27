@@ -110,6 +110,7 @@
     <Compile Include="Utils\LevelConverter.cs" />
     <Compile Include="Utils\NullValueToVisibilityConverter.cs" />
     <Compile Include="Utils\StringToDocumentTextConverter.cs" />
+    <Compile Include="Utils\StringToTimeSpanConverter.cs" />
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="Utils\TaskExtensions.cs" />
     <Compile Include="ViewModel\BaseTreeviewViewModel.cs" />
@@ -144,6 +145,9 @@
     <Compile Include="Views\Controls\ServerTreeView.xaml.cs">
       <DependentUpon>ServerTreeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Controls\AggregateView.xaml.cs">
+      <DependentUpon>AggregateView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\UpdateView.xaml.cs">
       <DependentUpon>UpdateView.xaml</DependentUpon>
     </Compile>
@@ -171,6 +175,10 @@
     <Page Include="Views\Controls\ReplaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\AggregateView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Controls\UpdateView.xaml">
       <SubType>Designer</SubType>

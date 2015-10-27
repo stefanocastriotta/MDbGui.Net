@@ -154,5 +154,38 @@ namespace MDbGui.Net.Model
             var result = await mongoCollection.DeleteOneAsync(BsonDocument.Parse(filter), token);
             return result;
         }
+
+        public async Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, string pipeline, AggregateOptions options, bool explain, CancellationToken token)
+        {
+            return await Task.Run(() =>
+            {
+                var server = client.GetServer();
+                var database = server.GetDatabase(databaseName);
+                var collection = database.GetCollection(collectionName);
+                List<BsonDocument> result;
+                if (!explain)
+                    result = collection.Aggregate(new AggregateArgs()
+                    {
+                        AllowDiskUse = options.AllowDiskUse,
+                        BatchSize = options.BatchSize,
+                        MaxTime = options.MaxTime,
+                        Pipeline = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(pipeline).Select(s => s.AsBsonDocument)
+                    }).ToList();
+                else
+                {
+                    var explainResult = collection.AggregateExplain(new AggregateArgs()
+                    {
+                        AllowDiskUse = options.AllowDiskUse,
+                        BatchSize = options.BatchSize,
+                        MaxTime = options.MaxTime,
+                        Pipeline = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(pipeline).Select(s => s.AsBsonDocument)
+                    });
+
+                    result = new List<BsonDocument>();
+                    result.Add(explainResult.Response);
+                }
+                return result;
+            }, token);
+        }
     }
 }
