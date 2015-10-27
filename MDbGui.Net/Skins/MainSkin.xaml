@@ -1,0 +1,18 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:utils="clr-namespace:MDbGui.Net.Utils">
+
+    <utils:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <utils:NullValueToVisibilityConverter x:Key="NullValueToVisibilityConverter" />
+
+    <Style x:Key="ResultsView" TargetType="TextBox">
+        <Setter Property="FontFamily" Value="Courier New"></Setter>
+        <Setter Property="Background" Value="Black"></Setter>
+        <Setter Property="Foreground" Value="White"></Setter>
+    </Style>
+    <Style x:Key="ResultsViewTextBlock" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Courier New"></Setter>
+        <Setter Property="Background" Value="Black"></Setter>
+        <Setter Property="Foreground" Value="White"></Setter>
+    </Style>
+</ResourceDictionary>

@@ -1,0 +1,25 @@
+﻿<Window x:Class="MDbGui.Net.Views.Dialogs.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ignore="http://www.galasoft.ch/ignore"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
+        mc:Ignorable="d ignore" Height="209.667" Width="348.166">
+
+    <Grid>
+        <Label Content="Address" HorizontalAlignment="Left" Margin="10,34,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="68,37,0,0" TextWrapping="Wrap" Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding HostPortMode}" VerticalAlignment="Top" Width="162"/>
+        <Label Content=":" HorizontalAlignment="Left" Margin="235,34,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="253,37,0,0" TextWrapping="Wrap" Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding HostPortMode}" VerticalAlignment="Top" Width="78"/>
+        <Button Content="Connect" HorizontalAlignment="Left" Margin="10,131,0,0" VerticalAlignment="Top" Width="75" Command="{Binding Connect, Mode=OneWay}">
+        </Button>
+
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="119,89,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="212" Text="{Binding ConnectionString}" IsEnabled="{Binding ConnectionStringMode}"/>
+        <Label Content="Connection string" HorizontalAlignment="Left" Margin="10,86,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.316,0.385"/>
+        <RadioButton Content="Host : Port" HorizontalAlignment="Left" Margin="10,17,0,0" VerticalAlignment="Top" GroupName="ConnectionType" IsChecked="{Binding HostPortMode, Mode=TwoWay}"/>
+        <RadioButton Content="Connection string" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top" GroupName="ConnectionType" IsChecked="{Binding ConnectionStringMode, Mode=TwoWay}"/>
+        <Button Content="Close" HorizontalAlignment="Left" Margin="119,131,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+    </Grid>
+</Window>
