@@ -80,6 +80,8 @@ namespace MDbGui.Net.ViewModel
             
             ExecuteReplace = new RelayCommand(InnerExecuteReplace);
 
+            ExecuteDelete = new RelayCommand(InnerExecuteDelete);
+
             ExecuteAggregate = new RelayCommand(InnerExecuteAggregate);
 
             Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
@@ -853,6 +855,64 @@ namespace MDbGui.Net.ViewModel
 
         #region Delete
 
+        public RelayCommand ExecuteDelete { get; set; }
+
+        private string _deleteQuery = "{}";
+
+        public string DeleteQuery
+        {
+            get
+            {
+                return _deleteQuery;
+            }
+            set
+            {
+                Set(ref _deleteQuery, value);
+            }
+        }
+
+        private bool _deleteJustOne;
+
+        public bool DeleteJustOne
+        {
+            get
+            {
+                return _deleteJustOne;
+            }
+            set
+            {
+                Set(ref _deleteJustOne, value);
+            }
+        }
+
+        public async void InnerExecuteDelete()
+        {
+            Executing = true;
+            try
+            {
+                var result = await Service.DeleteAsync(Database, Collection, DeleteQuery, DeleteJustOne, cts.Token);
+
+                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+                RawResult += Environment.NewLine;
+                RawResult += Environment.NewLine;
+                RawResult += "Deleted Count: " + result.DeletedCount;
+
+                SelectedViewIndex = 1;
+                Root = null;
+            }
+            catch (Exception ex)
+            {
+                RawResult = ex.Message;
+                SelectedViewIndex = 1;
+                Root = null;
+            }
+            finally
+            {
+                Executing = false;
+                ShowPager = false;
+            }
+        }
+
         private async void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
         {
             if (message.Notification == "DeleteResult")
@@ -860,7 +920,7 @@ namespace MDbGui.Net.ViewModel
                 Executing = true;
                 try
                 {
-                    var result = await Service.DeleteOneAsync(Database, Collection, "{_id: ObjectId('" + message.Content.Id + "')}", cts.Token);
+                    var result = await Service.DeleteAsync(Database, Collection, "{_id: ObjectId('" + message.Content.Id + "')}", true, cts.Token);
                     if (result.DeletedCount == 1 && Root != null)
                     {
                         Root.Children.Remove(message.Content);

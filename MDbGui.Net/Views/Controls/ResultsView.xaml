@@ -90,6 +90,9 @@
                 <DataTemplate x:Key="ReplaceTemplate">
                     <local:ReplaceView></local:ReplaceView>
                 </DataTemplate>
+                <DataTemplate x:Key="RemoveTemplate">
+                    <local:RemoveView></local:RemoveView>
+                </DataTemplate>
                 <DataTemplate x:Key="AggregateTemplate">
                     <local:AggregateView></local:AggregateView>
                 </DataTemplate>
@@ -114,6 +117,9 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding CommandType}" Value="Replace">
                             <Setter Property="ContentTemplate" Value="{StaticResource ReplaceTemplate}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CommandType}" Value="Remove">
+                            <Setter Property="ContentTemplate" Value="{StaticResource RemoveTemplate}" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding CommandType}" Value="Aggregate">
                             <Setter Property="ContentTemplate" Value="{StaticResource AggregateTemplate}" />

@@ -151,6 +151,9 @@
     <Compile Include="Views\Controls\AggregateView.xaml.cs">
       <DependentUpon>AggregateView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Controls\RemoveView.xaml.cs">
+      <DependentUpon>RemoveView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\UpdateView.xaml.cs">
       <DependentUpon>UpdateView.xaml</DependentUpon>
     </Compile>
@@ -184,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Controls\AggregateView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\RemoveView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

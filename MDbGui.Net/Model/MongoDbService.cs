@@ -153,12 +153,14 @@ namespace MDbGui.Net.Model
             return result;
         }
 
-        public async Task<DeleteResult> DeleteOneAsync(string databaseName, string collection, string filter, CancellationToken token)
+        public async Task<DeleteResult> DeleteAsync(string databaseName, string collection, string filter, bool justOne, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.DeleteOneAsync(BsonDocument.Parse(filter), token);
-            return result;
+            if (justOne)
+                return await mongoCollection.DeleteOneAsync(BsonDocument.Parse(filter), token);
+            else
+                return await mongoCollection.DeleteManyAsync(BsonDocument.Parse(filter), token);
         }
 
         public async Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, string pipeline, AggregateOptions options, bool explain, CancellationToken token)

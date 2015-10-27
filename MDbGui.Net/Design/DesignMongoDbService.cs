@@ -93,7 +93,7 @@ namespace MDbGui.Net.Design
             return null;
         }
 
-        public async Task<DeleteResult> DeleteOneAsync(string databaseName, string collection, string filter, CancellationToken token)
+        public async Task<DeleteResult> DeleteAsync(string databaseName, string collection, string filter, bool justOne, CancellationToken token)
         {
             return null;
         }
