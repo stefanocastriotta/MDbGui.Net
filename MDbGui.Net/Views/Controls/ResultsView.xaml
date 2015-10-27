@@ -78,6 +78,9 @@
                 <DataTemplate x:Key="CommandTemplate">
                     <local:CommandView></local:CommandView>
                 </DataTemplate>
+                <DataTemplate x:Key="EvalTemplate">
+                    <local:EvalView></local:EvalView>
+                </DataTemplate>
                 <DataTemplate x:Key="InsertTemplate">
                     <local:InsertView></local:InsertView>
                 </DataTemplate>
@@ -99,6 +102,9 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding CommandType}" Value="RunCommand">
                             <Setter Property="ContentTemplate" Value="{StaticResource CommandTemplate}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CommandType}" Value="Eval">
+                            <Setter Property="ContentTemplate" Value="{StaticResource EvalTemplate}" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding CommandType}" Value="Insert">
                             <Setter Property="ContentTemplate" Value="{StaticResource InsertTemplate}" />

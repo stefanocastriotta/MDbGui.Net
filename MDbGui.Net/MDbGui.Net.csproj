@@ -127,6 +127,9 @@
     <Compile Include="ViewModel\MongoDbServerViewModel.cs" />
     <Compile Include="ViewModel\ResultsViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Views\Controls\EvalView.xaml.cs">
+      <DependentUpon>EvalView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\CommandView.xaml.cs">
       <DependentUpon>CommandView.xaml</DependentUpon>
     </Compile>
@@ -160,6 +163,10 @@
     <Compile Include="Views\Spinner.xaml.cs">
       <DependentUpon>Spinner.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\Controls\EvalView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Controls\CommandView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

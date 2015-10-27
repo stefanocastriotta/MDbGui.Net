@@ -40,6 +40,7 @@ namespace MDbGui.Net.ViewModel
             CommandTypes.Add(Model.CommandType.Remove, "Remove");
             CommandTypes.Add(Model.CommandType.Aggregate, "Aggregate");
             CommandTypes.Add(Model.CommandType.RunCommand, "RunCommand");
+            CommandTypes.Add(Model.CommandType.Eval, "Eval");
 
             AggregateOptions = new MongoDB.Driver.AggregateOptions();
 
@@ -445,7 +446,9 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
-                //TODO: log error
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
             }
             finally
             {
@@ -520,7 +523,9 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
-                //TODO: log error
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
             }
             finally
             {
@@ -550,7 +555,9 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
-                //TODO: log error
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
             }
             finally
             {
@@ -607,6 +614,21 @@ namespace MDbGui.Net.ViewModel
 
         #region Eval
 
+        private string _evalFunction = "function () {" + Environment.NewLine + "\t" + Environment.NewLine + "}";
+
+        public string EvalFunction
+        {
+            get
+            {
+                return _evalFunction;
+            }
+            set
+            {
+                Set(ref _evalFunction, value);
+            }
+        }
+
+
         public RelayCommand ExecuteEval { get; set; }
 
         public async void InnerExecuteEval()
@@ -614,19 +636,23 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             try
             {
-                var result = await Service.Eval(Database, Command);
+                var result = await Service.Eval(Database, EvalFunction);
 
                 RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
 
+                if (result.IsBsonDocument)
+                    Root = new ResultsViewModel(new List<BsonDocument>() { result.AsBsonDocument }, this);
+                else
+                    Root = new ResultsViewModel(new List<BsonDocument>() { new BsonDocument().Add("result", result) }, this);
             }
             catch (Exception ex)
             {
                 RawResult = ex.Message;
+                Root = null;
             }
             finally
             {
                 SelectedViewIndex = 1;
-                Root = null;
                 Executing = false;
                 ShowPager = false;
             }
@@ -860,6 +886,8 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
+                    RawResult = ex.Message;
+                    SelectedViewIndex = 1;
                 }
                 finally
                 {
@@ -920,9 +948,10 @@ namespace MDbGui.Net.ViewModel
         {
             Executing = true;
             Guid operationID = Guid.NewGuid();
-            var task = Service.AggregateAsync(Database, Collection, AggregatePipeline, AggregateOptions, AggregateExplain, cts.Token);
+            Task<List<BsonDocument>> task = null;
             try
             {
+                task = Service.AggregateAsync(Database, Collection, AggregatePipeline, AggregateOptions, AggregateExplain, cts.Token);
                 var results = await task.WithCancellation(cts.Token);
                 Executing = false;
                 ShowPager = false;
@@ -977,6 +1006,9 @@ namespace MDbGui.Net.ViewModel
             catch (Exception ex)
             {
                 //TODO: log error
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
             }
             finally
             {

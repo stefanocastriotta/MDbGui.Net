@@ -8,6 +8,6 @@ namespace MDbGui.Net.Model
 {
     public enum CommandType
     {
-        Find, Insert, Update, Replace, Remove, Aggregate, RunCommand
+        Find, Insert, Update, Replace, Remove, Aggregate, RunCommand, Eval
     }
 }
