@@ -925,7 +925,7 @@ namespace MDbGui.Net.ViewModel
             {
                 var results = await task.WithCancellation(cts.Token);
                 Executing = false;
-                ShowPager = true;
+                ShowPager = false;
                 StringBuilder sb = new StringBuilder();
                 int index = 1;
                 sb.Append("[");
