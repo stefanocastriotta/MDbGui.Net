@@ -401,13 +401,26 @@ namespace MDbGui.Net.ViewModel
                 StringBuilder sb = new StringBuilder();
                 int index = 1;
                 sb.Append("[");
+                var serializer = MongoDB.Bson.Serialization.BsonSerializer.LookupSerializer(typeof(BsonDocument));
+                MongoDB.Bson.Serialization.BsonSerializationArgs args = default(MongoDB.Bson.Serialization.BsonSerializationArgs);
                 foreach (var result in results)
                 {
                     sb.AppendLine();
                     sb.Append("/* # ");
                     sb.Append(index.ToString());
                     sb.AppendLine(" */");
-                    sb.AppendLine(result.ToJson(new JsonWriterSettings { Indent = true }));
+
+                    using (var stringWriter = new System.IO.StringWriter())
+                    {
+                        using (var bsonWriter = new LocalDateTimeJsonWriter(stringWriter, new JsonWriterSettings { Indent = true }))
+                        {
+                            var context = MongoDB.Bson.Serialization.BsonSerializationContext.CreateRoot(bsonWriter, null);
+                            args.NominalType = typeof(BsonDocument);
+                            serializer.Serialize(context, args, result);
+                        }
+                        sb.Append(stringWriter.ToString());
+                    }
+
                     sb.Append(",");
                     index++;
                 }

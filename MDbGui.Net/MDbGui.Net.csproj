@@ -108,6 +108,7 @@
     <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utils\FocusExtension.cs" />
     <Compile Include="Utils\LevelConverter.cs" />
+    <Compile Include="Utils\LocalDateTimeJsonWriter.cs" />
     <Compile Include="Utils\NullValueToVisibilityConverter.cs" />
     <Compile Include="Utils\StringToDocumentTextConverter.cs" />
     <Compile Include="Utils\StringToTimeSpanConverter.cs" />
