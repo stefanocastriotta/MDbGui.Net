@@ -57,11 +57,23 @@ namespace MDbGui.Net.ViewModel
 
         public string Collection { get; private set; }
 
-        public BsonDocument Result { get; private set; }
+        public BsonDocument Result { get; set; }
 
         public string Id { get; set; }
 
-        public string Value { get; set; }
+        private string _value;
+        public string Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                _value = value;
+                RaisePropertyChanged("Value");
+            }
+        }
 
         public string Type { get; set; }
 

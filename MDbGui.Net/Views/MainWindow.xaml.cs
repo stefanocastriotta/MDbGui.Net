@@ -5,6 +5,8 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Media;
 using MDbGui.Net.Views.Dialogs;
+using MDbGui.Net.Views.Controls;
+using MongoDB.Bson;
 
 namespace MDbGui.Net.Views
 {
@@ -22,6 +24,7 @@ namespace MDbGui.Net.Views
             Closing += (s, e) => ViewModelLocator.Cleanup();
             Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, (message) => CollectionMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbDatabaseViewModel>>(this, (message) => DatabaseMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -66,6 +69,19 @@ namespace MDbGui.Net.Views
                         Messenger.Default.Send(new NotificationMessage<MongoDbDatabaseViewModel>(this, message.Content.Server, message.Content, "DropDatabase"));
                     }
                     break;
+            }
+        }
+
+        private void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
+        {
+            if (message.Notification == "EditResult")
+            {
+                UpdateDocumentView wnd = new UpdateDocumentView();
+                var vm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<ReplaceOneViewModel>();
+                vm.Document = message.Content;
+                vm.Replacement = message.Content.Result.ToJson(new MongoDB.Bson.IO.JsonWriterSettings() { Indent = true });
+                wnd.DataContext = vm;
+                wnd.ShowDialog();
             }
         }
     }

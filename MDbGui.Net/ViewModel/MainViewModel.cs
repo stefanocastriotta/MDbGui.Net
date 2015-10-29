@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using MDbGui.Net.Views.Controls;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -65,7 +66,6 @@ namespace MDbGui.Net.ViewModel
             Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<TabViewModel>>(this, (message) => TabMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => MongoDbServerMessageHandler(message));
-            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
         }
 
         private async void LoggingInMessageHandler(NotificationMessage<ConnectionInfo> message)
@@ -124,24 +124,6 @@ namespace MDbGui.Net.ViewModel
                 Tabs.Remove(message.Content);
                 message.Content.Cleanup();
                 break;
-            }
-        }
-
-        private void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
-        {
-            if (message.Notification == "EditResult")
-            {
-                TabViewModel tabVm = new TabViewModel();
-                tabVm.CommandType = MDbGui.Net.Model.CommandType.Replace;
-                tabVm.Database = message.Content.Database;
-                tabVm.Connections.AddRange(GetActiveConnections());
-                tabVm.Service = message.Content.Service;
-                tabVm.Collection = message.Content.Collection;
-                tabVm.Name = message.Content.Collection;
-                tabVm.ReplaceFilter = "{ _id: ObjectId(\"" + message.Content.Id +  "\") }";
-                tabVm.Replacement = message.Content.Result.ToJson(new MongoDB.Bson.IO.JsonWriterSettings() { Indent = true });
-                Tabs.Insert(Tabs.IndexOf(SelectedTab) + 1, tabVm);
-                SelectedTab = tabVm;
             }
         }
 

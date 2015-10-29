@@ -100,10 +100,10 @@
     <Compile Include="Model\CommandType.cs" />
     <Compile Include="Model\ConnectionInfo.cs" />
     <Compile Include="Model\DatabaseCommand.cs" />
-    <Compile Include="Model\InsertDocumentsModel.cs" />
     <Compile Include="Model\MongoDbServer.cs" />
     <Compile Include="Model\MongoDbService.cs" />
     <Compile Include="Model\IMongoDbService.cs" />
+    <Compile Include="ViewModel\ReplaceOneViewModel.cs" />
     <Compile Include="Utils\AvalonEditBehavior.cs" />
     <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utils\FocusExtension.cs" />
@@ -161,8 +161,8 @@
     <Compile Include="Views\Dialogs\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\InsertDocumentsView.xaml.cs">
-      <DependentUpon>InsertDocumentsView.xaml</DependentUpon>
+    <Compile Include="Views\Dialogs\UpdateDocumentView.xaml.cs">
+      <DependentUpon>UpdateDocumentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Spinner.xaml.cs">
       <DependentUpon>Spinner.xaml</DependentUpon>
@@ -203,8 +203,8 @@
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Dialogs\InsertDocumentsView.xaml">
-      <SubType>Form</SubType>
+    <Page Include="Views\Dialogs\UpdateDocumentView.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialogs\LoginView.xaml">

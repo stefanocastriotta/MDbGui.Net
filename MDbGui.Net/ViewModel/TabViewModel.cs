@@ -85,6 +85,7 @@ namespace MDbGui.Net.ViewModel
             ExecuteAggregate = new RelayCommand(InnerExecuteAggregate);
 
             Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<ReplaceOneViewModel>>(this, (message) => ReplaceOneHandler(message));
         }
 
         public Dictionary<CommandType, string> CommandTypes { get; private set; }
@@ -861,6 +862,32 @@ namespace MDbGui.Net.ViewModel
             {
                 Executing = false;
                 ShowPager = false;
+            }
+        }
+
+        private async void ReplaceOneHandler(NotificationMessage<ReplaceOneViewModel> message)
+        {
+            if (message.Target == this && message.Notification == "UpdateDocument")
+            {
+                Executing = true;
+                try
+                {
+                    var doc = BsonDocument.Parse(message.Content.Replacement);
+                    var result = await Service.ReplaceOneAsync(Database, Collection, "{ _id: ObjectId('" + message.Content.Document.Id + "') }", doc, cts.Token);
+
+                    message.Content.Document.Result = doc;
+                    message.Content.Document.IsExpanded = false;
+                    message.Content.Document.Value = "(" + doc.ElementCount + ") fields";
+                    message.Content.Document.Children.Clear();
+                    message.Content.Document.LazyLoading = true;
+                }
+                catch (Exception ex)
+                {
+                }
+                finally
+                {
+                    Executing = false;
+                }
             }
         }
 

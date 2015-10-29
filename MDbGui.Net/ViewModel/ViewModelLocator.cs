@@ -41,6 +41,7 @@ namespace MDbGui.Net.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<LoginViewModel>();
             SimpleIoc.Default.Register<CreateCollectionViewModel>();
+            SimpleIoc.Default.Register<ReplaceOneViewModel>();
         }
 
         /// <summary>

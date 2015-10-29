@@ -1,5 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
-using MDbGui.Net.Model;
+using MDbGui.Net.ViewModel;
 using System.Windows;
 
 namespace MDbGui.Net.Views.Dialogs
@@ -7,20 +7,24 @@ namespace MDbGui.Net.Views.Dialogs
     /// <summary>
     /// Description for InsertDocumentsView.
     /// </summary>
-    public partial class InsertDocumentsView : Window
+    public partial class UpdateDocumentView : Window
     {
         /// <summary>
         /// Initializes a new instance of the InsertDocumentsView class.
         /// </summary>
-        public InsertDocumentsView()
+        public UpdateDocumentView()
         {
             InitializeComponent();
-            Messenger.Default.Register<NotificationMessage<InsertDocumentsModel>>(this, (message) => NotificationMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<ReplaceOneViewModel>>(this, (message) => NotificationMessageHandler(message));
+            Closing += (s, e) =>
+            {
+                ((ReplaceOneViewModel)this.DataContext).Cleanup();
+            };
         }
 
-        private void NotificationMessageHandler(NotificationMessage<InsertDocumentsModel> message)
+        private void NotificationMessageHandler(NotificationMessage<ReplaceOneViewModel> message)
         {
-            if (message.Notification == "InsertDocuments")
+            if (message.Notification == "UpdateDocument")
             {
                 this.Close();
             }
