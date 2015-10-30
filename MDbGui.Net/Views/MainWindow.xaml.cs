@@ -7,6 +7,7 @@ using System.Windows.Media;
 using MDbGui.Net.Views.Dialogs;
 using MDbGui.Net.Views.Controls;
 using MongoDB.Bson;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.Views
 {
@@ -80,7 +81,7 @@ namespace MDbGui.Net.Views
                 UpdateDocumentView wnd = new UpdateDocumentView();
                 var vm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<ReplaceOneViewModel>();
                 vm.Document = message.Content;
-                vm.Replacement = message.Content.Result.ToJson(new MongoDB.Bson.IO.JsonWriterSettings() { Indent = true });
+                vm.Replacement = message.Content.Result.ToJson(new JsonWriterSettingsExtended() { Indent = true, UseLocalTime = true });
                 wnd.DataContext = vm;
                 wnd.ShowDialog();
             }

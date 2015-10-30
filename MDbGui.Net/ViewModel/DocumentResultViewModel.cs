@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -107,7 +108,7 @@ namespace MDbGui.Net.ViewModel
             });
             CopyToClipboard = new RelayCommand(() =>
             {
-                Clipboard.SetText(Result.ToJson(new JsonWriterSettings { Indent = true }));
+                Clipboard.SetText(Result.ToJson(new JsonWriterSettingsExtended() { Indent = true, UseLocalTime = true }));
             });
             ConfirmDeleteResult = new RelayCommand(() =>
             {
@@ -127,17 +128,6 @@ namespace MDbGui.Net.ViewModel
                 foreach (var element in Result)
                 {
                     ResultItemViewModel item = new ResultItemViewModel(element);
-                    item.Type = element.Value.BsonType.ToString();
-                    if (element.Value.IsBsonArray)
-                        item.Value = string.Format("{0} ({1} items)", element.Value.BsonType.ToString(), element.Value.AsBsonArray.Count);
-                    else if (element.Value.IsBsonDocument)
-                        item.Value = string.Format("{0} ({1} fields)", element.Value.BsonType.ToString(), element.Value.AsBsonDocument.ElementCount);
-                    else
-                    {
-                        item.Value = element.Value.ToString().Replace("\n", " ").Replace("\r", " ").Replace("\\n", " ").Replace("\\r", " ");
-                        if (item.Value.Length > 100)
-                            item.Value = item.Value.Substring(0, 100) + "...";
-                    }
                     Children.Add(item);
                 }
             }

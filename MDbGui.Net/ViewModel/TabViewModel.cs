@@ -25,6 +25,8 @@ namespace MDbGui.Net.ViewModel
 
         private bool _disposed;
 
+        JsonWriterSettingsExtended jsonWriterSettings = new JsonWriterSettingsExtended() { Indent = true, UseLocalTime = true };
+
         public TabViewModel()
         {
             ExecutingTimer.Tick += ExecutingTimer_Tick;
@@ -402,26 +404,13 @@ namespace MDbGui.Net.ViewModel
                 StringBuilder sb = new StringBuilder();
                 int index = 1;
                 sb.Append("[");
-                var serializer = MongoDB.Bson.Serialization.BsonSerializer.LookupSerializer(typeof(BsonDocument));
-                MongoDB.Bson.Serialization.BsonSerializationArgs args = default(MongoDB.Bson.Serialization.BsonSerializationArgs);
                 foreach (var result in results)
                 {
                     sb.AppendLine();
                     sb.Append("/* # ");
                     sb.Append(index.ToString());
                     sb.AppendLine(" */");
-
-                    using (var stringWriter = new System.IO.StringWriter())
-                    {
-                        using (var bsonWriter = new LocalDateTimeJsonWriter(stringWriter, new JsonWriterSettings { Indent = true }))
-                        {
-                            var context = MongoDB.Bson.Serialization.BsonSerializationContext.CreateRoot(bsonWriter, null);
-                            args.NominalType = typeof(BsonDocument);
-                            serializer.Serialize(context, args, result);
-                        }
-                        sb.Append(stringWriter.ToString());
-                    }
-
+                    sb.Append(result.ToJson(jsonWriterSettings));
                     sb.Append(",");
                     index++;
                 }
@@ -505,7 +494,7 @@ namespace MDbGui.Net.ViewModel
                 ShowPager = false;
 
                 if (results.Count > 0)
-                    RawResult = results[0].ToJson(new JsonWriterSettings { Indent = true });
+                    RawResult = results[0].ToJson(jsonWriterSettings);
                 else
                     RawResult = "";
                 SelectedViewIndex = 0;
@@ -608,7 +597,7 @@ namespace MDbGui.Net.ViewModel
             {
                 var result = await Service.ExecuteRawCommandAsync(Database, Command, cts.Token);
 
-                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+                RawResult = result.ToJson(jsonWriterSettings);
 
                 SelectedViewIndex = 1;
                 Root = new ResultsViewModel(new List<BsonDocument>() { result }, this);
@@ -654,7 +643,7 @@ namespace MDbGui.Net.ViewModel
             {
                 var result = await Service.Eval(Database, EvalFunction);
 
-                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+                RawResult = result.ToJson(jsonWriterSettings);
 
                 if (result.IsBsonDocument)
                     Root = new ResultsViewModel(new List<BsonDocument>() { result.AsBsonDocument }, this);
@@ -702,14 +691,14 @@ namespace MDbGui.Net.ViewModel
                 BsonArray array = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(Insert);
                 var result = await Service.InsertAsync(Database, Collection, array.Select(i => i.AsBsonDocument), cts.Token);
 
-                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+                RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
                 RawResult += Environment.NewLine;
                 RawResult += "Inserted Count: " + result.InsertedCount;
                 RawResult += Environment.NewLine;
                 RawResult += Environment.NewLine;
                 if (result.ProcessedRequests != null && result.ProcessedRequests.Count > 0)
-                    RawResult += "Processed requests: " + Environment.NewLine + string.Join(Environment.NewLine, result.ProcessedRequests.Cast<MongoDB.Driver.InsertOneModel<BsonDocument>>().Select(s => s.Document.ToJson(new JsonWriterSettings { Indent = true })));
+                    RawResult += "Processed requests: " + Environment.NewLine + string.Join(Environment.NewLine, result.ProcessedRequests.Cast<MongoDB.Driver.InsertOneModel<BsonDocument>>().Select(s => s.Document.ToJson(jsonWriterSettings)));
 
                 SelectedViewIndex = 1;
                 Root = null;
@@ -782,7 +771,7 @@ namespace MDbGui.Net.ViewModel
             {
                 var result = await Service.UpdateAsync(Database, Collection, UpdateFilter, BsonDocument.Parse(UpdateDocument), UpdateMulti, cts.Token);
 
-                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+                RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
                 RawResult += Environment.NewLine;
                 RawResult += "Modified Count: " + result.ModifiedCount;
@@ -844,7 +833,7 @@ namespace MDbGui.Net.ViewModel
             {
                 var result = await Service.ReplaceOneAsync(Database, Collection, ReplaceFilter, BsonDocument.Parse(Replacement), cts.Token);
 
-                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+                RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
                 RawResult += Environment.NewLine;
                 RawResult += "Modified Count: " + result.ModifiedCount;
@@ -932,7 +921,7 @@ namespace MDbGui.Net.ViewModel
             {
                 var result = await Service.DeleteAsync(Database, Collection, DeleteQuery, DeleteJustOne, cts.Token);
 
-                RawResult = result.ToJson(new JsonWriterSettings { Indent = true });
+                RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
                 RawResult += Environment.NewLine;
                 RawResult += "Deleted Count: " + result.DeletedCount;
@@ -972,7 +961,7 @@ namespace MDbGui.Net.ViewModel
                             sb.Append("/* # ");
                             sb.Append(((DocumentResultViewModel)item).Index);
                             sb.AppendLine(" */");
-                            sb.AppendLine(((DocumentResultViewModel)item).Result.ToJson(new JsonWriterSettings { Indent = true }));
+                            sb.AppendLine(((DocumentResultViewModel)item).Result.ToJson(jsonWriterSettings));
                             sb.Append(",");
                         }
                         if (Root.Children.Count > 0)
@@ -1064,7 +1053,7 @@ namespace MDbGui.Net.ViewModel
                     sb.Append("/* # ");
                     sb.Append(index.ToString());
                     sb.AppendLine(" */");
-                    sb.AppendLine(result.ToJson(new JsonWriterSettings { Indent = true }));
+                    sb.AppendLine(result.ToJson(jsonWriterSettings));
                     sb.Append(",");
                     index++;
                 }

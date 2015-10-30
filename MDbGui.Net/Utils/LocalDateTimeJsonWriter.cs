@@ -33,7 +33,7 @@ namespace MDbGui.Net.Utils
     {
         // private fields
         private TextWriter _textWriter;
-        private JsonWriterSettings _jsonWriterSettings; // same value as in base class just declared as derived class
+        private JsonWriterSettingsExtended _jsonWriterSettings; // same value as in base class just declared as derived class
         private JsonWriterContext _context;
 
         // constructors
@@ -42,7 +42,7 @@ namespace MDbGui.Net.Utils
         /// </summary>
         /// <param name="writer">A TextWriter.</param>
         public LocalDateTimeJsonWriter(TextWriter writer)
-            : this(writer, JsonWriterSettings.Defaults)
+            : this(writer, JsonWriterSettingsExtended.Defaults)
         {
         }
 
@@ -51,7 +51,7 @@ namespace MDbGui.Net.Utils
         /// </summary>
         /// <param name="writer">A TextWriter.</param>
         /// <param name="settings">Optional JsonWriter settings.</param>
-        public LocalDateTimeJsonWriter(TextWriter writer, JsonWriterSettings settings)
+        public LocalDateTimeJsonWriter(TextWriter writer, JsonWriterSettingsExtended settings)
             : base(settings)
         {
             if (writer == null)
@@ -195,8 +195,16 @@ namespace MDbGui.Net.Utils
                     if (value >= BsonConstants.DateTimeMinValueMillisecondsSinceEpoch &&
                         value <= BsonConstants.DateTimeMaxValueMillisecondsSinceEpoch)
                     {
-                        var dateTime = BsonUtils.ToDateTimeFromMillisecondsSinceEpoch(value).ToLocalTime();
-                        _textWriter.Write("ISODate(\"{0}\")", dateTime.ToString("yyyy-MM-ddTHH:mm:ss.FFFzzz"));
+                        if (_jsonWriterSettings.UseLocalTime)
+                        {
+                            var localDateTime = BsonUtils.ToDateTimeFromMillisecondsSinceEpoch(value).ToLocalTime();
+                            _textWriter.Write("ISODate(\"{0}\")", localDateTime.ToString("yyyy-MM-ddTHH:mm:ss.FFFzzz"));
+                        }
+                        else
+                        {
+                            var utcDateTime = BsonUtils.ToDateTimeFromMillisecondsSinceEpoch(value);
+                            _textWriter.Write("ISODate(\"{0}\")", utcDateTime.ToString("yyyy-MM-ddTHH:mm:ss.FFFZ"));
+                        }
                     }
                     else
                     {
@@ -915,5 +923,25 @@ namespace MDbGui.Net.Utils
             get { return _hasElements; }
             set { _hasElements = value; }
         }
+    }
+
+    public class JsonWriterSettingsExtended : JsonWriterSettings
+    {
+        public static new JsonWriterSettingsExtended Defaults = new JsonWriterSettingsExtended()
+        {
+            Encoding = JsonWriterSettings.Defaults.Encoding,
+            GuidRepresentation = JsonWriterSettings.Defaults.GuidRepresentation,
+            Indent = JsonWriterSettings.Defaults.Indent,
+            IndentChars = JsonWriterSettings.Defaults.IndentChars,
+            MaxSerializationDepth = JsonWriterSettings.Defaults.MaxSerializationDepth,
+            NewLineChars = JsonWriterSettings.Defaults.NewLineChars,
+            OutputMode = JsonWriterSettings.Defaults.OutputMode,
+            ShellVersion = JsonWriterSettings.Defaults.ShellVersion,
+        };
+
+        /// <summary>
+        /// Set wether to serialize DateTime fields as UTC or Local time
+        /// </summary>
+        public bool UseLocalTime { get; set; }
     }
 }

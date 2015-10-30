@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using ICSharpCode.TreeView;
+using MDbGui.Net.Utils;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using System.Collections.ObjectModel;
@@ -11,6 +12,8 @@ namespace MDbGui.Net.ViewModel
 {
     public class ResultItemViewModel : SharpTreeNode
     {
+        JsonWriterSettingsExtended jsonWriterSettings = new JsonWriterSettingsExtended() { Indent = true, UseLocalTime = true };
+
         private BsonElement Element { get; set; }
 
         public override object Icon
@@ -74,6 +77,10 @@ namespace MDbGui.Net.ViewModel
                 Value = string.Format("{0} ({1} items)", element.Value.BsonType.ToString(), element.Value.AsBsonArray.Count);
             else if (element.Value.IsBsonDocument)
                 Value = string.Format("{0} ({1} fields)", element.Value.BsonType.ToString(), element.Value.AsBsonDocument.ElementCount);
+            else if (element.Value.IsValidDateTime)
+            {
+                Value = element.Value.ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss.FFFzzz");
+            }
             else
             {
                 Value = element.Value.ToString().Replace("\n", " ").Replace("\r", " ").Replace("\\n", " ").Replace("\\r", " ");
@@ -86,13 +93,13 @@ namespace MDbGui.Net.ViewModel
                 string res = "";
                 if (Element.Value.IsBsonDocument)
                 {
-                    res = Element.Value.ToJson(new JsonWriterSettings { Indent = true });
+                    res = Element.Value.ToJson(jsonWriterSettings);
                 }
                 else
                 {
                     BsonDocument document = new BsonDocument();
                     document.Add(Element);
-                    res = document.ToJson(new JsonWriterSettings { Indent = true });
+                    res = document.ToJson(jsonWriterSettings);
                 }
                 Clipboard.SetText(res);
             });
@@ -102,7 +109,7 @@ namespace MDbGui.Net.ViewModel
             });
             CopyValue = new RelayCommand(() =>
             {
-                string res = Element.Value.ToJson(new JsonWriterSettings { Indent = true });
+                string res = Element.Value.ToJson(jsonWriterSettings);
                 Clipboard.SetText(res);
             });
         }
