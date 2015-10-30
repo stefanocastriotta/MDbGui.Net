@@ -55,6 +55,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\ICSharpCode.TreeView.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -103,6 +107,9 @@
     <Compile Include="Model\MongoDbServer.cs" />
     <Compile Include="Model\MongoDbService.cs" />
     <Compile Include="Model\IMongoDbService.cs" />
+    <Compile Include="Utils\LoggerHelper.cs" />
+    <Compile Include="Utils\LogLevelTemplateSelector.cs" />
+    <Compile Include="Utils\WpfAppender.cs" />
     <Compile Include="ViewModel\ReplaceOneViewModel.cs" />
     <Compile Include="Utils\AvalonEditBehavior.cs" />
     <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
@@ -139,6 +146,9 @@
     </Compile>
     <Compile Include="Views\Controls\InsertView.xaml.cs">
       <DependentUpon>InsertView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\LogView.xaml.cs">
+      <DependentUpon>LogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\ReplaceView.xaml.cs">
       <DependentUpon>ReplaceView.xaml</DependentUpon>
@@ -180,6 +190,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Controls\InsertView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\LogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -13,6 +13,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using MDbGui.Net.Model;
+using log4net.Core;
 
 namespace MDbGui.Net.ViewModel
 {

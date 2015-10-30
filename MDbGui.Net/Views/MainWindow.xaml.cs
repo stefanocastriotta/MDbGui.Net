@@ -25,6 +25,7 @@ namespace MDbGui.Net.Views
             Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, (message) => CollectionMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbDatabaseViewModel>>(this, (message) => DatabaseMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
+            Utils.LoggerHelper.Logger.Debug("Application started");
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
