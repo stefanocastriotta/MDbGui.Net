@@ -6,39 +6,58 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:utils="clr-namespace:MDbGui.Net.Utils"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             DataContext="{Binding Main, Source={StaticResource Locator}}">
 
     <UserControl.Resources>
         <DataTemplate x:Key="ErrorTemplate">
-            <fa:ImageAwesome Icon="TimesCircle" Foreground="Red"></fa:ImageAwesome>
+            <fa:FontAwesome Icon="TimesCircle" Foreground="Red"></fa:FontAwesome>
         </DataTemplate>
         <DataTemplate x:Key="WarningTemplate">
-            <fa:ImageAwesome Icon="ExclamationTriangle" Foreground="Yellow"></fa:ImageAwesome>
+            <fa:FontAwesome Icon="ExclamationTriangle" Foreground="Yellow"></fa:FontAwesome>
         </DataTemplate>
         <DataTemplate x:Key="InfoTemplate">
-            <fa:ImageAwesome Icon="InfoCircle" Foreground="Blue"></fa:ImageAwesome>
+            <fa:FontAwesome Icon="InfoCircle" Foreground="Blue"></fa:FontAwesome>
         </DataTemplate>
         <DataTemplate x:Key="DebugTemplate">
-            <fa:ImageAwesome Icon="Bug" Foreground="Gray"></fa:ImageAwesome>
+            <fa:FontAwesome Icon="Bug" Foreground="Gray"></fa:FontAwesome>
         </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
         <DataGrid AutoGenerateColumns="False" 
-                  ItemsSource="{Binding Path=LogEntries}">
+                  ItemsSource="{Binding Path=LogEvents}">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path=Timestamp}" 
-                                      Header="Timestamp" />
                 <DataGridTemplateColumn Header="Level">
                     <DataGridTemplateColumn.CellTemplateSelector>
                         <utils:LogLevelTemplateSelector ErrorTemplate="{StaticResource ErrorTemplate}"
 			                WarningTemplate="{StaticResource WarningTemplate}"
 			                InfoTemplate="{StaticResource InfoTemplate}"
-			                DebugTemplate="{StaticResource DebugTemplate}"
-                                                        />
+			                DebugTemplate="{StaticResource DebugTemplate}" />
                     </DataGridTemplateColumn.CellTemplateSelector>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Binding="{Binding Path=Message}" Header="Message" />
+                <DataGridTextColumn Binding="{Binding Path=TimeStamp}" Header="Timestamp">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Level.Name}" Value="ERROR">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=RenderedMessage}" Header="Message">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Level.Name}" Value="ERROR">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -29,6 +29,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition></RowDefinition>
+                <RowDefinition Height="3"></RowDefinition>
+                <RowDefinition Height="200"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid>
                 <StackPanel Orientation="Horizontal">
@@ -63,6 +65,8 @@
                     </TabControl.ContentTemplate>
                 </TabControl>
             </Grid>
+            <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></GridSplitter>
+            <uc:LogView Grid.Row="3"></uc:LogView>
         </Grid>
     </Grid>
 </Window>

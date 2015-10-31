@@ -73,6 +73,7 @@ namespace MDbGui.Net.ViewModel
             this.IsExpanded = true;
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
+                Utils.LoggerHelper.Logger.Debug("Adding new database to server " + Name);
                 Items.Add(newDb);
             });
         }
@@ -97,6 +98,7 @@ namespace MDbGui.Net.ViewModel
                 tabVm.ExecuteOnOpen = param.ExecuteImmediately;
             }
             tabVm.SelectedViewIndex = 1;
+            Utils.LoggerHelper.Logger.Debug("Opening RunCommandTab for server " + Name);
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 
@@ -105,7 +107,9 @@ namespace MDbGui.Net.ViewModel
             try
             {
                 this.IsBusy = true;
+                Utils.LoggerHelper.Logger.Debug("Getting database list of server " + Name);
                 var databases = await MongoDbService.ListDatabasesAsync();
+                Utils.LoggerHelper.Logger.Debug("Database list of server " + Name + " received");
                 LoadDatabases(databases);
             }
             catch (Exception ex)
@@ -122,6 +126,7 @@ namespace MDbGui.Net.ViewModel
         {
             try
             {
+                Utils.LoggerHelper.Logger.Debug("Loading database list of server " + Name);
                 this.Items.Clear();
                 List<MongoDbDatabaseViewModel> systemDatabases = new List<MongoDbDatabaseViewModel>();
                 List<MongoDbDatabaseViewModel> standardDatabases = new List<MongoDbDatabaseViewModel>();
@@ -157,17 +162,19 @@ namespace MDbGui.Net.ViewModel
         {
             if (message.Notification == "DropDatabase" && message.Target == this)
             {
+                Utils.LoggerHelper.Logger.Debug("DropDatabase notification received on server " + Name + ", database name: " + message.Content.Name);
                 IsBusy = true;
                 message.Content.IsBusy = true;
                 try
                 {
+                    Utils.LoggerHelper.Logger.Info("Dropping database " + message.Content.Name + " on server " + Name);
                     await MongoDbService.DropDatabaseAsync(message.Content.Name);
                     Items.Remove(message.Content);
                     message.Content.Cleanup();
                 }
                 catch (Exception ex)
                 {
-                    //TODO: log error
+                    Utils.LoggerHelper.Logger.Error("Error while dropping database " + message.Content.Name + " on server " + Name, ex);
                 }
                 finally
                 {

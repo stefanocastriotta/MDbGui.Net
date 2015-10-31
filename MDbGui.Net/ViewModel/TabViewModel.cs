@@ -432,7 +432,7 @@ namespace MDbGui.Net.ViewModel
                     {
                         if (t.Exception != null)
                         {
-
+                            Utils.LoggerHelper.Logger.Error("Exception while executing find command", t.Exception);
                         }
                     });
                     var currentOpTask = Service.Eval(Database, "function() { return db.currentOP(); }");
@@ -451,6 +451,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
+                Utils.LoggerHelper.Logger.Error("Exception while executing find command", ex);
                 SelectedViewIndex = 1;
                 RawResult = ex.Message;
                 Root = null;
@@ -509,7 +510,7 @@ namespace MDbGui.Net.ViewModel
                     {
                         if (t.Exception != null)
                         {
-
+                            Utils.LoggerHelper.Logger.Error("Exception while executing find command", t.Exception);
                         }
                     });
                     var currentOpTask = Service.Eval(Database, "function() { return db.currentOP(); }");
@@ -528,6 +529,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Find Explain command", ex);
                 SelectedViewIndex = 1;
                 RawResult = ex.Message;
                 Root = null;
@@ -560,6 +562,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Count command", ex);
                 SelectedViewIndex = 1;
                 RawResult = ex.Message;
                 Root = null;
@@ -604,6 +607,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
+                Utils.LoggerHelper.Logger.Error("Exception while executing command", ex);
                 RawResult = ex.Message;
                 SelectedViewIndex = 1;
                 Root = null;
@@ -652,6 +656,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Eval command", ex);
                 RawResult = ex.Message;
                 Root = null;
             }
@@ -705,6 +710,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Insert command", ex);
                 RawResult = ex.Message;
                 SelectedViewIndex = 1;
                 Root = null;
@@ -781,6 +787,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Update command", ex);
                 RawResult = ex.Message;
                 SelectedViewIndex = 1;
                 Root = null;
@@ -843,6 +850,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Replace command", ex);
                 RawResult = ex.Message;
                 SelectedViewIndex = 1;
                 Root = null;
@@ -872,6 +880,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
+                    Utils.LoggerHelper.Logger.Error("Exception while updating a document", ex);
                 }
                 finally
                 {
@@ -931,6 +940,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Delete command", ex);
                 RawResult = ex.Message;
                 SelectedViewIndex = 1;
                 Root = null;
@@ -975,6 +985,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
+                    Utils.LoggerHelper.Logger.Error("Exception while deleting a document", ex);
                     RawResult = ex.Message;
                     SelectedViewIndex = 1;
                 }
@@ -1075,7 +1086,7 @@ namespace MDbGui.Net.ViewModel
                     {
                         if (t.Exception != null)
                         {
-
+                            Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", t.Exception);
                         }
                     });
                     var currentOpTask = Service.Eval(Database, "function() { return db.currentOP(); }");
@@ -1094,7 +1105,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
-                //TODO: log error
+                Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", ex);
                 SelectedViewIndex = 1;
                 RawResult = ex.Message;
                 Root = null;

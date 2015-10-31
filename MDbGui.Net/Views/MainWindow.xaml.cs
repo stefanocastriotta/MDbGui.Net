@@ -43,11 +43,13 @@ namespace MDbGui.Net.Views
 
         private void CollectionMessageHandler(NotificationMessage<MongoDbCollectionViewModel> message)
         {
+            Utils.LoggerHelper.Logger.Debug("MongoDbCollectionViewModel message received");
             if (message.Notification == "ConfirmDropCollection")
             {
                 var result = MessageBox.Show("Drop collection " + message.Content.Name + "?", "Drop confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
+                    Utils.LoggerHelper.Logger.Debug("Sending DropCollection message, collection name:" + message.Content.Name);
                     Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, message.Content.Database, message.Content, "DropCollection"));
                 }
             }

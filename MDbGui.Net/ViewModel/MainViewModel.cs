@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using MDbGui.Net.Views.Controls;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -56,6 +57,8 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        public ObservableCollection<log4net.Core.LoggingEvent> LogEvents { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -63,6 +66,7 @@ namespace MDbGui.Net.ViewModel
         {
             _activeConnections = new ObservableCollection<MongoDbServerViewModel>();
             _tabs = new ObservableCollection<TabViewModel>();
+            LogEvents = LoggerHelper.LogEvents;
             Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<TabViewModel>>(this, (message) => TabMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => MongoDbServerMessageHandler(message));
@@ -84,12 +88,14 @@ namespace MDbGui.Net.ViewModel
 
                 try
                 {
+                    Utils.LoggerHelper.Logger.Info("Connecting to server " + message.Content.Address + ":" + message.Content.Port);
                     var serverInfo = await _mongoDbService.ConnectAsync(message.Content);
+                    Utils.LoggerHelper.Logger.Info("Connected to server " + message.Content.Address + ":" + message.Content.Port);
                     serverVm.LoadDatabases(serverInfo.Databases);
                 }
                 catch (Exception ex)
                 {
-                    //TODO: log error
+                    Utils.LoggerHelper.Logger.Error("Failed to connect to server " + message.Content.Address + ":" + message.Content.Port, ex);
                 }
                 serverVm.IsBusy = false;
             }
@@ -101,29 +107,31 @@ namespace MDbGui.Net.ViewModel
             switch (message.Notification)
             {
                 case "OpenTab":
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                {
-                    message.Content.Connections.AddRange(GetActiveConnections());
-                    Tabs.Add(message.Content);
-                    SelectedTab = message.Content;
-                    if (message.Content.ExecuteOnOpen)
+                    Utils.LoggerHelper.Logger.Debug("OpenTab message received");
+                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
-                        switch (message.Content.CommandType)
+                        message.Content.Connections.AddRange(GetActiveConnections());
+                        Tabs.Add(message.Content);
+                        SelectedTab = message.Content;
+                        if (message.Content.ExecuteOnOpen)
                         {
-                            case CommandType.Find:
-                                message.Content.ExecuteFind.Execute(null);
-                                break;
-                            case CommandType.RunCommand:
-                                message.Content.ExecuteCommand.Execute(null);
-                                break;
+                            switch (message.Content.CommandType)
+                            {
+                                case CommandType.Find:
+                                    message.Content.ExecuteFind.Execute(null);
+                                    break;
+                                case CommandType.RunCommand:
+                                    message.Content.ExecuteCommand.Execute(null);
+                                    break;
+                            }
                         }
-                    }
-                });
-                break;
+                    });
+                    break;
                 case "CloseTab":
-                Tabs.Remove(message.Content);
-                message.Content.Cleanup();
-                break;
+                    Utils.LoggerHelper.Logger.Debug("CloseTab message received");
+                    Tabs.Remove(message.Content);
+                    message.Content.Cleanup();
+                    break;
             }
         }
 
@@ -131,6 +139,7 @@ namespace MDbGui.Net.ViewModel
         {
             if (message.Notification == "Disconnect")
             {
+                Utils.LoggerHelper.Logger.Info("Disconnecting from server " + message.Content.Name);
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     ActiveConnections.Remove(message.Content);

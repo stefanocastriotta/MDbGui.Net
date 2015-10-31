@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,19 +21,20 @@ namespace MDbGui.Net.Utils
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            string level = item.ToString();
-
-            switch (level)
+            if (item != null)
             {
-                case "Error":
-                    return ErrorTemplate;
-                case "Warning":
+                var logItem = (LoggingEvent)item;
+
+                if (logItem.Level == Level.Error)
+                        return ErrorTemplate;
+                else if (logItem.Level == Level.Warn)
                     return WarningTemplate;
-                case "Info":
+                else if (logItem.Level == Level.Info)
                     return InfoTemplate;
-                default:
+                else if (logItem.Level == Level.Debug)
                     return DebugTemplate;
             }
+            return null;
         }
     }
 
