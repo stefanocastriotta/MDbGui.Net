@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,13 @@ namespace MDbGui.Net.Views.Controls
         public LogView()
         {
             InitializeComponent();
+            ((INotifyCollectionChanged)grdLogs.Items).CollectionChanged += LogView_CollectionChanged;
+        }
+
+        private void LogView_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (grdLogs.Items.Count > 0)
+                grdLogs.ScrollIntoView(grdLogs.Items[grdLogs.Items.Count - 1]);
         }
     }
 }
