@@ -8,6 +8,7 @@ using MDbGui.Net.Views.Dialogs;
 using MDbGui.Net.Views.Controls;
 using MongoDB.Bson;
 using MDbGui.Net.Utils;
+using System;
 
 namespace MDbGui.Net.Views
 {
@@ -23,8 +24,9 @@ namespace MDbGui.Net.Views
         {
             InitializeComponent();
             Closing += (s, e) => ViewModelLocator.Cleanup();
-            Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, (message) => CollectionMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbDatabaseViewModel>>(this, (message) => DatabaseMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, (message) => CollectionMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<MongoDbIndexViewModel>>(this, (message) => IndexMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
             Utils.LoggerHelper.Logger.Debug("Application started");
         }
@@ -44,14 +46,51 @@ namespace MDbGui.Net.Views
         private void CollectionMessageHandler(NotificationMessage<MongoDbCollectionViewModel> message)
         {
             Utils.LoggerHelper.Logger.Debug("MongoDbCollectionViewModel message received");
-            if (message.Notification == "ConfirmDropCollection")
+            switch (message.Notification)
             {
-                var result = MessageBox.Show("Drop collection " + message.Content.Name + "?", "Drop confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    Utils.LoggerHelper.Logger.Debug("Sending DropCollection message, collection name:" + message.Content.Name);
-                    Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, message.Content.Database, message.Content, "DropCollection"));
-                }
+                case "ConfirmDropCollection":
+                    var result = MessageBox.Show("Drop collection " + message.Content.Name + "?", "Drop confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        Utils.LoggerHelper.Logger.Debug("Sending DropCollection message, collection name:" + message.Content.Name);
+                        Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, message.Content.Database, message.Content, "DropCollection"));
+                    }
+                    break;
+                case "CreateIndex":
+                    CreateIndexDialog wnd = new CreateIndexDialog();
+                    wnd.Title = "Create index";
+                    var vm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<CreateIndexViewModel>();
+                    vm.Collection = message.Content;
+                    vm.IsNew = true;
+                    wnd.DataContext = vm;
+                    wnd.ShowDialog();
+                    break;
+            }
+        }
+
+        private void IndexMessageHandler(NotificationMessage<MongoDbIndexViewModel> message)
+        {
+            switch (message.Notification)
+            {
+                case "ConfirmDropIndex":
+                    var result = MessageBox.Show("Drop index " + message.Content.Name + "?", "Drop confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        Utils.LoggerHelper.Logger.Debug("Sending DropIndex message, index name:" + message.Content.Name);
+                        Messenger.Default.Send(new NotificationMessage<MongoDbIndexViewModel>(this, message.Content.Collection, message.Content, "DropIndex"));
+                    }
+                    break;
+                case "EditIndex":
+                    CreateIndexDialog wnd = new CreateIndexDialog();
+                    wnd.Title = "Edit index";
+                    var vm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<CreateIndexViewModel>();
+                    vm.Collection = message.Content.Collection;
+                    vm.Name = message.Content.Name;
+                    vm.IsNew = false;
+                    vm.IndexDefinition = message.Content.IndexDefinition;
+                    wnd.DataContext = vm;
+                    wnd.ShowDialog();
+                    break;
             }
         }
 

@@ -113,7 +113,7 @@
 
             <HierarchicalDataTemplate 
                       DataType="{x:Type local:MongoDbCollectionViewModel}" 
-                      ItemsSource="{Binding Indexes}"
+                      ItemsSource="{Binding Folders}"
                       >
                 <StackPanel Orientation="Horizontal">
                     <fa:ImageAwesome Icon="Table" Width="16" Height="16" Visibility="{Binding IconVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -126,6 +126,7 @@
                                 <MenuItem Header="Drop collection..." Command="{Binding Path=ConfirmDropCollection}" />
                                 <Separator/>
                                 <MenuItem Header="Insert documents" Command="{Binding Path=InsertDocuments}" />
+                                <MenuItem Header="Create index" Command="{Binding Path=CreateIndex}" />
                             </ContextMenu>
                         </TextBlock.ContextMenu>
                         <TextBlock.ToolTip>
@@ -149,7 +150,16 @@
 
             <DataTemplate DataType="{x:Type local:MongoDbIndexViewModel}">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="5,0,0,0" Text="{Binding Name}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown" />
+                    <fa:ImageAwesome Icon="SortAmountAscending" Width="16" Height="16" Visibility="{Binding IconVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    </fa:ImageAwesome>
+                    <TextBlock Margin="5,0,0,0" Text="{Binding Name}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
+                        <TextBlock.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Edit index" Command="{Binding Path=EditIndex}" />
+                                <MenuItem Header="Drop index..." Command="{Binding Path=ConfirmDropIndex}" />
+                            </ContextMenu>
+                        </TextBlock.ContextMenu>
+                    </TextBlock>
                 </StackPanel>
             </DataTemplate>
         </TreeView.Resources>

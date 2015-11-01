@@ -104,6 +104,32 @@ namespace MDbGui.Net.Model
 
         #endregion
 
+        #region Collections admin
+
+        public async Task<List<BsonDocument>> GetCollectionIndexesAsync(string databaseName, string collection)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            var cursor = await mongoCollection.Indexes.ListAsync();
+            return await cursor.ToListAsync();
+        }
+
+        public async Task<string> CreateIndexAsync(string databaseName, string collection, string indexDefinition, CreateIndexOptions options)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            return await mongoCollection.Indexes.CreateOneAsync(BsonDocument.Parse(indexDefinition), options);
+        }
+
+        public async Task DropIndexAsync(string databaseName, string collection, string indexName)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            await mongoCollection.Indexes.DropOneAsync(indexName);
+        }
+
+        #endregion
+
         public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, string projection, int? limit, int? skip, bool explain, Guid operationComment, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);

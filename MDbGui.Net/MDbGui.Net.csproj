@@ -111,6 +111,7 @@
     <Compile Include="Utils\LoggerHelper.cs" />
     <Compile Include="Utils\LogLevelTemplateSelector.cs" />
     <Compile Include="Utils\WpfAppender.cs" />
+    <Compile Include="ViewModel\CreateIndexViewModel.cs" />
     <Compile Include="ViewModel\ReplaceOneViewModel.cs" />
     <Compile Include="Utils\AvalonEditBehavior.cs" />
     <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
@@ -172,6 +173,9 @@
     <Compile Include="Views\Dialogs\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Dialogs\CreateIndexDialog.xaml.cs">
+      <DependentUpon>CreateIndexDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dialogs\UpdateDocumentView.xaml.cs">
       <DependentUpon>UpdateDocumentView.xaml</DependentUpon>
     </Compile>
@@ -216,6 +220,10 @@
     </Page>
     <Page Include="Views\Dialogs\CreateCollectionDialog.xaml">
       <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\CreateIndexDialog.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialogs\UpdateDocumentView.xaml">

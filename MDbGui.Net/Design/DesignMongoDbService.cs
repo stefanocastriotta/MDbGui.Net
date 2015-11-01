@@ -57,6 +57,21 @@ namespace MDbGui.Net.Design
             return new List<BsonDocument>();
         }
 
+        public async Task<List<BsonDocument>> GetCollectionIndexesAsync(string databaseName, string collection)
+        {
+            return new List<BsonDocument>();
+        }
+
+        public async Task<string> CreateIndexAsync(string databaseName, string collection, string indexDefinition, CreateIndexOptions options)
+        {
+            return "";
+        }
+
+        public async Task DropIndexAsync(string databaseName, string collection, string indexName)
+        {
+
+        }
+
         public async Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command, CancellationToken token)
         {
             // Use this to create design time data
