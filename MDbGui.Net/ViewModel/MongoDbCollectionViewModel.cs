@@ -188,7 +188,7 @@ namespace MDbGui.Net.ViewModel
                 foreach (var index in indexes)
                 {
                     var indexVm = new MongoDbIndexViewModel(this, index["name"].AsString);
-                    indexVm.IndexDefinition = index["key"].ToJson(new MongoDB.Bson.IO.JsonWriterSettings() { Indent = true });
+                    indexVm.Index = index;
                     _indexes.Children.Add(indexVm);
                 }
                 _indexes.ItemsCount = _indexes.Children.OfType<MongoDbIndexViewModel>().Count();
@@ -213,22 +213,29 @@ namespace MDbGui.Net.ViewModel
                     IsBusy = true;
                     if (message.Notification == "RecreateIndex")
                         await Database.Server.MongoDbService.DropIndexAsync(Database.Name, Name, message.Content.Name);
-                    string result = await Database.Server.MongoDbService.CreateIndexAsync(Database.Name, Name, message.Content.IndexDefinition, new MongoDB.Driver.CreateIndexOptions() { Name = message.Content.Name });
+                    await Database.Server.MongoDbService.CreateIndexAsync(Database.Name, Name, message.Content.IndexDefinition, 
+                        new MongoDB.Driver.CreateIndexOptions()
+                        {
+                            Name = message.Content.Name,
+                            Background = message.Content.Background,
+                            Bits = message.Content.Bits,
+                            BucketSize = message.Content.BucketSize,
+                            DefaultLanguage = message.Content.DefaultLanguage,
+                            ExpireAfter = message.Content.ExpireAfter.HasValue ? TimeSpan.FromSeconds(message.Content.ExpireAfter.Value) : (TimeSpan?)null,
+                            LanguageOverride = message.Content.LanguageOverride,
+                            Max = message.Content.Max,
+                            Min = message.Content.Min,
+                            Sparse = message.Content.Sparse,
+                            SphereIndexVersion = message.Content.SphereIndexVersion,
+                            StorageEngine = !string.IsNullOrWhiteSpace(message.Content.StorageEngine) ? BsonDocument.Parse(message.Content.StorageEngine) : null,
+                            TextIndexVersion = message.Content.TextIndexVersion,
+                            Unique = message.Content.Unique,
+                            Version = message.Content.Version,
+                            Weights = !string.IsNullOrWhiteSpace(message.Content.Weights) ? BsonDocument.Parse(message.Content.Weights) : null
+                        });
                     this.IsExpanded = true;
                     this._indexes.IsExpanded = true;
-                    if (message.Notification == "CreateIndex")
-                    {
-                        var newIndex = new MongoDbIndexViewModel(this, result);
-                        newIndex.IndexDefinition = message.Content.IndexDefinition;
-                        _indexes.Children.Add(newIndex);
-                        _indexes.ItemsCount = _indexes.Children.OfType<MongoDbIndexViewModel>().Count();
-                    }
-                    else
-                    {
-                        var existingIndexVm = _indexes.Children.FirstOrDefault(i => i.Name == message.Content.Name);
-                        if (existingIndexVm != null)
-                            ((MongoDbIndexViewModel)existingIndexVm).IndexDefinition = message.Content.IndexDefinition;
-                    }
+                    LoadIndexes();
                 }
                 catch (Exception ex)
                 {

@@ -7,7 +7,7 @@
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:utils="clr-namespace:MDbGui.Net.Utils"
-        mc:Ignorable="d" Width="450" Height="250">
+        mc:Ignorable="d" Width="450" SizeToContent="Height">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -26,6 +26,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Content="Index name" />
         <TextBox HorizontalAlignment="Stretch" Height="23" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Name, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
@@ -38,8 +39,134 @@
                 </i:Interaction.Behaviors>
             </avalonEdit:TextEditor>
         </Border>
-
-        <StackPanel Margin="0,5,0,0" Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="2">
+        <Expander Grid.Row="2" Grid.ColumnSpan="2" Header="Options" IsExpanded="{Binding IsExpanded}">
+            <TabControl>
+                <TabItem Header="Common">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                            <Label Content="Unique" />
+                            <CheckBox Height="23" IsChecked="{Binding Unique}">
+                            </CheckBox>
+                            <Label Content="Sparse" />
+                            <CheckBox Height="23" IsChecked="{Binding Sparse}">
+                            </CheckBox>
+                            <Label Content="Create in background" />
+                            <CheckBox Height="23" IsChecked="{Binding Background}">
+                            </CheckBox>
+                        </StackPanel>
+                        <Label Content="Expire after (sec.)" Grid.Row="1" />
+                        <TextBox Grid.Column="1" Grid.Row="1" Height="23" Text="{Binding ExpireAfter, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}">
+                        </TextBox>
+                        <Label Content="Version" Grid.Row="2" />
+                        <TextBox Grid.Column="1" Grid.Row="2" Height="23" Text="{Binding Version, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}">
+                        </TextBox>
+                        <Label Content="Storage engine" Grid.Row="3" />
+                        <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="3" Height="100">
+                            <avalonEdit:TextEditor>
+                                <i:Interaction.Behaviors>
+                                    <utils:AvalonEditBehavior GiveMeTheText="{Binding StorageEngine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </i:Interaction.Behaviors>
+                            </avalonEdit:TextEditor>
+                        </Border>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Text">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Label Content="Default language" Grid.Row="0" />
+                        <TextBox Grid.Column="1" Grid.Row="0" Height="23" Text="{Binding DefaultLanguage, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}">
+                        </TextBox>
+                        <Label Content="Language override" Grid.Row="1" />
+                        <TextBox Grid.Column="1" Grid.Row="1" Height="23" Text="{Binding LanguageOverride, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}">
+                        </TextBox>
+                        <Label Content="Text index version" Grid.Row="2" />
+                        <TextBox Grid.Column="1" Grid.Row="2" Height="23" Text="{Binding TextIndexVersion, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}">
+                        </TextBox>
+                        <Label Content="Weights" Grid.Row="3" />
+                        <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="3" Height="100">
+                            <avalonEdit:TextEditor>
+                                <i:Interaction.Behaviors>
+                                    <utils:AvalonEditBehavior GiveMeTheText="{Binding Weights, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </i:Interaction.Behaviors>
+                            </avalonEdit:TextEditor>
+                        </Border>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="2d">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Label Content="Bits" Grid.Row="0" />
+                        <TextBox Grid.Column="1" Grid.Row="0" Height="23" Text="{Binding Bits, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}">
+                        </TextBox>
+                        <Label Content="Min" Grid.Row="1" />
+                        <TextBox Grid.Column="1" Grid.Row="1" Height="23" Text="{Binding Min, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}">
+                        </TextBox>
+                        <Label Content="Max" Grid.Row="2" />
+                        <TextBox Grid.Column="1" Grid.Row="2" Height="23" Text="{Binding Max, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}">
+                        </TextBox>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="2dsphere">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Label Content="Sphere index version" Grid.Row="0" />
+                        <TextBox Grid.Column="1" Grid.Row="0" Height="23" Text="{Binding SphereIndexVersion, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}">
+                        </TextBox>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="geoHaystack">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Label Content="Bucket size" Grid.Row="1" />
+                        <TextBox Grid.Column="1" Grid.Row="1" Height="23" Text="{Binding BucketSize, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}">
+                        </TextBox>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Expander>
+        <StackPanel Margin="0,5,0,0" Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2">
             <Button Content="Create" Command="{Binding CreateIndex}" Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}}"></Button>
             <Button Content="Recreate" Command="{Binding CreateIndex}" Visibility="{Binding IsNew, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"></Button>
             <Button Margin="10,0,0,0" Content="Close" Click="Button_Click"></Button>

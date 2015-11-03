@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
+using MongoDB.Bson;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -35,14 +36,14 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
-        protected string _indexDefinition;
+        protected BsonDocument _index;
 
-        public string IndexDefinition
+        public BsonDocument Index
         {
-            get { return _indexDefinition; }
+            get { return _index; }
             set
             {
-                Set(ref _indexDefinition, value);
+                Set(ref _index, value);
             }
         }
 

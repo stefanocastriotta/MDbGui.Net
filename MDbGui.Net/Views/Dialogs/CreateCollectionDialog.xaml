@@ -8,7 +8,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:utils="clr-namespace:MDbGui.Net.Utils"
         mc:Ignorable="d ignore"
-        Width="400" Height="300">
+        Width="400" SizeToContent="Height">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -35,35 +35,35 @@
         <Label Content="Collection name" />
         <TextBox HorizontalAlignment="Stretch" Height="23" Grid.Column="1" TextWrapping="Wrap" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" />
 
-        <Label Margin="0,5,0,0" Content="AutoIndexId" Grid.Row="1" />
-        <CheckBox Margin="0,5,0,0" Grid.Column="1" Height="23" Grid.Row="1" IsThreeState="True" IsChecked="{Binding AutoIndexId}">
+        <Label Content="AutoIndexId" Grid.Row="1" />
+        <CheckBox Grid.Column="1" Height="23" Grid.Row="1" IsThreeState="True" IsChecked="{Binding AutoIndexId}">
         </CheckBox>
         
-        <Label Margin="0,5,0,0" Content="Capped" Grid.Row="2" />
-        <CheckBox Margin="0,5,0,0" Grid.Column="2" Height="23" Grid.Row="2" IsThreeState="True" IsChecked="{Binding Capped}">
+        <Label Content="Capped" Grid.Row="2" />
+        <CheckBox Grid.Column="2" Height="23" Grid.Row="2" IsThreeState="True" IsChecked="{Binding Capped}">
         </CheckBox>
 
-        <Label Content="MaxDocuments" Grid.Row="3" Margin="0,5,0,0" />
-        <TextBox Grid.Column="1" Grid.Row="3" Height="23" Margin="0,5,0,0" Text="{Binding MaxDocuments, UpdateSourceTrigger=PropertyChanged}">
+        <Label Content="MaxDocuments" Grid.Row="3" />
+        <TextBox Grid.Column="1" Grid.Row="3" Height="23" Text="{Binding MaxDocuments, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
 
-        <Label Content="MaxSize" Grid.Row="4" Margin="0,5,0,0" />
-        <TextBox Grid.Column="1" Grid.Row="4" Height="23" Margin="0,5,0,0" Text="{Binding MaxSize, UpdateSourceTrigger=PropertyChanged}">
+        <Label Content="MaxSize" Grid.Row="4" />
+        <TextBox Grid.Column="1" Grid.Row="4" Height="23" Text="{Binding MaxSize, UpdateSourceTrigger=PropertyChanged}">
         </TextBox>
 
-        <Label Margin="0,5,0,0" Content="UsePowerOf2Sizes" Grid.Row="5" />
-        <CheckBox Margin="0,5,0,0" Grid.Column="1" Height="23" Grid.Row="5" IsThreeState="True" IsChecked="{Binding UsePowerOf2Sizes}">
+        <Label Content="UsePowerOf2Sizes" Grid.Row="5" />
+        <CheckBox Grid.Column="1" Height="23" Grid.Row="5" IsThreeState="True" IsChecked="{Binding UsePowerOf2Sizes}">
         </CheckBox>
 
-        <Label Content="Storage engine" Grid.Row="6" Margin="0,5,0,0" />
-        <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="6" Margin="0,5,0,0">
-            <avalonEdit:TextEditor>
+        <Label Content="Storage engine" Grid.Row="6" />
+        <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="6">
+            <avalonEdit:TextEditor Height="100">
                 <i:Interaction.Behaviors>
                     <utils:AvalonEditBehavior GiveMeTheText="{Binding StorageEngine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </i:Interaction.Behaviors>
             </avalonEdit:TextEditor>
         </Border>
-        <StackPanel Margin="0,5,0,0" Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="2">
+        <StackPanel Orientation="Horizontal" Grid.Row="7" Grid.ColumnSpan="2">
             <Button Content="Create" Command="{Binding CreateCollection}"></Button>
             <Button Margin="10,0,0,0" Content="Close" Click="Button_Click"></Button>
         </StackPanel>

@@ -89,7 +89,50 @@ namespace MDbGui.Net.Views
                     vm.Collection = message.Content.Collection;
                     vm.Name = message.Content.Name;
                     vm.IsNew = false;
-                    vm.IndexDefinition = message.Content.IndexDefinition;
+                    vm.IsExpanded = true;
+                    vm.IndexDefinition = message.Content.Index["key"].ToJson(new MongoDB.Bson.IO.JsonWriterSettings() { Indent = true });
+                    if (message.Content.Index.Contains("unique"))
+                        vm.Unique = message.Content.Index["unique"].AsBoolean;
+
+                    if (message.Content.Index.Contains("sparse"))
+                        vm.Sparse = message.Content.Index["sparse"].AsBoolean;
+
+                    if (message.Content.Index.Contains("expireAfterSeconds"))
+                        vm.ExpireAfter = message.Content.Index["expireAfterSeconds"].AsInt32;
+
+                    if (message.Content.Index.Contains("v"))
+                        vm.Version = message.Content.Index["v"].AsInt32;
+
+                    if (message.Content.Index.Contains("storageEngine"))
+                        vm.StorageEngine = message.Content.Index["storageEngine"].ToJson(new MongoDB.Bson.IO.JsonWriterSettings() { Indent = true });
+
+                    if (message.Content.Index.Contains("weights"))
+                        vm.Weights = message.Content.Index["weights"].ToJson(new MongoDB.Bson.IO.JsonWriterSettings() { Indent = true });
+
+                    if (message.Content.Index.Contains("default_language"))
+                        vm.DefaultLanguage = message.Content.Index["default_language"].AsString;
+
+                    if (message.Content.Index.Contains("language_override"))
+                        vm.LanguageOverride = message.Content.Index["language_override"].AsString;
+
+                    if (message.Content.Index.Contains("textIndexVersion"))
+                        vm.TextIndexVersion = message.Content.Index["textIndexVersion"].AsInt32;
+
+                    if (message.Content.Index.Contains("2dsphereIndexVersion"))
+                        vm.SphereIndexVersion = message.Content.Index["2dsphereIndexVersion"].AsInt32;
+
+                    if (message.Content.Index.Contains("bits"))
+                        vm.Bits = message.Content.Index["bits"].AsInt32;
+
+                    if (message.Content.Index.Contains("min"))
+                        vm.Min = message.Content.Index["min"].AsInt32;
+
+                    if (message.Content.Index.Contains("max"))
+                        vm.Max = message.Content.Index["max"].AsInt32;
+
+                    if (message.Content.Index.Contains("bucketSize"))
+                        vm.BucketSize = message.Content.Index["bucketSize"].AsInt32;
+
                     wnd.DataContext = vm;
                     wnd.ShowDialog();
                     break;
