@@ -9,6 +9,7 @@ using MDbGui.Net.Views.Controls;
 using MongoDB.Bson;
 using MDbGui.Net.Utils;
 using System;
+using log4net.Core;
 
 namespace MDbGui.Net.Views
 {
@@ -28,6 +29,7 @@ namespace MDbGui.Net.Views
             Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, (message) => CollectionMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbIndexViewModel>>(this, (message) => IndexMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<log4net.Core.LoggingEvent>>(this, (message) => LogDetailsMessageHandler(message));
             Utils.LoggerHelper.Logger.Debug("Application started");
         }
 
@@ -126,6 +128,13 @@ namespace MDbGui.Net.Views
                 wnd.DataContext = vm;
                 wnd.ShowDialog();
             }
+        }
+
+        private void LogDetailsMessageHandler(NotificationMessage<LoggingEvent> message)
+        {
+            LogDetailsView logDetails = new LogDetailsView();
+            logDetails.DataContext = message.Content;
+            logDetails.ShowDialog();
         }
     }
 }

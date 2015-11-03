@@ -12,6 +12,8 @@ namespace MDbGui.Net.Model
     {
         public MongoClient Client { get; set; }
 
+        public BsonDocument ServerStatus { get; set; }
+
         public List<BsonDocument> Databases { get; set; }
     }
 }

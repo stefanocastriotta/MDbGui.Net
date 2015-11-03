@@ -21,10 +21,11 @@ namespace MDbGui.Net.Model
             else
                 client = new MongoClient(new MongoUrl(connectionInfo.ConnectionString));
             var databases = await client.ListDatabasesAsync();
+            var serverStatus = await client.GetDatabase("admin").RunCommandAsync(new JsonCommand<BsonDocument>("{serverStatus:1}"));
             MongoDbServer server = new MongoDbServer();
             server.Client = client;
             server.Databases = await databases.ToListAsync();
-
+            server.ServerStatus = serverStatus;
             return server;
         }
 

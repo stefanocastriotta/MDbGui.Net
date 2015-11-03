@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using System;
 using System.Threading;
+using MongoDB.Driver.Core.Misc;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -39,6 +40,8 @@ namespace MDbGui.Net.ViewModel
 
         private bool _collectionsLoaded;
 
+        private bool _usersLoaded;
+
         private ObservableCollection<FolderViewModel> _folders;
         public ObservableCollection<FolderViewModel> Folders
         {
@@ -63,13 +66,14 @@ namespace MDbGui.Net.ViewModel
             _folders = new ObservableCollection<FolderViewModel>();
             _collections = new FolderViewModel("Collections", this);
             _users = new FolderViewModel("Users", this);
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            _folders.Add(_collections);
+            _collections.Children.Add(new MongoDbCollectionViewModel(this, null) { IconVisible = false });
+
+            if (_server.ServerVersion < SemanticVersion.Parse("2.6.0"))
             {
-                _folders.Add(_collections);
-                _collections.Children.Add(new MongoDbCollectionViewModel(this, null) { IconVisible = false });
                 _folders.Add(_users);
-                _users.Children.Add(new BaseTreeviewViewModel());
-            });
+                _users.Children.Add(new MongoDbUserViewModel(null, null) { IconVisible = false });
+            }
 
             CreateDatabase = new RelayCommand(InnerCreateDatabase, () =>
             {
@@ -100,6 +104,11 @@ namespace MDbGui.Net.ViewModel
                 {
                     if (!IsNew && !_collectionsLoaded && !string.IsNullOrWhiteSpace(Name))
                         LoadCollections();
+                }
+                else if (Server.ServerVersion < SemanticVersion.Parse("2.6.0") && message.Sender == _users && message.PropertyName == "IsExpanded" && _users.IsExpanded)
+                {
+                    if (!IsNew && !_usersLoaded && !string.IsNullOrWhiteSpace(Name))
+                        LoadUsers();
                 }
             });
 
@@ -148,7 +157,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
-                //TODO: log error
+                Utils.LoggerHelper.Logger.Error(string.Format("Failed to get collections on database '{0}', server '{1}'", Name, Server.Name), ex);
             }
             finally
             {
@@ -166,7 +175,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    //TODO: log error
+                    Utils.LoggerHelper.Logger.Error(string.Format("Failed to get collection stats for collection '{0}' on database '{1}', server '{2}'", collection.Name, Name, Server.Name), ex);
                 }
             }
         }
@@ -198,6 +207,34 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        private async void LoadUsers()
+        {
+            _users.IsBusy = true;
+            try
+            {
+                var usersResult = await Server.MongoDbService.FindAsync(Name, "system.users", null, null, null, null, null, false, Guid.NewGuid(), cts.Token);
+                _users.Children.Clear();
+
+                if (usersResult.Count > 0)
+                {
+                    foreach (var user in usersResult)
+                    {
+                        _users.Children.Add(new MongoDbUserViewModel(user["name"].AsString, user));
+                    }
+                }
+
+                _usersLoaded = true;
+            }
+            catch (Exception ex)
+            {
+                Utils.LoggerHelper.Logger.Error(string.Format("Failed to get users on server '{0}'", Server.Name), ex);
+            }
+            finally
+            {
+                _users.IsBusy = false;
+            }
+        }
+
         public RelayCommand CreateDatabase { get; set; }
 
         public RelayCommand<DatabaseCommand> RunCommand { get; set; }
@@ -219,7 +256,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    //TODO: log error
+                    Utils.LoggerHelper.Logger.Error(string.Format("Failed to create database '{0}' on server '{1}'", Name, Server.Name), ex);
                 }
             }
         }
@@ -269,7 +306,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    //TODO: log error
+                    Utils.LoggerHelper.Logger.Error(string.Format("Failed to create collection '{0}' on database '{1}', server '{2}'", message.Content.Name, Name, Server.Name), ex);
                 }
                 finally
                 {
@@ -293,7 +330,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    //TODO: log error
+                    Utils.LoggerHelper.Logger.Error(string.Format("Failed to drop collection '{0}' on database '{1}', server '{2}'", message.Content.Name, Name, Server.Name), ex);
                 }
                 finally
                 {
@@ -320,7 +357,6 @@ namespace MDbGui.Net.ViewModel
             // of this type implements a finalizer.
             GC.SuppressFinalize(this);
         }
-
 
         protected virtual void Dispose(bool disposing)
         {

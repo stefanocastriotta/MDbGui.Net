@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
+using MongoDB.Driver.Core.Misc;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -19,12 +21,15 @@ namespace MDbGui.Net.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class MongoDbServerViewModel : BaseTreeviewViewModel
+    public class MongoDbServerViewModel : BaseTreeviewViewModel, IDisposable
     {
+        CancellationTokenSource cts = new CancellationTokenSource();
+
+        private bool _disposed;
+
         public readonly IMongoDbService MongoDbService;
 
         public Dictionary<string, DatabaseCommand> DatabaseCommands { get; set; }
-
 
         private ObservableCollection<BaseTreeviewViewModel> _items;
         public ObservableCollection<BaseTreeviewViewModel> Items
@@ -36,6 +41,23 @@ namespace MDbGui.Net.ViewModel
                 RaisePropertyChanged("Items");
             }
         }
+
+        private SemanticVersion _serverVersion;
+        public SemanticVersion ServerVersion
+        {
+            get
+            {
+                return _serverVersion;
+            }
+            set
+            {
+                Set(ref _serverVersion, value);
+            }
+        }
+
+        private bool _usersLoaded;
+
+        private FolderViewModel _users;
 
         /// <summary>
         /// Initializes a new instance of the MongoDbServerViewModel class.
@@ -55,6 +77,14 @@ namespace MDbGui.Net.ViewModel
             DatabaseCommands.Add("replSetGetStatus", new DatabaseCommand() { Command = "{ replSetGetStatus: 1 }", ExecuteImmediately = true });
 
             Messenger.Default.Register<NotificationMessage<MongoDbDatabaseViewModel>>(this, InnerDropDatabase);
+            Messenger.Default.Register<PropertyChangedMessage<bool>>(this, (message) =>
+            {
+                if (message.Sender == _users && message.PropertyName == "IsExpanded" && _users.IsExpanded)
+                {
+                    if (!IsNew && !_usersLoaded && !string.IsNullOrWhiteSpace(Name))
+                        LoadUsers();
+                }
+            });
         }
 
         public RelayCommand CreateNewDatabase { get; set; }
@@ -114,7 +144,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
-                //TODO: log error
+                Utils.LoggerHelper.Logger.Error("Failed to get databases on server " + Name, ex);
             }
             finally
             {
@@ -150,11 +180,18 @@ namespace MDbGui.Net.ViewModel
                 foreach (var db in standardDatabases.OrderBy(o => o.Name))
                     this.Items.Add(db);
 
+                if (ServerVersion >= SemanticVersion.Parse("2.6.0"))
+                {
+                    _users = new FolderViewModel("Users", this);
+                    _users.Children.Add(new MongoDbUserViewModel(null, null) { IconVisible = false });
+                    this.Items.Add(_users);
+                }
+
                 this.IsExpanded = true;
             }
             catch (Exception ex)
             {
-                //TODO: log error
+                Utils.LoggerHelper.Logger.Error("Failed to load database list on server " + Name, ex);
             }
         }
 
@@ -162,7 +199,7 @@ namespace MDbGui.Net.ViewModel
         {
             if (message.Notification == "DropDatabase" && message.Target == this)
             {
-                Utils.LoggerHelper.Logger.Debug("DropDatabase notification received on server " + Name + ", database name: " + message.Content.Name);
+                Utils.LoggerHelper.Logger.DebugFormat("DropDatabase notification received on server '{0}', database name '{1}'", Name, message.Content.Name);
                 IsBusy = true;
                 message.Content.IsBusy = true;
                 try
@@ -174,7 +211,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Utils.LoggerHelper.Logger.Error("Error while dropping database " + message.Content.Name + " on server " + Name, ex);
+                    Utils.LoggerHelper.Logger.Error(string.Format("Error while dropping database '{0}' on server '{1}'", message.Content.Name, Name), ex);
                 }
                 finally
                 {
@@ -184,12 +221,61 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        private async void LoadUsers()
+        {
+            _users.IsBusy = true;
+            try
+            {
+                var usersResult = await MongoDbService.ExecuteRawCommandAsync("admin", "{ usersInfo: 1 }", cts.Token);
+                _users.Children.Clear();
+
+                if (usersResult.Contains("users") && usersResult["users"].AsBsonArray.Count > 0)
+                {
+                    foreach (var user in usersResult["users"].AsBsonArray)
+                    {
+                        _users.Children.Add(new MongoDbUserViewModel(user["name"].AsString, user.AsBsonDocument));
+                    }
+                }
+
+                _usersLoaded = true;
+            }
+            catch (Exception ex)
+            {
+                Utils.LoggerHelper.Logger.Error(string.Format("Failed to get users on server '{0}'", Name), ex);
+            }
+            finally
+            {
+                _users.IsBusy = false;
+            }
+        }
+
         public override void Cleanup()
         {
             base.Cleanup();
             foreach (var item in Items)
                 item.Cleanup();
             MessengerInstance.Unregister(this);
+            this.Dispose();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            // Use SupressFinalize in case a subclass 
+            // of this type implements a finalizer.
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                cts.Dispose();
+
+                // Indicate that the instance has been disposed.
+                _disposed = true;
+            }
         }
     }
 }

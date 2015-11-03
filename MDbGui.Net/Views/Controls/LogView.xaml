@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:utils="clr-namespace:MDbGui.Net.Utils"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding Main, Source={StaticResource Locator}}">
@@ -25,7 +27,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <DataGrid Name="grdLogs" AutoGenerateColumns="False" ItemsSource="{Binding Path=LogEvents}">
+        <DataGrid Name="grdLogs" AutoGenerateColumns="False" ItemsSource="{Binding Path=LogEvents}" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Level">
                     <DataGridTemplateColumn.CellTemplateSelector>
@@ -35,7 +37,7 @@
 			                DebugTemplate="{StaticResource DebugTemplate}" />
                     </DataGridTemplateColumn.CellTemplateSelector>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Binding="{Binding Path=TimeStamp}" Header="Timestamp">
+                <DataGridTextColumn Binding="{Binding Path=TimeStamp, Mode=OneWay}" Header="Timestamp">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
                             <Style.Triggers>
@@ -46,7 +48,7 @@
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=RenderedMessage}" Header="Message">
+                <DataGridTextColumn Binding="{Binding Path=RenderedMessage, Mode=OneWay}" Header="Message">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
                             <Style.Triggers>
@@ -58,6 +60,11 @@
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
             </DataGrid.Columns>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <mvvm:EventToCommand Command="{Binding ViewLogDetails}" CommandParameter="{Binding ElementName=grdLogs, Path=SelectedItem}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
         </DataGrid>
     </Grid>
 </UserControl>

@@ -10,6 +10,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using MDbGui.Net.Views.Controls;
 using MDbGui.Net.Utils;
+using MongoDB.Driver.Core.Misc;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -59,6 +61,8 @@ namespace MDbGui.Net.ViewModel
 
         public ObservableCollection<log4net.Core.LoggingEvent> LogEvents { get; set; }
 
+        public RelayCommand<log4net.Core.LoggingEvent> ViewLogDetails { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -67,6 +71,10 @@ namespace MDbGui.Net.ViewModel
             _activeConnections = new ObservableCollection<MongoDbServerViewModel>();
             _tabs = new ObservableCollection<TabViewModel>();
             LogEvents = LoggerHelper.LogEvents;
+            ViewLogDetails = new RelayCommand<log4net.Core.LoggingEvent>((param) =>
+            {
+                Messenger.Default.Send(new NotificationMessage<log4net.Core.LoggingEvent>(param, "ShowLogDetails"));
+            });
             Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<TabViewModel>>(this, (message) => TabMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => MongoDbServerMessageHandler(message));
@@ -90,6 +98,7 @@ namespace MDbGui.Net.ViewModel
                 {
                     Utils.LoggerHelper.Logger.Info("Connecting to server " + message.Content.Address + ":" + message.Content.Port);
                     var serverInfo = await _mongoDbService.ConnectAsync(message.Content);
+                    serverVm.ServerVersion = SemanticVersion.Parse(serverInfo.ServerStatus["version"].AsString);
                     Utils.LoggerHelper.Logger.Info("Connected to server " + message.Content.Address + ":" + message.Content.Port);
                     serverVm.LoadDatabases(serverInfo.Databases);
                 }

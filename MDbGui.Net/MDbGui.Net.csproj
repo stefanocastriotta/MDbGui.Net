@@ -108,10 +108,13 @@
     <Compile Include="Model\MongoDbService.cs" />
     <Compile Include="Model\IMongoDbService.cs" />
     <Compile Include="Utils\BsonExtensions.cs" />
+    <Compile Include="Utils\ExceptionToStringConverter.cs" />
     <Compile Include="Utils\LoggerHelper.cs" />
     <Compile Include="Utils\LogLevelTemplateSelector.cs" />
+    <Compile Include="Utils\ObjectToJsonConverter.cs" />
     <Compile Include="Utils\WpfAppender.cs" />
     <Compile Include="ViewModel\CreateIndexViewModel.cs" />
+    <Compile Include="ViewModel\MongoDbUserViewModel.cs" />
     <Compile Include="ViewModel\ReplaceOneViewModel.cs" />
     <Compile Include="Utils\AvalonEditBehavior.cs" />
     <Compile Include="Utils\BooleanToVisibilityConverter.cs" />
@@ -148,6 +151,9 @@
     </Compile>
     <Compile Include="Views\Controls\InsertView.xaml.cs">
       <DependentUpon>InsertView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\LogDetailsView.xaml.cs">
+      <DependentUpon>LogDetailsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\LogView.xaml.cs">
       <DependentUpon>LogView.xaml</DependentUpon>
@@ -195,6 +201,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Controls\InsertView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\LogDetailsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
