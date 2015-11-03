@@ -23,6 +23,10 @@ namespace MDbGui.Net.Views.Controls
         public UpdateView()
         {
             InitializeComponent();
+            filterEditor.Options.EnableHyperlinks = false;
+            filterEditor.Options.EnableEmailHyperlinks = false;
+            updateEditor.Options.EnableHyperlinks = false;
+            updateEditor.Options.EnableEmailHyperlinks = false;
         }
     }
 }

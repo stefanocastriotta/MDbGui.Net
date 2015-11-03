@@ -11,6 +11,13 @@
              xmlns:vm="clr-namespace:MDbGui.Net.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MDbGui.Net;component/Skins/MainSkin.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
@@ -21,9 +28,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Label Content="Eval function"></Label>
-        <avalonEdit:TextEditor Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxHeight="100"
-                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
+        <avalonEdit:TextEditor Name="evalEditor" Grid.Column="1" MaxHeight="100">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding EvalFunction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>

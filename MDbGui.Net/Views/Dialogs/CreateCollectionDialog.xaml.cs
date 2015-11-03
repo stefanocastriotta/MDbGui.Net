@@ -16,6 +16,13 @@ namespace MDbGui.Net.Views.Dialogs
         {
             InitializeComponent();
             Messenger.Default.Register<NotificationMessage<CreateCollectionViewModel>>(this, (message) => NotificationMessageHandler(message));
+            if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
+            {
+                var vmTest = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<CreateCollectionViewModel>();
+                vmTest.Name = "Collection1";
+                vmTest.StorageEngine = "{ \"Property1\": \"Value1\"}";
+                this.DataContext = vmTest;
+            }
         }
 
         private void NotificationMessageHandler(NotificationMessage<CreateCollectionViewModel> message)

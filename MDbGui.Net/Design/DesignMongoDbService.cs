@@ -10,110 +10,115 @@ namespace MDbGui.Net.Design
 {
     public class DesignMongoDbService : IMongoDbService
     {
-        public async Task<MongoDbServer> ConnectAsync(ConnectionInfo connectionInfo)
+        public Task<MongoDbServer> ConnectAsync(ConnectionInfo connectionInfo)
         {
             // Use this to create design time data
 
             MongoDbServer server = new MongoDbServer();
-            return server;
+            server.Databases = new List<BsonDocument>();
+            server.Databases.Add(new BsonDocument{ { "name", "TestDatabase1" } });
+            return Task.FromResult(server);
         }
 
-        public async Task<List<BsonDocument>> ListDatabasesAsync()
+        public Task<List<BsonDocument>> ListDatabasesAsync()
         {
-            return new List<BsonDocument>();
+            return Task.FromResult(new List<BsonDocument>());
         }
 
-        public async Task DropDatabaseAsync(string databaseName)
+        public Task DropDatabaseAsync(string databaseName)
         {
-            
+            return new Task(() => { });
         }
 
-        public async Task<BsonValue> Eval(string databaseName, string function)
+        public Task<BsonValue> Eval(string databaseName, string function)
         {
-            return new BsonDocument();
+            return Task.FromResult<BsonValue>(new BsonDocument());
         }
 
-        public async Task<IMongoDatabase> CreateNewDatabaseAsync(string databaseName)
+        public Task<IMongoDatabase> CreateNewDatabaseAsync(string databaseName)
         {
-            return null;
+            return Task.FromResult<IMongoDatabase>(null);
         }
 
-        public async Task CreateCollectionAsync(string databaseName, string collection, CreateCollectionOptions options)
+        public Task CreateCollectionAsync(string databaseName, string collection, CreateCollectionOptions options)
         {
+            return new Task(() => { });
         }
 
-        public async Task RenameCollectionAsync(string databaseName, string oldName, string newName)
+        public Task RenameCollectionAsync(string databaseName, string oldName, string newName)
         {
+            return new Task(() => { });
         }
 
-        public async Task DropCollectionAsync(string databaseName, string collection)
+        public Task DropCollectionAsync(string databaseName, string collection)
         {
+            return new Task(() => { });
         }
 
-        public async Task<List<BsonDocument>> GetCollectionsAsync(string databaseName)
-        {
-            // Use this to create design time data
-
-            return new List<BsonDocument>();
-        }
-
-        public async Task<List<BsonDocument>> GetCollectionIndexesAsync(string databaseName, string collection)
-        {
-            return new List<BsonDocument>();
-        }
-
-        public async Task<string> CreateIndexAsync(string databaseName, string collection, string indexDefinition, CreateIndexOptions options)
-        {
-            return "";
-        }
-
-        public async Task DropIndexAsync(string databaseName, string collection, string indexName)
-        {
-
-        }
-
-        public async Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command, CancellationToken token)
+        public Task<List<BsonDocument>> GetCollectionsAsync(string databaseName)
         {
             // Use this to create design time data
 
-            return new BsonDocument();
+            return Task.FromResult(new List<BsonDocument>());
         }
 
-        public async Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, string projection, int? limit, int? skip, bool explain, Guid operationComment, CancellationToken token)
+        public Task<List<BsonDocument>> GetCollectionIndexesAsync(string databaseName, string collection)
+        {
+            return Task.FromResult(new List<BsonDocument>());
+        }
+
+        public Task<string> CreateIndexAsync(string databaseName, string collection, string indexDefinition, CreateIndexOptions options)
+        {
+            return Task.FromResult("");
+        }
+
+        public Task DropIndexAsync(string databaseName, string collection, string indexName)
+        {
+            return new Task(() => { });
+        }
+
+        public Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command, CancellationToken token)
         {
             // Use this to create design time data
 
-            return new List<BsonDocument>();
+            return Task.FromResult(new BsonDocument());
         }
 
-        public async Task<long> CountAsync(string databaseName, string collection, string filter, CancellationToken token)
+        public Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, string projection, int? limit, int? skip, bool explain, Guid operationComment, CancellationToken token)
         {
             // Use this to create design time data
 
-            return 100;
+            return Task.FromResult(new List<BsonDocument>());
         }
 
-        public async Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents, CancellationToken token)
+        public Task<long> CountAsync(string databaseName, string collection, string filter, CancellationToken token)
+        {
+            // Use this to create design time data
+
+            return Task.FromResult<long>(100);
+        }
+
+        public Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents, CancellationToken token)
         {
             return null;
         }
 
-        public async Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token)
+        public Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token)
         {
             return null;
         }
 
-        public async Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, bool multi, CancellationToken token)
+        public Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, bool multi, CancellationToken token)
         {
             return null;
         }
 
-        public async Task<DeleteResult> DeleteAsync(string databaseName, string collection, string filter, bool justOne, CancellationToken token)
+        public Task<DeleteResult> DeleteAsync(string databaseName, string collection, string filter, bool justOne, CancellationToken token)
         {
             return null;
         }
 
-        public async Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, string pipeline, AggregateOptions options, bool explain, CancellationToken token)
+        public Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, string pipeline, AggregateOptions options, bool explain, CancellationToken token)
         {
             return null;
         }

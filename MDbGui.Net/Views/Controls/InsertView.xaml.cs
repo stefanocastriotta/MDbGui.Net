@@ -23,6 +23,8 @@ namespace MDbGui.Net.Views.Controls
         public InsertView()
         {
             InitializeComponent();
+            insertEditor.Options.EnableHyperlinks = false;
+            insertEditor.Options.EnableEmailHyperlinks = false;
         }
     }
 }

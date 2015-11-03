@@ -12,6 +12,7 @@ using MDbGui.Net.Views.Controls;
 using MDbGui.Net.Utils;
 using MongoDB.Driver.Core.Misc;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -78,6 +79,28 @@ namespace MDbGui.Net.ViewModel
             Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<TabViewModel>>(this, (message) => TabMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => MongoDbServerMessageHandler(message));
+
+            if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
+            {
+                var _mongoDbService = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<IMongoDbService>();
+                MongoDbServerViewModel serverVm = new MongoDbServerViewModel(_mongoDbService);
+                serverVm.Name = "127.0.0.1:27017";
+
+                ActiveConnections.Add(serverVm);
+                var task = _mongoDbService.ConnectAsync(new ConnectionInfo());
+                task.Wait();
+                var serverInfo = task.Result;
+                serverVm.LoadDatabases(serverInfo.Databases);
+
+                TabViewModel tabDesign1 = SimpleIoc.Default.GetInstanceWithoutCaching<TabViewModel>();
+                tabDesign1.Name = "Collection1";
+                this.Tabs.Add(tabDesign1);
+                this.SelectedTab = tabDesign1;
+                TabViewModel tabDesign2 = SimpleIoc.Default.GetInstanceWithoutCaching<TabViewModel>();
+                tabDesign2.Name = "localhost:27017";
+                this.Tabs.Add(tabDesign2);
+            }
+
         }
 
         private async void LoggingInMessageHandler(NotificationMessage<ConnectionInfo> message)

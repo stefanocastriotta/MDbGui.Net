@@ -10,6 +10,13 @@
         mc:Ignorable="d ignore"
         Width="400" Height="300">
 
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MDbGui.Net;component/Skins/MainSkin.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"></ColumnDefinition>
@@ -50,9 +57,7 @@
 
         <Label Content="Storage engine" Grid.Row="6" Margin="0,5,0,0" />
         <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="6" Margin="0,5,0,0">
-            <avalonEdit:TextEditor HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
-                        FontFamily="Courier New" SyntaxHighlighting="Bson">
+            <avalonEdit:TextEditor>
                 <i:Interaction.Behaviors>
                     <utils:AvalonEditBehavior GiveMeTheText="{Binding StorageEngine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </i:Interaction.Behaviors>

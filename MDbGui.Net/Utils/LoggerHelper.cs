@@ -19,7 +19,7 @@ namespace MDbGui.Net.Utils
         {
             XmlConfigurator.Configure(new System.IO.FileInfo(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile));
 
-            Logger = LogManager.GetLogger(typeof(String));
+            Logger = LogManager.GetLogger(typeof(App));
             var wpfAppender = Logger.Logger.Repository.GetAppenders().OfType<WpfAppender>().FirstOrDefault();
 
             if (wpfAppender != null)

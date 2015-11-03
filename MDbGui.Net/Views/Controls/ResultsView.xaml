@@ -17,7 +17,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Skins/MainSkin.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MDbGui.Net;component/Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <utils:StringToDocumentTextConverter x:Key="StringToDocumentTextConverter" />
             <!-- Remove listview selected item overlay http://stackoverflow.com/questions/1051215/wpf-listview-turn-off-selection/16024204#16024204 -->
@@ -45,7 +45,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
 
@@ -58,14 +58,14 @@
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <fa:ImageAwesome Icon="Server" Width="16" Height="16"></fa:ImageAwesome>
-            <ComboBox Grid.Column="1" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Connections}" SelectedValue="{Binding Service}" SelectedValuePath="Service" DisplayMemberPath="Name"></ComboBox>
-            <fa:ImageAwesome Grid.Column="2" Icon="Database" Width="16" Height="16"></fa:ImageAwesome>
-            <TextBox Grid.Column="3" Text="{Binding Database}"></TextBox>
-            <fa:ImageAwesome Grid.Column="4" Icon="Table" Width="16" Height="16"></fa:ImageAwesome>
+            <fa:ImageAwesome Icon="Server" Width="16" Height="16" Margin="0,0,5,0"></fa:ImageAwesome>
+            <ComboBox Grid.Column="1" Margin="0,0,10,0" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Connections}" SelectedValue="{Binding Service}" SelectedValuePath="Service" DisplayMemberPath="Name"></ComboBox>
+            <fa:ImageAwesome Grid.Column="2" Icon="Database" Width="16" Height="16" Margin="0,0,5,0"></fa:ImageAwesome>
+            <TextBox Grid.Column="3" Margin="0,0,10,0" Text="{Binding Database}"></TextBox>
+            <fa:ImageAwesome Grid.Column="4" Icon="Table" Width="16" Height="16" Margin="0,0,5,0"></fa:ImageAwesome>
             <TextBox Grid.Column="5" Text="{Binding Collection}"></TextBox>
         </Grid>
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5">
             <TextBlock Text="Operation"></TextBlock>
             <ComboBox ItemsSource="{Binding CommandTypes}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=CommandType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             </ComboBox>
@@ -195,10 +195,9 @@
                 </tv:SharpTreeView>
             </TabItem>
             <TabItem Header="Raw">
-                <avalonEdit:TextEditor Name="txtEditor" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                <avalonEdit:TextEditor Name="txtEditor"
             Visibility="{Binding RawResult, Converter={StaticResource NullValueToVisibilityConverter}, ConverterParameter=false}" 
-            Document="{Binding RawResult, Converter={StaticResource StringToDocumentTextConverter}}" HorizontalScrollBarVisibility="Disabled"
-            Background="Black" Foreground="White" FontFamily="Courier New" IsReadOnly="True" SyntaxHighlighting="Bson">
+            Document="{Binding RawResult, Converter={StaticResource StringToDocumentTextConverter}}" IsReadOnly="True">
                     <ContextMenuService.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Copy to clipboard" Command="{Binding Path=CopyToClipboard}" />

@@ -12,7 +12,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Skins/MainSkin.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MDbGui.Net;component/Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate x:Key="ErrorTemplate">
                 <fa:FontAwesome Icon="TimesCircle" Foreground="Red"></fa:FontAwesome>

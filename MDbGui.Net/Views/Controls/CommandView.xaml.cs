@@ -23,6 +23,8 @@ namespace MDbGui.Net.Views.Controls
         public CommandView()
         {
             InitializeComponent();
+            commandEditor.Options.EnableHyperlinks = false;
+            commandEditor.Options.EnableEmailHyperlinks = false;
         }
     }
 }

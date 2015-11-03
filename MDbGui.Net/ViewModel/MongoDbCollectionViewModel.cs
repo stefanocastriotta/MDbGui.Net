@@ -126,7 +126,7 @@ namespace MDbGui.Net.ViewModel
 
         private void InternalOpenTab()
         {
-            TabViewModel tabVm = new TabViewModel();
+            TabViewModel tabVm = SimpleIoc.Default.GetInstanceWithoutCaching<TabViewModel>();
             tabVm.CommandType = Model.CommandType.Find;
             tabVm.Database = this.Database.Name;
             tabVm.Service = this.Database.Server.MongoDbService;

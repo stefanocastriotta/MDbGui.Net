@@ -12,7 +12,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Skins/MainSkin.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MDbGui.Net;component/Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -24,9 +24,7 @@
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Content="Replacement"></Label>
-        <avalonEdit:TextEditor Grid.Row="1" Grid.Column="1" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
-                        Background="Black" Foreground="White" FontFamily="Courier New" SyntaxHighlighting="Bson">
+        <avalonEdit:TextEditor Name="replaceEditor" Grid.Row="1" Grid.Column="1" Margin="10">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Replacement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>

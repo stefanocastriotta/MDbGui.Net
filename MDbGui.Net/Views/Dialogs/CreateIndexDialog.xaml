@@ -12,7 +12,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Skins/MainSkin.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MDbGui.Net;component/Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -32,9 +32,7 @@
 
         <Label Margin="0,5,0,0" Content="Index Definition" Grid.Row="1" />
         <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="1" Margin="0,5,0,0">
-            <avalonEdit:TextEditor HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                        HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Height="100"
-                        FontFamily="Courier New" SyntaxHighlighting="Bson">
+            <avalonEdit:TextEditor Height="100">
                 <i:Interaction.Behaviors>
                     <utils:AvalonEditBehavior GiveMeTheText="{Binding IndexDefinition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </i:Interaction.Behaviors>

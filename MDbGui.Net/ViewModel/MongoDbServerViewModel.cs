@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using MongoDB.Driver.Core.Misc;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -115,7 +116,7 @@ namespace MDbGui.Net.ViewModel
 
         private void InnerOpenRunCommand(DatabaseCommand param)
         {
-            TabViewModel tabVm = new TabViewModel();
+            TabViewModel tabVm = SimpleIoc.Default.GetInstanceWithoutCaching<TabViewModel>();
             tabVm.CommandType = CommandType.RunCommand;
             tabVm.Service = this.MongoDbService;
             tabVm.Database = "admin";

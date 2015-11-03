@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <!-- syntaxdefinition for MongoDB Bson Document -->
 <SyntaxDefinition name="Bson" extensions=".bson" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-	<Color name="Digits" foreground="Cyan" exampleText="3.14" />
+	<Color name="Digits" foreground="SkyBlue" exampleText="3.14" />
 	<Color name="Comment" foreground="Gray" exampleText="// comment" />
-	<Color name="String" foreground="Green" exampleText="var text = &quot;Hello, World!&quot;;" />
-	<Color name="Character" foreground="Green" exampleText="var char = 'a';" />
-	<Color name="Regex" foreground="Green" exampleText="/abc/m" />
-	<Color name="JavaScriptKeyWords" foreground="Cyan" exampleText="return myVariable;" />
-	<Color name="JavaScriptIntrinsics" foreground="Cyan" exampleText="Math.random()" />
-	<Color name="JavaScriptLiterals" foreground="Cyan" exampleText="return false;" />
-	<Color name="JavaScriptGlobalFunctions" foreground="Cyan" exampleText="escape(myString);" />
-	<Color name="BsonElements" foreground="Cyan" exampleText="ISODate(myString);" />
+	<Color name="String" foreground="YellowGreen" exampleText="var text = &quot;Hello, World!&quot;;" />
+	<Color name="Character" foreground="YellowGreen" exampleText="var char = 'a';" />
+	<Color name="Regex" foreground="YellowGreen" exampleText="/abc/m" />
+	<Color name="JavaScriptKeyWords" foreground="SkyBlue" exampleText="return myVariable;" />
+	<Color name="JavaScriptIntrinsics" foreground="SkyBlue" exampleText="Math.random()" />
+	<Color name="JavaScriptLiterals" foreground="SkyBlue" exampleText="return false;" />
+	<Color name="JavaScriptGlobalFunctions" foreground="SkyBlue" exampleText="escape(myString);" />
+	<Color name="BsonElements" foreground="SkyBlue" exampleText="ISODate(myString);" />
 	<RuleSet ignoreCase="false">
 		<Keywords color="JavaScriptKeyWords">
 			<Word>break</Word>

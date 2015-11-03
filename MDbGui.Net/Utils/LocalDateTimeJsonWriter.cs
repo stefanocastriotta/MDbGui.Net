@@ -929,7 +929,6 @@ namespace MDbGui.Net.Utils
     {
         public static new JsonWriterSettingsExtended Defaults = new JsonWriterSettingsExtended()
         {
-            Encoding = JsonWriterSettings.Defaults.Encoding,
             GuidRepresentation = JsonWriterSettings.Defaults.GuidRepresentation,
             Indent = JsonWriterSettings.Defaults.Indent,
             IndentChars = JsonWriterSettings.Defaults.IndentChars,
