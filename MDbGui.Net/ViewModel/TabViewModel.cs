@@ -998,7 +998,7 @@ namespace MDbGui.Net.ViewModel
 
         #region Aggregate
 
-        private string _aggregatePipeline = "{}";
+        private string _aggregatePipeline = "[" + Environment.NewLine + "\t" + Environment.NewLine + "]";
 
         public string AggregatePipeline
         {
