@@ -1,4 +1,5 @@
-﻿using log4net.Appender;
+﻿using GalaSoft.MvvmLight.Threading;
+using log4net.Appender;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +22,10 @@ namespace MDbGui.Net.Utils
         /// </remarks>
         protected override void Append(log4net.Core.LoggingEvent loggingEvent)
         {
-            LogEvents.Add(loggingEvent);
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                LogEvents.Add(loggingEvent);
+            });
         }
 
     }

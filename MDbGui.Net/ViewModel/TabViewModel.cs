@@ -420,9 +420,11 @@ namespace MDbGui.Net.ViewModel
                 sb.Append("]");
 
                 RawResult = sb.ToString();
+                sb.Clear();
                 SelectedViewIndex = 0;
 
                 Root = new ResultsViewModel(results, this);
+                GC.Collect();
             }
             catch (OperationCanceledException)
             {
@@ -432,19 +434,16 @@ namespace MDbGui.Net.ViewModel
                     {
                         if (t.Exception != null)
                         {
-                            Utils.LoggerHelper.Logger.Error("Exception while executing find command", t.Exception);
+                            Utils.LoggerHelper.Logger.Warn("Exception while executing find command", t.Exception);
                         }
                     });
-                    var currentOpTask = Service.Eval(Database, "function() { return db.currentOP(); }");
-                    currentOpTask.Wait();
-                    var currentOp = currentOpTask.Result;
+                    var currentOp = await Service.Eval(Database, "function() { return db.currentOP(); }");
                     if (currentOp != null)
                     {
                         var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationID.ToString());
                         if (operation != null)
                         {
-                            var killOpTask = Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
-                            killOpTask.Wait();
+                            await Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
                         }
                     }
                 }
@@ -513,16 +512,13 @@ namespace MDbGui.Net.ViewModel
                             Utils.LoggerHelper.Logger.Error("Exception while executing find command", t.Exception);
                         }
                     });
-                    var currentOpTask = Service.Eval(Database, "function() { return db.currentOP(); }");
-                    currentOpTask.Wait();
-                    var currentOp = currentOpTask.Result;
+                    var currentOp = await Service.Eval(Database, "function() { return db.currentOP(); }");
                     if (currentOp != null)
                     {
                         var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationID.ToString());
                         if (operation != null)
                         {
-                            var killOpTask = Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
-                            killOpTask.Wait();
+                            await Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
                         }
                     }
                 }
@@ -979,6 +975,8 @@ namespace MDbGui.Net.ViewModel
                         sb.AppendLine();
                         sb.Append("]");
                         RawResult = sb.ToString();
+                        sb.Clear();
+                        GC.Collect();
                     }
                     else
                         RawResult = "[" + Environment.NewLine + "\t" + Environment.NewLine + "]";
@@ -1075,8 +1073,9 @@ namespace MDbGui.Net.ViewModel
 
                 RawResult = sb.ToString();
                 SelectedViewIndex = 0;
-
+                sb.Clear();
                 Root = new ResultsViewModel(results, this);
+                GC.Collect();
             }
             catch (OperationCanceledException)
             {
@@ -1089,16 +1088,13 @@ namespace MDbGui.Net.ViewModel
                             Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", t.Exception);
                         }
                     });
-                    var currentOpTask = Service.Eval(Database, "function() { return db.currentOP(); }");
-                    currentOpTask.Wait();
-                    var currentOp = currentOpTask.Result;
+                    var currentOp = await Service.Eval(Database, "function() { return db.currentOP(); }");
                     if (currentOp != null)
                     {
                         var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationID.ToString());
                         if (operation != null)
                         {
-                            var killOpTask = Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
-                            killOpTask.Wait();
+                            await Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
                         }
                     }
                 }
@@ -1121,7 +1117,16 @@ namespace MDbGui.Net.ViewModel
         public override void Cleanup()
         {
             base.Cleanup();
+            if (Root != null)
+            {
+                foreach (var child in Root.Children)
+                    child.Children.Clear();
+                Root.Children.Clear();
+            }
+            Root = null;
+            RawResult = null;
             MessengerInstance.Unregister(this);
+            GC.Collect();
             this.Dispose();
         }
 

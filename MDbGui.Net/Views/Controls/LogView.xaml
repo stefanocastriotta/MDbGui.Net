@@ -16,7 +16,7 @@
             <fa:FontAwesome Icon="TimesCircle" Foreground="Red"></fa:FontAwesome>
         </DataTemplate>
         <DataTemplate x:Key="WarningTemplate">
-            <fa:FontAwesome Icon="ExclamationTriangle" Foreground="Yellow"></fa:FontAwesome>
+            <fa:FontAwesome Icon="ExclamationTriangle" Foreground="Gold"></fa:FontAwesome>
         </DataTemplate>
         <DataTemplate x:Key="InfoTemplate">
             <fa:FontAwesome Icon="InfoCircle" Foreground="Blue"></fa:FontAwesome>
