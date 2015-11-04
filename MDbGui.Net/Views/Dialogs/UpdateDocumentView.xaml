@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:local="clr-namespace:MDbGui.Net.Views.Controls"
         xmlns:utils="clr-namespace:MDbGui.Net.Utils"
         xmlns:ignore="http://www.galasoft.ch/ignore"
         mc:Ignorable="d ignore">
@@ -24,11 +24,11 @@
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Content="Replacement"></Label>
-        <avalonEdit:TextEditor Name="replaceEditor" Grid.Row="1" Grid.Column="1" Margin="10">
+        <local:TextEditorExt Grid.Row="1" Grid.Column="1" Margin="10">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Replacement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
-        </avalonEdit:TextEditor>
+        </local:TextEditorExt>
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <Button Content="Update" Command="{Binding Replace}"></Button>
             <Button Content="Close" Click="Button_Click"></Button>

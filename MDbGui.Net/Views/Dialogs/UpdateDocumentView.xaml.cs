@@ -15,8 +15,6 @@ namespace MDbGui.Net.Views.Dialogs
         public UpdateDocumentView()
         {
             InitializeComponent();
-            replaceEditor.Options.EnableHyperlinks = false;
-            replaceEditor.Options.EnableEmailHyperlinks = false;
             Messenger.Default.Register<NotificationMessage<ReplaceOneViewModel>>(this, (message) => NotificationMessageHandler(message));
             Closing += (s, e) =>
             {

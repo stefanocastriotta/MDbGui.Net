@@ -23,8 +23,6 @@ namespace MDbGui.Net.Views.Controls
         public EvalView()
         {
             InitializeComponent();
-            evalEditor.Options.EnableHyperlinks = false;
-            evalEditor.Options.EnableEmailHyperlinks = false;
         }
     }
 }

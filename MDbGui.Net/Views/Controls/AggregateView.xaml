@@ -6,7 +6,6 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:MDbGui.Net.Views.Controls"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
-             xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:utils="clr-namespace:MDbGui.Net.Utils"
              xmlns:vm="clr-namespace:MDbGui.Net.ViewModel"
              mc:Ignorable="d" 
@@ -35,11 +34,11 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Label Content="Pipeline"></Label>
-        <avalonEdit:TextEditor Name="pipelineEditor" Grid.Column="1" Height="200" MaxHeight="300">
+        <local:TextEditorExt Grid.Column="1" Height="200" MaxHeight="300">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding AggregatePipeline, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
-        </avalonEdit:TextEditor>
+        </local:TextEditorExt>
         <Label Grid.Row="2" Content="Allow disk use"></Label>
         <CheckBox Grid.Column="1" Height="23" Grid.Row="2" IsThreeState="True" IsChecked="{Binding AggregateOptions.AllowDiskUse}">
         </CheckBox>

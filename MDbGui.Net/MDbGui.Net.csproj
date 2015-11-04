@@ -173,6 +173,7 @@
     <Compile Include="Views\Controls\RemoveView.xaml.cs">
       <DependentUpon>RemoveView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Controls\TextEditorExt.cs" />
     <Compile Include="Views\Controls\UpdateView.xaml.cs">
       <DependentUpon>UpdateView.xaml</DependentUpon>
     </Compile>

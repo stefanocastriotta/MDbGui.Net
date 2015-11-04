@@ -23,12 +23,6 @@ namespace MDbGui.Net.Views.Controls
         public FindView()
         {
             InitializeComponent();
-            findEditor.Options.EnableHyperlinks = false;
-            findEditor.Options.EnableEmailHyperlinks = false;
-            sortEditor.Options.EnableHyperlinks = false;
-            sortEditor.Options.EnableEmailHyperlinks = false;
-            projectionEditor.Options.EnableHyperlinks = false;
-            projectionEditor.Options.EnableEmailHyperlinks = false;
         }
     }
 }

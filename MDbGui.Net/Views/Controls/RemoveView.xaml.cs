@@ -23,8 +23,6 @@ namespace MDbGui.Net.Views.Controls
         public RemoveView()
         {
             InitializeComponent();
-            filterEditor.Options.EnableHyperlinks = false;
-            filterEditor.Options.EnableEmailHyperlinks = false;
         }
     }
 }

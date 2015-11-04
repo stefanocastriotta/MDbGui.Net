@@ -3,8 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MDbGui.Net.Views.Dialogs"
-        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:local="clr-namespace:MDbGui.Net.Views.Controls"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:utils="clr-namespace:MDbGui.Net.Utils"
         mc:Ignorable="d" Width="450" SizeToContent="Height">
@@ -33,11 +32,11 @@
 
         <Label Margin="0,5,0,0" Content="Index Definition" Grid.Row="1" />
         <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="1" Margin="0,5,0,0">
-            <avalonEdit:TextEditor Height="100">
+            <local:TextEditorExt Height="100">
                 <i:Interaction.Behaviors>
                     <utils:AvalonEditBehavior GiveMeTheText="{Binding IndexDefinition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </i:Interaction.Behaviors>
-            </avalonEdit:TextEditor>
+            </local:TextEditorExt>
         </Border>
         <Expander Grid.Row="2" Grid.ColumnSpan="2" Header="Options" IsExpanded="{Binding IsExpanded}">
             <TabControl>
@@ -72,11 +71,11 @@
                         </TextBox>
                         <Label Content="Storage engine" Grid.Row="3" />
                         <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="3" Height="100">
-                            <avalonEdit:TextEditor>
+                            <local:TextEditorExt>
                                 <i:Interaction.Behaviors>
                                     <utils:AvalonEditBehavior GiveMeTheText="{Binding StorageEngine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 </i:Interaction.Behaviors>
-                            </avalonEdit:TextEditor>
+                            </local:TextEditorExt>
                         </Border>
                     </Grid>
                 </TabItem>
@@ -103,11 +102,11 @@
                         </TextBox>
                         <Label Content="Weights" Grid.Row="3" />
                         <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="3" Height="100">
-                            <avalonEdit:TextEditor>
+                            <local:TextEditorExt>
                                 <i:Interaction.Behaviors>
                                     <utils:AvalonEditBehavior GiveMeTheText="{Binding Weights, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 </i:Interaction.Behaviors>
-                            </avalonEdit:TextEditor>
+                            </local:TextEditorExt>
                         </Border>
                     </Grid>
                 </TabItem>

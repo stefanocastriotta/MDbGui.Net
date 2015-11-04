@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
+using ICSharpCode.AvalonEdit.Search;
 using MDbGui.Net.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -25,8 +26,6 @@ namespace MDbGui.Net.Views.Controls
         public ResultsView()
         {
             InitializeComponent();
-            txtEditor.Options.EnableHyperlinks = false;
-            txtEditor.Options.EnableEmailHyperlinks = false;
             Messenger.Default.Register<NotificationMessage>(this, (message) => NotificationMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
         }

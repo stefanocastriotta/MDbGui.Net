@@ -23,8 +23,6 @@ namespace MDbGui.Net.Views.Controls
         public AggregateView()
         {
             InitializeComponent();
-            pipelineEditor.Options.EnableHyperlinks = false;
-            pipelineEditor.Options.EnableEmailHyperlinks = false;
         }
     }
 }

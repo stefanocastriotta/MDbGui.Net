@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+                    xmlns:local="clr-namespace:MDbGui.Net.Views.Controls"
                     xmlns:utils="clr-namespace:MDbGui.Net.Utils">
 
     <utils:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -16,7 +16,7 @@
         <Setter Property="Background" Value="Black"></Setter>
         <Setter Property="Foreground" Value="White"></Setter>
     </Style>
-    <Style TargetType="avalonEdit:TextEditor">
+    <Style TargetType="local:TextEditorExt">
         <Setter Property="Background" Value="#333333"></Setter>
         <Setter Property="Foreground" Value="White"></Setter>
         <Setter Property="SyntaxHighlighting" Value="Bson"></Setter>

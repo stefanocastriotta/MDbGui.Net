@@ -6,7 +6,6 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:MDbGui.Net.Views.Controls"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
-             xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:utils="clr-namespace:MDbGui.Net.Utils"
              xmlns:vm="clr-namespace:MDbGui.Net.ViewModel"
              mc:Ignorable="d" 
@@ -31,24 +30,24 @@
         </Grid.ColumnDefinitions>
         <Label Content="Find"></Label>
 
-        <avalonEdit:TextEditor Name="findEditor" Grid.Column="1" MaxHeight="100">
+        <local:TextEditorExt Grid.Column="1" MaxHeight="100">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Find, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
-        </avalonEdit:TextEditor>
+        </local:TextEditorExt>
 
         <Label Grid.Row="1" Content="Sort"></Label>
-        <avalonEdit:TextEditor Name="sortEditor" Grid.Row="1" Grid.Column="1" MaxHeight="100">
+        <local:TextEditorExt Grid.Row="1" Grid.Column="1" MaxHeight="100">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Sort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
-        </avalonEdit:TextEditor>
+        </local:TextEditorExt>
         <Label Grid.Row="2" Content="Projection"></Label>
-        <avalonEdit:TextEditor Name="projectionEditor" Grid.Row="2" Grid.Column="1" MaxHeight="100">
+        <local:TextEditorExt Grid.Row="2" Grid.Column="1" MaxHeight="100">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Projection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
-        </avalonEdit:TextEditor>
+        </local:TextEditorExt>
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal">
             <Button Command="{Binding ExecuteFind}" Content="Find"></Button>
             <Button Command="{Binding ExecuteCount}" Content="Count"></Button>
