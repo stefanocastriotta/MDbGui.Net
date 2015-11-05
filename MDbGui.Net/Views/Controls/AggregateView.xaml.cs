@@ -13,7 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static MDbGui.Net.Utils.BsonExtensions;
 using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.Views.Controls
@@ -26,10 +25,10 @@ namespace MDbGui.Net.Views.Controls
         public AggregateView()
         {
             InitializeComponent();
-            Messenger.Default.Register<NotificationMessage<BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<BsonExtensions.BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
         }
 
-        private void BsonParseExceptionMessageHandler(NotificationMessage<BsonParseException> message)
+        private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
             if (message.Notification == "AggregateParseException")
             {

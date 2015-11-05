@@ -16,7 +16,6 @@ using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using System.Threading;
 using MongoDB.Driver;
-using static MDbGui.Net.Utils.BsonExtensions;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -397,6 +396,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             Guid operationID = Guid.NewGuid();
             var task = Service.FindAsync(Database, Collection, Find, Sort, Projection, Size, Skip, false, operationID, cts.Token);
+            bool stopRequested = false;
             try
             {
                 var results = await task.WithCancellation(cts.Token);
@@ -429,6 +429,21 @@ namespace MDbGui.Net.ViewModel
             }
             catch (OperationCanceledException)
             {
+                stopRequested = true;
+            }
+            catch (Exception ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing find command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+            }
+            finally
+            {
+                Executing = false;
+            }
+            if (stopRequested)
+            {
                 if (!task.IsCompleted)
                 {
                     task.ContinueWith(t =>
@@ -448,17 +463,6 @@ namespace MDbGui.Net.ViewModel
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing find command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
             }
         }
 
@@ -488,6 +492,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             Guid operationID = Guid.NewGuid();
             var task = Service.FindAsync(Database, Collection, Find, Sort, Projection, Size, Skip, true, operationID, cts.Token);
+            bool stopRequested = false;
             try
             {
                 var results = await task.WithCancellation(cts.Token);
@@ -504,13 +509,28 @@ namespace MDbGui.Net.ViewModel
             }
             catch (OperationCanceledException)
             {
+                stopRequested = true;
+            }
+            catch (Exception ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Find Explain command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+            }
+            finally
+            {
+                Executing = false;
+            }
+            if (stopRequested)
+            {
                 if (!task.IsCompleted)
                 {
                     task.ContinueWith(t =>
                     {
                         if (t.Exception != null)
                         {
-                            Utils.LoggerHelper.Logger.Error("Exception while executing find command", t.Exception);
+                            Utils.LoggerHelper.Logger.Warn("Exception while executing find command", t.Exception);
                         }
                     });
                     var currentOp = await Service.Eval(Database, "function() { return db.currentOP(); }");
@@ -523,17 +543,6 @@ namespace MDbGui.Net.ViewModel
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Find Explain command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
             }
         }
 
@@ -1047,6 +1056,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             Guid operationID = Guid.NewGuid();
             Task<List<BsonDocument>> task = null;
+            bool stopRequested = false;
             try
             {
                 var pipeline = AggregatePipeline.Deserialize<BsonArray>();
@@ -1080,13 +1090,36 @@ namespace MDbGui.Net.ViewModel
             }
             catch (OperationCanceledException)
             {
+                stopRequested = true;
+            }
+            catch (BsonExtensions.BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "AggregateParseException"));
+            }
+            catch (Exception ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+            }
+            finally
+            {
+                Executing = false;
+            }
+            if (stopRequested)
+            {
                 if (!task.IsCompleted)
                 {
                     task.ContinueWith(t =>
                     {
                         if (t.Exception != null)
                         {
-                            Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", t.Exception);
+                            Utils.LoggerHelper.Logger.Warn("Exception while executing find command", t.Exception);
                         }
                     });
                     var currentOp = await Service.Eval(Database, "function() { return db.currentOP(); }");
@@ -1099,25 +1132,6 @@ namespace MDbGui.Net.ViewModel
                         }
                     }
                 }
-            }
-            catch (BsonParseException ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonParseException>(this, ex, "AggregateParseException"));
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
             }
         }
 
