@@ -29,13 +29,13 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Label Content="Filter"></Label>
-        <local:TextEditorExt Grid.Column="1" MaxHeight="50">
+        <local:TextEditorExt x:Name="updateFilterEditor" Grid.Column="1" MaxHeight="50">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding UpdateFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
         </local:TextEditorExt>
         <Label Grid.Row="1" Content="Update"></Label>
-        <local:TextEditorExt Grid.Row="1" Grid.Column="1" Height="200" MaxHeight="300">
+        <local:TextEditorExt x:Name="updateDocumentEditor" Grid.Row="1" Grid.Column="1" Height="200" MaxHeight="300">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding UpdateDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>

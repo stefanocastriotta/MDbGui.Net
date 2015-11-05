@@ -58,15 +58,13 @@ namespace MDbGui.Net.ViewModel
 
             ExecuteClose = new RelayCommand(InnerExecuteClose);
 
-            ExecuteFind = new RelayCommand(() =>
+            ExecuteFind = new RelayCommand<bool>((explain) =>
             {
                 Skip = 0;
-                InnerExecuteFind();
+                InnerExecuteFind(explain);
             });
 
-            ExecuteFindExplain = new RelayCommand(InnerExecuteFindExplain);
-
-            DoPaging = new RelayCommand(InnerExecuteFind);
+            DoPaging = new RelayCommand<bool>(InnerExecuteFind);
             PageBack = new RelayCommand(InnerPageBack);
             PageForward = new RelayCommand(InnerPageForward);
 
@@ -103,6 +101,13 @@ namespace MDbGui.Net.ViewModel
             set
             {
                 Set(ref _commandType, value);
+                if (value == CommandType.Find)
+                {
+                    if (Root != null && Root.Children.Count > 0)
+                        ShowPager = true;
+                }
+                else
+                    ShowPager = false;
             }
         }
 
@@ -389,43 +394,64 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
-        public RelayCommand ExecuteFind { get; set; }
+        public RelayCommand<bool> ExecuteFind { get; set; }
 
-        public async void InnerExecuteFind()
+        public async void InnerExecuteFind(bool explain = false)
         {
             Executing = true;
             Guid operationID = Guid.NewGuid();
-            var task = Service.FindAsync(Database, Collection, Find, Sort, Projection, Size, Skip, false, operationID, cts.Token);
+            Task<List<BsonDocument>> task = null;
             bool stopRequested = false;
             try
             {
+                task = Service.FindAsync(Database, Collection, Find.Deserialize<BsonDocument>("Find"), Sort.Deserialize<BsonDocument>("Sort"), Projection.Deserialize<BsonDocument>("Projection"), Size, Skip, explain, operationID, cts.Token);
                 var results = await task.WithCancellation(cts.Token);
                 Executing = false;
-                ShowPager = true;
-                StringBuilder sb = new StringBuilder();
-                int index = 1;
-                sb.Append("[");
-                foreach (var result in results)
-                {
-                    sb.AppendLine();
-                    sb.Append("/* # ");
-                    sb.Append(index.ToString());
-                    sb.AppendLine(" */");
-                    sb.Append(result.ToJson(jsonWriterSettings));
-                    sb.Append(",");
-                    index++;
-                }
-                if (results.Count > 0)
-                    sb.Length -= 1;
-                sb.AppendLine();
-                sb.Append("]");
 
-                RawResult = sb.ToString();
-                sb.Clear();
+                if (!explain)
+                {
+                    ShowPager = true;
+                    StringBuilder sb = new StringBuilder();
+                    int index = 1;
+                    sb.Append("[");
+                    foreach (var result in results)
+                    {
+                        sb.AppendLine();
+                        sb.Append("/* # ");
+                        sb.Append(index.ToString());
+                        sb.AppendLine(" */");
+                        sb.Append(result.ToJson(jsonWriterSettings));
+                        sb.Append(",");
+                        index++;
+                    }
+                    if (results.Count > 0)
+                        sb.Length -= 1;
+                    sb.AppendLine();
+                    sb.Append("]");
+
+                    RawResult = sb.ToString();
+                    sb.Clear();
+                }
+                else
+                {
+                    ShowPager = false;
+                    if (results.Count > 0)
+                        RawResult = results[0].ToJson(jsonWriterSettings);
+                    else
+                        RawResult = "";
+                }
                 SelectedViewIndex = 0;
 
                 Root = new ResultsViewModel(results, this);
                 GC.Collect();
+            }
+            catch (BsonExtensions.BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing find command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "FindParseException"));
             }
             catch (OperationCanceledException)
             {
@@ -483,68 +509,7 @@ namespace MDbGui.Net.ViewModel
             InnerExecuteFind();
         }
 
-        public RelayCommand DoPaging { get; set; }
-
-        public RelayCommand ExecuteFindExplain { get; set; }
-
-        public async void InnerExecuteFindExplain()
-        {
-            Executing = true;
-            Guid operationID = Guid.NewGuid();
-            var task = Service.FindAsync(Database, Collection, Find, Sort, Projection, Size, Skip, true, operationID, cts.Token);
-            bool stopRequested = false;
-            try
-            {
-                var results = await task.WithCancellation(cts.Token);
-                Executing = false;
-                ShowPager = false;
-
-                if (results.Count > 0)
-                    RawResult = results[0].ToJson(jsonWriterSettings);
-                else
-                    RawResult = "";
-                SelectedViewIndex = 0;
-
-                Root = new ResultsViewModel(results, this);
-            }
-            catch (OperationCanceledException)
-            {
-                stopRequested = true;
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Find Explain command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
-            }
-            if (stopRequested)
-            {
-                if (!task.IsCompleted)
-                {
-                    task.ContinueWith(t =>
-                    {
-                        if (t.Exception != null)
-                        {
-                            Utils.LoggerHelper.Logger.Warn("Exception while executing find command", t.Exception);
-                        }
-                    });
-                    var currentOp = await Service.Eval(Database, "function() { return db.currentOP(); }");
-                    if (currentOp != null)
-                    {
-                        var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationID.ToString());
-                        if (operation != null)
-                        {
-                            await Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
-                        }
-                    }
-                }
-            }
-        }
+        public RelayCommand<bool> DoPaging { get; set; }
 
         #endregion
 
@@ -557,7 +522,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             try
             {
-                var result = await Service.CountAsync(Database, Collection, Find, cts.Token);
+                var result = await Service.CountAsync(Database, Collection, Find.Deserialize<BsonDocument>("Find"), cts.Token);
                 Executing = false;
                 ShowPager = false;
 
@@ -565,6 +530,14 @@ namespace MDbGui.Net.ViewModel
                 SelectedViewIndex = 1;
 
                 Root = null;
+            }
+            catch (BsonExtensions.BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Count command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "FindParseException"));
             }
             catch (Exception ex)
             {
@@ -604,12 +577,20 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             try
             {
-                var result = await Service.ExecuteRawCommandAsync(Database, Command, cts.Token);
+                var result = await Service.ExecuteRawCommandAsync(Database, Command.Deserialize<BsonDocument>("Command"), cts.Token);
 
                 RawResult = result.ToJson(jsonWriterSettings);
 
                 SelectedViewIndex = 1;
                 Root = new ResultsViewModel(new List<BsonDocument>() { result }, this);
+            }
+            catch (BsonExtensions.BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "CommandParseException"));
             }
             catch (Exception ex)
             {
@@ -699,7 +680,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             try
             {
-                var result = await Service.InsertAsync(Database, Collection, Insert, cts.Token);
+                var result = await Service.InsertAsync(Database, Collection, Insert.Deserialize<BsonArray>("Insert"), cts.Token);
 
                 RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
@@ -712,6 +693,14 @@ namespace MDbGui.Net.ViewModel
 
                 SelectedViewIndex = 1;
                 Root = null;
+            }
+            catch (BsonExtensions.BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Insert command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "InsertParseException"));
             }
             catch (Exception ex)
             {
@@ -780,7 +769,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             try
             {
-                var result = await Service.UpdateAsync(Database, Collection, UpdateFilter, UpdateDocument, UpdateMulti, cts.Token);
+                var result = await Service.UpdateAsync(Database, Collection, UpdateFilter.Deserialize<BsonDocument>("UpdateFilter"), UpdateDocument.Deserialize<BsonDocument>("UpdateDocument"), UpdateMulti, cts.Token);
 
                 RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
@@ -789,6 +778,14 @@ namespace MDbGui.Net.ViewModel
 
                 SelectedViewIndex = 1;
                 Root = null;
+            }
+            catch (BsonExtensions.BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Update command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "UpdateParseException"));
             }
             catch (Exception ex)
             {
@@ -843,7 +840,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             try
             {
-                var result = await Service.ReplaceOneAsync(Database, Collection, ReplaceFilter, Replacement, cts.Token);
+                var result = await Service.ReplaceOneAsync(Database, Collection, ReplaceFilter.Deserialize<BsonDocument>("ReplaceFilter"), Replacement.Deserialize<BsonDocument>("Replacement"), cts.Token);
 
                 RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
@@ -852,6 +849,14 @@ namespace MDbGui.Net.ViewModel
 
                 SelectedViewIndex = 1;
                 Root = null;
+            }
+            catch (BsonExtensions.BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Replace command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "ReplaceParseException"));
             }
             catch (Exception ex)
             {
@@ -874,7 +879,7 @@ namespace MDbGui.Net.ViewModel
                 Executing = true;
                 try
                 {
-                    var result = await Service.ReplaceOneAsync(Database, Collection, "{ _id: ObjectId('" + message.Content.Document.Id + "') }", message.Content.Replacement, cts.Token);
+                    var result = await Service.ReplaceOneAsync(Database, Collection, BsonDocument.Parse("{ _id: ObjectId('" + message.Content.Document.Id + "') }"), message.Content.ReplacementBsonDocument, cts.Token);
 
                     var doc = message.Content.Replacement.Deserialize<BsonDocument>();
                     message.Content.Document.Result = doc;
@@ -933,7 +938,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             try
             {
-                var result = await Service.DeleteAsync(Database, Collection, DeleteQuery, DeleteJustOne, cts.Token);
+                var result = await Service.DeleteAsync(Database, Collection, DeleteQuery.Deserialize<BsonDocument>("DeleteQuery"), DeleteJustOne, cts.Token);
 
                 RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
@@ -942,6 +947,14 @@ namespace MDbGui.Net.ViewModel
 
                 SelectedViewIndex = 1;
                 Root = null;
+            }
+            catch (BsonExtensions.BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Delete command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "DeleteParseException"));
             }
             catch (Exception ex)
             {
@@ -964,7 +977,7 @@ namespace MDbGui.Net.ViewModel
                 Executing = true;
                 try
                 {
-                    var result = await Service.DeleteAsync(Database, Collection, "{_id: ObjectId('" + message.Content.Id + "')}", true, cts.Token);
+                    var result = await Service.DeleteAsync(Database, Collection, ("{_id: ObjectId('" + message.Content.Id + "')}").Deserialize<BsonDocument>("Id"), true, cts.Token);
                     if (result.DeletedCount == 1 && Root != null)
                     {
                         Root.Children.Remove(message.Content);
@@ -1060,7 +1073,7 @@ namespace MDbGui.Net.ViewModel
             try
             {
                 var pipeline = AggregatePipeline.Deserialize<BsonArray>();
-                task = Service.AggregateAsync(Database, Collection, AggregatePipeline, AggregateOptions, AggregateExplain, cts.Token);
+                task = Service.AggregateAsync(Database, Collection, AggregatePipeline.Deserialize<BsonArray>("AggregatePipeline"), AggregateOptions, AggregateExplain, cts.Token);
                 var results = await task.WithCancellation(cts.Token);
                 Executing = false;
                 ShowPager = false;

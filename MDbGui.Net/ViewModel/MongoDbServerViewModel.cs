@@ -227,7 +227,7 @@ namespace MDbGui.Net.ViewModel
             _users.IsBusy = true;
             try
             {
-                var usersResult = await MongoDbService.ExecuteRawCommandAsync("admin", "{ usersInfo: 1 }", cts.Token);
+                var usersResult = await MongoDbService.ExecuteRawCommandAsync("admin", BsonDocument.Parse("{ usersInfo: 1 }"), cts.Token);
                 _users.Children.Clear();
 
                 if (usersResult.Contains("users") && usersResult["users"].AsBsonArray.Count > 0)

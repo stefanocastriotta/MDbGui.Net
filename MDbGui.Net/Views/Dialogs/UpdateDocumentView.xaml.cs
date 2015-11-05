@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
+using MDbGui.Net.Utils;
 using MDbGui.Net.ViewModel;
 using System.Windows;
 
@@ -20,6 +21,7 @@ namespace MDbGui.Net.Views.Dialogs
             {
                 ((ReplaceOneViewModel)this.DataContext).Cleanup();
             };
+            Messenger.Default.Register<NotificationMessage<BsonExtensions.BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
         }
 
         private void NotificationMessageHandler(NotificationMessage<ReplaceOneViewModel> message)
@@ -27,6 +29,15 @@ namespace MDbGui.Net.Views.Dialogs
             if (message.Notification == "UpdateDocument")
             {
                 this.Close();
+            }
+        }
+
+        private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
+        {
+            if (message.Notification == "ReplaceOneParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "Replacement")
+            {
+                replaceDocumentEditor.CaretOffset = message.Content.Position;
+                replaceDocumentEditor.Focus();
             }
         }
 

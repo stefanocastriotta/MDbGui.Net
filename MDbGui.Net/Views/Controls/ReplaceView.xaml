@@ -28,13 +28,13 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Label Content="Filter"></Label>
-        <local:TextEditorExt Grid.Column="1" MaxHeight="50">
+        <local:TextEditorExt x:Name="replaceFilterEditor" Grid.Column="1" MaxHeight="50">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding ReplaceFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
         </local:TextEditorExt>
         <Label Grid.Row="1" Content="Replacement"></Label>
-        <local:TextEditorExt Grid.Row="1" Grid.Column="1" Height="200" MaxHeight="300">
+        <local:TextEditorExt x:Name="replacementEditor" Grid.Row="1" Grid.Column="1" Height="200" MaxHeight="300">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Replacement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>

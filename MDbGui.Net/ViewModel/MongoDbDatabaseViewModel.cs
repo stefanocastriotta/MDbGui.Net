@@ -183,7 +183,7 @@ namespace MDbGui.Net.ViewModel
 
         private async Task LoadCollectionStats(MongoDbCollectionViewModel collection)
         {
-            collection.Stats = await Server.MongoDbService.ExecuteRawCommandAsync(Name, "{ collStats: \"" + collection.Name + "\", verbose: true }", cts.Token);
+            collection.Stats = await Server.MongoDbService.ExecuteRawCommandAsync(Name, BsonDocument.Parse("{ collStats: \"" + collection.Name + "\", verbose: true }"), cts.Token);
             switch (collection.Stats["storageSize"].BsonType)
             {
                 case MongoDB.Bson.BsonType.Int32:

@@ -27,7 +27,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Label Content="Command"></Label>
-        <local:TextEditorExt Grid.Column="1" MaxHeight="100">
+        <local:TextEditorExt x:Name="commandEditor" Grid.Column="1" MaxHeight="100">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Command, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>

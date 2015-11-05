@@ -27,7 +27,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Label Content="Documents"></Label>
-        <local:TextEditorExt Grid.Column="1" Height="200" MaxHeight="300">
+        <local:TextEditorExt x:Name="insertEditor" Grid.Column="1" Height="200" MaxHeight="300">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Insert, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>

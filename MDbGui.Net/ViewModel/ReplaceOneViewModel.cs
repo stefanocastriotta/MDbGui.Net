@@ -1,6 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using MDbGui.Net.Utils;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,10 @@ namespace MDbGui.Net.ViewModel
     {
         public ReplaceOneViewModel()
         {
-            Replace = new RelayCommand(InnerExecuteReplace);
+            Replace = new RelayCommand(InnerExecuteReplace, () =>
+            {
+                return !string.IsNullOrWhiteSpace(Replacement);
+            });
         }
 
         public DocumentResultViewModel Document { get; set; }
@@ -31,11 +36,41 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get
+            {
+                return _errorMessage;
+            }
+            set
+            {
+                Set(ref _errorMessage, value);
+            }
+        }
+
+        public BsonDocument ReplacementBsonDocument { get; set; }
+
         public RelayCommand Replace { get; set; }
 
         private void InnerExecuteReplace()
         {
-            Messenger.Default.Send(new NotificationMessage<ReplaceOneViewModel>(this, ((ResultsViewModel)Document.Parent).Owner, this, "UpdateDocument"));
+            try
+            {
+                ReplacementBsonDocument = Replacement.Deserialize<BsonDocument>("Replacement");
+                Messenger.Default.Send(new NotificationMessage<ReplaceOneViewModel>(this, ((ResultsViewModel)Document.Parent).Owner, this, "UpdateDocument"));
+            }
+            catch (BsonExtensions.BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while updating a document", ex);
+                ErrorMessage = ex.Message;
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "ReplaceOneParseException"));
+            }
+            catch(Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                Utils.LoggerHelper.Logger.Error("Exception while updating a document", ex);
+            }
         }
 
         public override void Cleanup()

@@ -148,12 +148,12 @@
                 </Button>
                 <TextBox Width="30" Height="18" Style="{StaticResource ResultsView}" Text="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True">
                     <TextBox.InputBindings>
-                        <KeyBinding Command="{Binding DoPaging}" Key="Enter" />
+                        <KeyBinding Command="{Binding DoPaging}" CommandParameter="false" Key="Enter" />
                     </TextBox.InputBindings>
                 </TextBox>
                 <TextBox Width="30" Height="18" Style="{StaticResource ResultsView}" Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True">
                     <TextBox.InputBindings>
-                        <KeyBinding Command="{Binding DoPaging}" Key="Enter" />
+                        <KeyBinding Command="{Binding DoPaging}" CommandParameter="false" Key="Enter" />
                     </TextBox.InputBindings>
                 </TextBox>
                 <Button Height="18" Width="18" Command="{Binding PageForward}">

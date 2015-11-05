@@ -22,15 +22,21 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Content="Replacement"></Label>
-        <local:TextEditorExt Grid.Row="1" Grid.Column="1" Margin="10">
+        <local:TextEditorExt x:Name="replaceDocumentEditor" Grid.Row="1" Grid.Column="1" Margin="10">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Replacement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
         </local:TextEditorExt>
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Content="Update" Command="{Binding Replace}"></Button>
+        <local:TextEditorExt Grid.Row="2" Grid.Column="1" Height="50" Margin="10,0,10,5" IsReadOnly="True" Visibility="{Binding ErrorMessage, Converter={StaticResource NullValueToVisibilityConverter}}">
+            <i:Interaction.Behaviors>
+                <utils:AvalonEditBehavior GiveMeTheText="{Binding ErrorMessage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </i:Interaction.Behaviors>
+        </local:TextEditorExt>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,5">
+            <Button Content="Update" Command="{Binding Replace}" Margin="10,0"></Button>
             <Button Content="Close" Click="Button_Click"></Button>
         </StackPanel>
     </Grid>

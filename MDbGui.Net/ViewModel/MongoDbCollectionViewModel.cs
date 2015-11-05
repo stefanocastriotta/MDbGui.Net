@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using MDbGui.Net.Utils;
 using Microsoft.Practices.ServiceLocation;
 using MongoDB.Bson;
 using System;
@@ -213,7 +214,7 @@ namespace MDbGui.Net.ViewModel
                     IsBusy = true;
                     if (message.Notification == "RecreateIndex")
                         await Database.Server.MongoDbService.DropIndexAsync(Database.Name, Name, message.Content.Name);
-                    await Database.Server.MongoDbService.CreateIndexAsync(Database.Name, Name, message.Content.IndexDefinition, 
+                    await Database.Server.MongoDbService.CreateIndexAsync(Database.Name, Name, message.Content.IndexDefinition.Deserialize<BsonDocument>("IndexDefinition"), 
                         new MongoDB.Driver.CreateIndexOptions()
                         {
                             Name = message.Content.Name,

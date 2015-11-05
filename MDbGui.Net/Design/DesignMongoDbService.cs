@@ -67,7 +67,7 @@ namespace MDbGui.Net.Design
             return Task.FromResult(new List<BsonDocument>());
         }
 
-        public Task<string> CreateIndexAsync(string databaseName, string collection, string indexDefinition, CreateIndexOptions options)
+        public Task<string> CreateIndexAsync(string databaseName, string collection, BsonDocument indexDefinition, CreateIndexOptions options)
         {
             return Task.FromResult("");
         }
@@ -77,48 +77,48 @@ namespace MDbGui.Net.Design
             return new Task(() => { });
         }
 
-        public Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, string command, CancellationToken token)
+        public Task<BsonDocument> ExecuteRawCommandAsync(string databaseName, BsonDocument command, CancellationToken token)
         {
             // Use this to create design time data
 
             return Task.FromResult(new BsonDocument());
         }
 
-        public Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, string projection, int? limit, int? skip, bool explain, Guid operationComment, CancellationToken token)
+        public Task<List<BsonDocument>> FindAsync(string databaseName, string collection, BsonDocument filter, BsonDocument sort, BsonDocument projection, int? limit, int? skip, bool explain, Guid operationComment, CancellationToken token)
         {
             // Use this to create design time data
 
             return Task.FromResult(new List<BsonDocument>());
         }
 
-        public Task<long> CountAsync(string databaseName, string collection, string filter, CancellationToken token)
+        public Task<long> CountAsync(string databaseName, string collection, BsonDocument filter, CancellationToken token)
         {
             // Use this to create design time data
 
             return Task.FromResult<long>(100);
         }
 
-        public Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, string documents, CancellationToken token)
+        public Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, BsonArray documents, CancellationToken token)
         {
             return null;
         }
 
-        public Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, string document, CancellationToken token)
+        public Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, BsonDocument filter, BsonDocument document, CancellationToken token)
         {
             return null;
         }
 
-        public Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, string document, bool multi, CancellationToken token)
+        public Task<UpdateResult> UpdateAsync(string databaseName, string collection, BsonDocument filter, BsonDocument document, bool multi, CancellationToken token)
         {
             return null;
         }
 
-        public Task<DeleteResult> DeleteAsync(string databaseName, string collection, string filter, bool justOne, CancellationToken token)
+        public Task<DeleteResult> DeleteAsync(string databaseName, string collection, BsonDocument filter, bool justOne, CancellationToken token)
         {
             return null;
         }
 
-        public Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, string pipeline, AggregateOptions options, bool explain, CancellationToken token)
+        public Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, BsonArray pipeline, AggregateOptions options, bool explain, CancellationToken token)
         {
             return null;
         }

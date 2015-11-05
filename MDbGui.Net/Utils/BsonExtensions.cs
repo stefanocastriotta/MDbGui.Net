@@ -31,13 +31,13 @@ namespace MDbGui.Net.Utils
             return sb.ToString();
         }
 
-        public static TNominalType Deserialize<TNominalType>(this string json, Action<BsonDeserializationContext.Builder> configurator = null)
+        public static TNominalType Deserialize<TNominalType>(this string json, string propertyName = null)
         {
             using (var bsonReader = new JsonReader(json))
             {
                 try
                 {
-                    return BsonSerializer.Deserialize<TNominalType>(bsonReader, configurator);
+                    return BsonSerializer.Deserialize<TNominalType>(bsonReader);
                 }
                 catch (Exception ex)
                 {
@@ -45,7 +45,7 @@ namespace MDbGui.Net.Utils
                     var _buffer = _bufferProp.GetValue(bsonReader);
                     var _positionProp = _buffer.GetType().GetProperty("Position", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                     int Position = (int)_positionProp.GetValue(_buffer);
-                    throw new BsonParseException(ex, Position);
+                    throw new BsonParseException(ex, Position, propertyName);
                 }
             }
         }
@@ -54,9 +54,12 @@ namespace MDbGui.Net.Utils
         {
             public int Position { get; set; }
 
-            public BsonParseException(Exception ex, int position) : base(ex.Message + Environment.NewLine + "Position: " + position, ex)
+            public string PropertyName { get; set; }
+
+            public BsonParseException(Exception ex, int position, string propertyName) : base(ex.Message + Environment.NewLine + "Position: " + position, ex)
             {
                 Position = position;
+                PropertyName = propertyName;
             }
         }
     }

@@ -30,9 +30,9 @@ namespace MDbGui.Net.Views.Controls
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "AggregateParseException")
+            if (message.Notification == "AggregateParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "AggregatePipeline")
             {
-                aggregateEditor.CaretOffset = message.Content.Position - 1;
+                aggregateEditor.CaretOffset = message.Content.Position;
                 aggregateEditor.Focus();
             }
         }

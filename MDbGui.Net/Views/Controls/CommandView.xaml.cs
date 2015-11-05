@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using MDbGui.Net.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,16 @@ namespace MDbGui.Net.Views.Controls
         public CommandView()
         {
             InitializeComponent();
+            Messenger.Default.Register<NotificationMessage<BsonExtensions.BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
+        }
+
+        private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
+        {
+            if (message.Notification == "CommandParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "Command")
+            {
+                commandEditor.CaretOffset = message.Content.Position;
+                commandEditor.Focus();
+            }
         }
     }
 }

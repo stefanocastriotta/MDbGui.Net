@@ -30,28 +30,28 @@
         </Grid.ColumnDefinitions>
         <Label Content="Find"></Label>
 
-        <local:TextEditorExt Grid.Column="1" MaxHeight="100">
+        <local:TextEditorExt x:Name="findEditor" Grid.Column="1" MaxHeight="100">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Find, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
         </local:TextEditorExt>
 
         <Label Grid.Row="1" Content="Sort"></Label>
-        <local:TextEditorExt Grid.Row="1" Grid.Column="1" MaxHeight="100">
+        <local:TextEditorExt x:Name="sortEditor" Grid.Row="1" Grid.Column="1" MaxHeight="100">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Sort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
         </local:TextEditorExt>
         <Label Grid.Row="2" Content="Projection"></Label>
-        <local:TextEditorExt Grid.Row="2" Grid.Column="1" MaxHeight="100">
+        <local:TextEditorExt x:Name="projectionEditor" Grid.Row="2" Grid.Column="1" MaxHeight="100">
             <i:Interaction.Behaviors>
                 <utils:AvalonEditBehavior GiveMeTheText="{Binding Projection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
         </local:TextEditorExt>
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <Button Command="{Binding ExecuteFind}" Content="Find"></Button>
+            <Button Command="{Binding ExecuteFind}" CommandParameter="false" Content="Find"></Button>
             <Button Command="{Binding ExecuteCount}" Content="Count"></Button>
-            <Button Command="{Binding ExecuteFindExplain}" Content="Explain"></Button>
+            <Button Command="{Binding ExecuteFind}" CommandParameter="true" Content="Explain"></Button>
         </StackPanel>
     </Grid>
 

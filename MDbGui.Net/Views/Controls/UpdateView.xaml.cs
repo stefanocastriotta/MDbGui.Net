@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using MDbGui.Net.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,25 @@ namespace MDbGui.Net.Views.Controls
         public UpdateView()
         {
             InitializeComponent();
+            Messenger.Default.Register<NotificationMessage<BsonExtensions.BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
+        }
+
+        private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
+        {
+            if (message.Notification == "UpdateParseException" && message.Sender == this.DataContext)
+            {
+                switch (message.Content.PropertyName)
+                {
+                    case "UpdateFilter":
+                        updateFilterEditor.CaretOffset = message.Content.Position;
+                        updateFilterEditor.Focus();
+                        break;
+                    case "UpdateDocument":
+                        updateDocumentEditor.CaretOffset = message.Content.Position;
+                        updateDocumentEditor.Focus();
+                        break;
+                }
+            }
         }
     }
 }
