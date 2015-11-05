@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.Model
 {
@@ -119,7 +120,7 @@ namespace MDbGui.Net.Model
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            return await mongoCollection.Indexes.CreateOneAsync(BsonDocument.Parse(indexDefinition), options);
+            return await mongoCollection.Indexes.CreateOneAsync(indexDefinition.Deserialize<BsonDocument>(), options);
         }
 
         public async Task DropIndexAsync(string databaseName, string collection, string indexName)
@@ -135,11 +136,12 @@ namespace MDbGui.Net.Model
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var find = mongoCollection.Find(BsonDocument.Parse(string.IsNullOrWhiteSpace(filter) ? "{}" : filter), new FindOptions() { Comment = operationComment.ToString(), Modifiers = explain ? BsonDocument.Parse("{ $explain: true }") : null });
+
+            var find = mongoCollection.Find((string.IsNullOrWhiteSpace(filter) ? "{}" : filter).Deserialize<BsonDocument>(), new FindOptions() { Comment = operationComment.ToString(), Modifiers = explain ? BsonDocument.Parse("{ $explain: true }") : null });
             if (!string.IsNullOrWhiteSpace(sort))
-                find = find.Sort(BsonDocument.Parse(sort));
+                find = find.Sort(sort.Deserialize<BsonDocument>());
             if (!string.IsNullOrWhiteSpace(projection))
-                find = find.Project(BsonDocument.Parse(projection));
+                find = find.Project(projection.Deserialize<BsonDocument>());
 
             find = find.Limit(limit).Skip(skip);
             
@@ -150,33 +152,34 @@ namespace MDbGui.Net.Model
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.CountAsync(BsonDocument.Parse(filter), null, token);
+            var result = await mongoCollection.CountAsync(filter.Deserialize<BsonDocument>(), null, token);
             return result;
         }
 
-        public async Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents, CancellationToken token)
+        public async Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, string documents, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.BulkWriteAsync(documents.Select(d => new InsertOneModel<BsonDocument>(d)), null, token);
+            BsonArray array = documents.Deserialize<BsonArray>();
+            var result = await mongoCollection.BulkWriteAsync(array.Select(d => new InsertOneModel<BsonDocument>(d.AsBsonDocument)), null, token);
             return result;
         }
 
-        public async Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, bool multi, CancellationToken token)
+        public async Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, string document, bool multi, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
             if (multi)
-                return await mongoCollection.UpdateManyAsync(BsonDocument.Parse(filter), document, null, token);
+                return await mongoCollection.UpdateManyAsync(filter.Deserialize<BsonDocument>(), document.Deserialize<BsonDocument>(), null, token);
             else
-                return await mongoCollection.UpdateOneAsync(BsonDocument.Parse(filter), document, null, token);
+                return await mongoCollection.UpdateOneAsync(filter.Deserialize<BsonDocument>(), document.Deserialize<BsonDocument>(), null, token);
         }
 
-        public async Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token)
+        public async Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, string document, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
-            var result = await mongoCollection.ReplaceOneAsync(BsonDocument.Parse(filter), document, null, token);
+            var result = await mongoCollection.ReplaceOneAsync(filter.Deserialize<BsonDocument>(), document.Deserialize<BsonDocument>(), null, token);
             return result;
         }
 
@@ -185,9 +188,9 @@ namespace MDbGui.Net.Model
             var db = client.GetDatabase(databaseName);
             var mongoCollection = db.GetCollection<BsonDocument>(collection);
             if (justOne)
-                return await mongoCollection.DeleteOneAsync(BsonDocument.Parse(filter), token);
+                return await mongoCollection.DeleteOneAsync(filter.Deserialize<BsonDocument>(), token);
             else
-                return await mongoCollection.DeleteManyAsync(BsonDocument.Parse(filter), token);
+                return await mongoCollection.DeleteManyAsync(filter.Deserialize<BsonDocument>(), token);
         }
 
         public async Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, string pipeline, AggregateOptions options, bool explain, CancellationToken token)
@@ -204,7 +207,7 @@ namespace MDbGui.Net.Model
                         AllowDiskUse = options.AllowDiskUse,
                         BatchSize = options.BatchSize,
                         MaxTime = options.MaxTime,
-                        Pipeline = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(pipeline).Select(s => s.AsBsonDocument)
+                        Pipeline = pipeline.Deserialize<BsonArray>().Select(s => s.AsBsonDocument)
                     }).ToList();
                 else
                 {
@@ -213,7 +216,7 @@ namespace MDbGui.Net.Model
                         AllowDiskUse = options.AllowDiskUse,
                         BatchSize = options.BatchSize,
                         MaxTime = options.MaxTime,
-                        Pipeline = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(pipeline).Select(s => s.AsBsonDocument)
+                        Pipeline = pipeline.Deserialize<BsonArray>().Select(s => s.AsBsonDocument)
                     });
 
                     result = new List<BsonDocument>();

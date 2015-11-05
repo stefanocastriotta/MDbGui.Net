@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static MDbGui.Net.Utils.BsonExtensions;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.Views.Controls
 {
@@ -23,6 +26,16 @@ namespace MDbGui.Net.Views.Controls
         public AggregateView()
         {
             InitializeComponent();
+            Messenger.Default.Register<NotificationMessage<BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
+        }
+
+        private void BsonParseExceptionMessageHandler(NotificationMessage<BsonParseException> message)
+        {
+            if (message.Notification == "AggregateParseException")
+            {
+                aggregateEditor.CaretOffset = message.Content.Position - 1;
+                aggregateEditor.Focus();
+            }
         }
     }
 }

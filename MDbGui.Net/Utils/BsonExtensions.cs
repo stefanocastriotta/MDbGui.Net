@@ -1,4 +1,6 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.IO;
+using MongoDB.Bson.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +29,35 @@ namespace MDbGui.Net.Utils
             }
 
             return sb.ToString();
+        }
+
+        public static TNominalType Deserialize<TNominalType>(this string json, Action<BsonDeserializationContext.Builder> configurator = null)
+        {
+            using (var bsonReader = new JsonReader(json))
+            {
+                try
+                {
+                    return BsonSerializer.Deserialize<TNominalType>(bsonReader, configurator);
+                }
+                catch (Exception ex)
+                {
+                    var _bufferProp = bsonReader.GetType().GetField("_buffer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    var _buffer = _bufferProp.GetValue(bsonReader);
+                    var _positionProp = _buffer.GetType().GetProperty("Position", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    int Position = (int)_positionProp.GetValue(_buffer);
+                    throw new BsonParseException(ex, Position);
+                }
+            }
+        }
+
+        public class BsonParseException : Exception
+        {
+            public int Position { get; set; }
+
+            public BsonParseException(Exception ex, int position) : base(ex.Message + Environment.NewLine + "Position: " + position, ex)
+            {
+                Position = position;
+            }
         }
     }
 }

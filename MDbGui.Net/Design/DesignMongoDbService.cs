@@ -98,17 +98,17 @@ namespace MDbGui.Net.Design
             return Task.FromResult<long>(100);
         }
 
-        public Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents, CancellationToken token)
+        public Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, string documents, CancellationToken token)
         {
             return null;
         }
 
-        public Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token)
+        public Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, string document, CancellationToken token)
         {
             return null;
         }
 
-        public Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, bool multi, CancellationToken token)
+        public Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, string document, bool multi, CancellationToken token)
         {
             return null;
         }

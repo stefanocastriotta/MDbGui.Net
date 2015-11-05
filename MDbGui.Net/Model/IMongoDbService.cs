@@ -26,9 +26,9 @@ namespace MDbGui.Net.Model
         Task DropIndexAsync(string databaseName, string collection, string indexName);
         Task<List<BsonDocument>> FindAsync(string databaseName, string collection, string filter, string sort, string projection, int? limit, int? skip, bool explain, Guid operationComment, CancellationToken token);
         Task<long> CountAsync(string databaseName, string collection, string filter, CancellationToken token);
-        Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, IEnumerable<BsonDocument> documents, CancellationToken token);
-        Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, BsonDocument document, bool multi, CancellationToken token);
-        Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, BsonDocument document, CancellationToken token);
+        Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, string documents, CancellationToken token);
+        Task<UpdateResult> UpdateAsync(string databaseName, string collection, string filter, string document, bool multi, CancellationToken token);
+        Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, string filter, string document, CancellationToken token);
         Task<DeleteResult> DeleteAsync(string databaseName, string collection, string filter, bool justOne, CancellationToken token);
         Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, string pipeline, AggregateOptions options, bool explain, CancellationToken token);
     }

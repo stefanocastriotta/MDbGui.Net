@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using System.Threading;
 using MongoDB.Driver;
+using static MDbGui.Net.Utils.BsonExtensions;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -689,8 +690,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             try
             {
-                BsonArray array = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonArray>(Insert);
-                var result = await Service.InsertAsync(Database, Collection, array.Select(i => i.AsBsonDocument), cts.Token);
+                var result = await Service.InsertAsync(Database, Collection, Insert, cts.Token);
 
                 RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
@@ -699,7 +699,7 @@ namespace MDbGui.Net.ViewModel
                 RawResult += Environment.NewLine;
                 RawResult += Environment.NewLine;
                 if (result.ProcessedRequests != null && result.ProcessedRequests.Count > 0)
-                    RawResult += "Processed requests: " + Environment.NewLine + string.Join(Environment.NewLine, result.ProcessedRequests.Cast<MongoDB.Driver.InsertOneModel<BsonDocument>>().Select(s => s.Document.ToJson(jsonWriterSettings)));
+                    RawResult += "Processed requests: " + Environment.NewLine + string.Join(Environment.NewLine, result.ProcessedRequests.Cast<InsertOneModel<BsonDocument>>().Select(s => s.Document.ToJson(jsonWriterSettings)));
 
                 SelectedViewIndex = 1;
                 Root = null;
@@ -771,7 +771,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             try
             {
-                var result = await Service.UpdateAsync(Database, Collection, UpdateFilter, BsonDocument.Parse(UpdateDocument), UpdateMulti, cts.Token);
+                var result = await Service.UpdateAsync(Database, Collection, UpdateFilter, UpdateDocument, UpdateMulti, cts.Token);
 
                 RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
@@ -834,7 +834,7 @@ namespace MDbGui.Net.ViewModel
             Executing = true;
             try
             {
-                var result = await Service.ReplaceOneAsync(Database, Collection, ReplaceFilter, BsonDocument.Parse(Replacement), cts.Token);
+                var result = await Service.ReplaceOneAsync(Database, Collection, ReplaceFilter, Replacement, cts.Token);
 
                 RawResult = result.ToJson(jsonWriterSettings);
                 RawResult += Environment.NewLine;
@@ -865,9 +865,9 @@ namespace MDbGui.Net.ViewModel
                 Executing = true;
                 try
                 {
-                    var doc = BsonDocument.Parse(message.Content.Replacement);
-                    var result = await Service.ReplaceOneAsync(Database, Collection, "{ _id: ObjectId('" + message.Content.Document.Id + "') }", doc, cts.Token);
+                    var result = await Service.ReplaceOneAsync(Database, Collection, "{ _id: ObjectId('" + message.Content.Document.Id + "') }", message.Content.Replacement, cts.Token);
 
+                    var doc = message.Content.Replacement.Deserialize<BsonDocument>();
                     message.Content.Document.Result = doc;
                     message.Content.Document.IsExpanded = false;
                     message.Content.Document.Value = "(" + doc.ElementCount + ") fields";
@@ -1049,6 +1049,7 @@ namespace MDbGui.Net.ViewModel
             Task<List<BsonDocument>> task = null;
             try
             {
+                var pipeline = AggregatePipeline.Deserialize<BsonArray>();
                 task = Service.AggregateAsync(Database, Collection, AggregatePipeline, AggregateOptions, AggregateExplain, cts.Token);
                 var results = await task.WithCancellation(cts.Token);
                 Executing = false;
@@ -1098,6 +1099,14 @@ namespace MDbGui.Net.ViewModel
                         }
                     }
                 }
+            }
+            catch (BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+                Messenger.Default.Send(new NotificationMessage<BsonParseException>(this, ex, "AggregateParseException"));
             }
             catch (Exception ex)
             {
