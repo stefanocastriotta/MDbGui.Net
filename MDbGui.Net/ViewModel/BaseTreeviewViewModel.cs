@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using MDbGui.Net.Utils;
+using System.Collections.ObjectModel;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -135,6 +136,29 @@ namespace MDbGui.Net.ViewModel
             set
             {
                 Set(ref _itemsCountString, value);
+            }
+        }
+
+        protected ObservableCollection<BaseTreeviewViewModel> _children;
+        public ObservableCollection<BaseTreeviewViewModel> Children
+        {
+            get { return _children; }
+            set
+            {
+                Set(ref _children, value);
+            }
+        }
+
+        public void UnselectAll()
+        {
+            if (Children != null)
+            {
+                foreach(var child in Children)
+                {
+                    child.IsSelected = false;
+                    child.IsEditing = false;
+                    child.UnselectAll();
+                }
             }
         }
 

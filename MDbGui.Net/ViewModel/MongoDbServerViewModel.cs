@@ -32,17 +32,6 @@ namespace MDbGui.Net.ViewModel
 
         public Dictionary<string, DatabaseCommand> DatabaseCommands { get; set; }
 
-        private ObservableCollection<BaseTreeviewViewModel> _items;
-        public ObservableCollection<BaseTreeviewViewModel> Items
-        {
-            get { return _items; }
-            set
-            {
-                _items = value;
-                RaisePropertyChanged("Items");
-            }
-        }
-
         private SemanticVersion _serverVersion;
         public SemanticVersion ServerVersion
         {
@@ -66,7 +55,7 @@ namespace MDbGui.Net.ViewModel
         public MongoDbServerViewModel(IMongoDbService mongoDbService)
         {
             MongoDbService = mongoDbService;
-            _items = new ObservableCollection<BaseTreeviewViewModel>();
+            _children = new ObservableCollection<BaseTreeviewViewModel>();
             CreateNewDatabase = new RelayCommand(InnerCreateNewDatabase);
             Disconnect = new RelayCommand(InnerDisconnect);
             RunCommand = new RelayCommand<DatabaseCommand>(InnerOpenRunCommand);
@@ -105,7 +94,7 @@ namespace MDbGui.Net.ViewModel
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 Utils.LoggerHelper.Logger.Debug("Adding new database to server " + Name);
-                Items.Add(newDb);
+                Children.Add(newDb);
             });
         }
 
@@ -158,7 +147,7 @@ namespace MDbGui.Net.ViewModel
             try
             {
                 Utils.LoggerHelper.Logger.Debug("Loading database list of server " + Name);
-                this.Items.Clear();
+                this.Children.Clear();
                 List<MongoDbDatabaseViewModel> systemDatabases = new List<MongoDbDatabaseViewModel>();
                 List<MongoDbDatabaseViewModel> standardDatabases = new List<MongoDbDatabaseViewModel>();
 
@@ -176,16 +165,16 @@ namespace MDbGui.Net.ViewModel
                 foreach (var systemDb in systemDatabases.OrderBy(o => o.Name))
                     systemDbFolder.Children.Add(systemDb);
 
-                this.Items.Add(systemDbFolder);
+                this.Children.Add(systemDbFolder);
 
                 foreach (var db in standardDatabases.OrderBy(o => o.Name))
-                    this.Items.Add(db);
+                    this.Children.Add(db);
 
                 if (ServerVersion >= SemanticVersion.Parse("2.6.0"))
                 {
                     _users = new FolderViewModel("Users", this);
                     _users.Children.Add(new MongoDbUserViewModel(null, null) { IconVisible = false });
-                    this.Items.Add(_users);
+                    this.Children.Add(_users);
                 }
 
                 this.IsExpanded = true;
@@ -207,7 +196,7 @@ namespace MDbGui.Net.ViewModel
                 {
                     Utils.LoggerHelper.Logger.Info("Dropping database " + message.Content.Name + " on server " + Name);
                     await MongoDbService.DropDatabaseAsync(message.Content.Name);
-                    Items.Remove(message.Content);
+                    Children.Remove(message.Content);
                     message.Content.Cleanup();
                 }
                 catch (Exception ex)
@@ -253,7 +242,7 @@ namespace MDbGui.Net.ViewModel
         public override void Cleanup()
         {
             base.Cleanup();
-            foreach (var item in Items)
+            foreach (var item in Children)
                 item.Cleanup();
             MessengerInstance.Unregister(this);
             this.Dispose();

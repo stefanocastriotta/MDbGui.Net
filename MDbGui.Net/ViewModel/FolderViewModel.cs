@@ -23,17 +23,6 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
-        private ObservableCollection<BaseTreeviewViewModel> _children;
-        public ObservableCollection<BaseTreeviewViewModel> Children
-        {
-            get { return _children; }
-            set
-            {
-                _children = value;
-                RaisePropertyChanged("Children");
-            }
-        }
-
         public FolderViewModel(string name, BaseTreeviewViewModel parent)
         {
             this._name = name;

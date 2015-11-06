@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace MDbGui.Net.Utils
 {
@@ -34,6 +36,15 @@ namespace MDbGui.Net.Utils
             if ((bool)e.NewValue)
             {
                 uie.Focus(); // Don't care about false values.
+                if (uie is System.Windows.Controls.TextBox)
+                {
+                    if (!string.IsNullOrWhiteSpace(((System.Windows.Controls.TextBox)uie).Text))
+                        ((System.Windows.Controls.TextBox)uie).CaretIndex = ((System.Windows.Controls.TextBox)uie).Text.Length;
+                    uie.Dispatcher.BeginInvoke((Action)delegate
+                    {
+                        Keyboard.Focus(uie);
+                    }, DispatcherPriority.Render);
+                }
             }
         }
     }

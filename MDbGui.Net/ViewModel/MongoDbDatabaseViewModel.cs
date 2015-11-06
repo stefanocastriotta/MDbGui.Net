@@ -43,17 +43,6 @@ namespace MDbGui.Net.ViewModel
 
         private bool _usersLoaded;
 
-        private ObservableCollection<FolderViewModel> _folders;
-        public ObservableCollection<FolderViewModel> Folders
-        {
-            get { return _folders; }
-            set
-            {
-                _folders = value;
-                RaisePropertyChanged("Folders");
-            }
-        }
-
         private FolderViewModel _collections;
         private FolderViewModel _users;
 
@@ -64,15 +53,15 @@ namespace MDbGui.Net.ViewModel
         {
             Server = server;
             Name = name;
-            _folders = new ObservableCollection<FolderViewModel>();
+            _children = new ObservableCollection<BaseTreeviewViewModel>();
             _collections = new FolderViewModel("Collections", this);
             _users = new FolderViewModel("Users", this);
-            _folders.Add(_collections);
+            _children.Add(_collections);
             _collections.Children.Add(new MongoDbCollectionViewModel(this, null) { IconVisible = false });
 
             if (_server.ServerVersion < SemanticVersion.Parse("2.6.0"))
             {
-                _folders.Add(_users);
+                _children.Add(_users);
                 _users.Children.Add(new MongoDbUserViewModel(null, null) { IconVisible = false });
             }
 
@@ -345,7 +334,7 @@ namespace MDbGui.Net.ViewModel
         {
             base.Cleanup();
             MessengerInstance.Unregister(this);
-            foreach (var folder in Folders)
+            foreach (var folder in Children)
                 folder.Cleanup();
             this.Dispose();
         }

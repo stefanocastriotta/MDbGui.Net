@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MDbGui.Net.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,6 +43,19 @@ namespace MDbGui.Net.Views.Controls
                 source = VisualTreeHelper.GetParent(source);
 
             return source as TreeViewItem;
+        }
+
+        private void TreeView_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource is Grid && ((TreeView)e.Source).Items.Count > 0)
+            {
+                foreach (var item in ((TreeView)e.Source).Items.Cast<BaseTreeviewViewModel>())
+                {
+                    item.IsSelected = false;
+                    item.UnselectAll();
+                }
+                ((Grid)e.OriginalSource).Focus();
+            }
         }
     }
 }

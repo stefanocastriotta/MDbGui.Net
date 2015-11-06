@@ -61,16 +61,6 @@ namespace MDbGui.Net.ViewModel
 
         private FolderViewModel _indexes;
 
-        private ObservableCollection<FolderViewModel> _folders;
-        public ObservableCollection<FolderViewModel> Folders
-        {
-            get { return _folders; }
-            set
-            {
-                Set(ref _folders, value);
-            }
-        }
-
         public RelayCommand OpenTab { get; set; }
 
         public RelayCommand SaveCollection { get; set; }
@@ -88,16 +78,16 @@ namespace MDbGui.Net.ViewModel
         /// </summary>
         public MongoDbCollectionViewModel(MongoDbDatabaseViewModel database, string collectionName)
         {
-            _folders = new ObservableCollection<FolderViewModel>();
+            _children = new ObservableCollection<BaseTreeviewViewModel>();
             _indexes = new FolderViewModel("Indexes", this);
-            _folders.Add(_indexes);
+            _children.Add(_indexes);
             _indexes.Children.Add(new MongoDbIndexViewModel(this, null) { IconVisible = false });
 
             OpenTab = new RelayCommand(InternalOpenTab);
             RenameCollection = new RelayCommand(InternalRenameCollection);
             SaveCollection = new RelayCommand(InnerSaveCollection, () =>
             {
-                return !string.IsNullOrWhiteSpace(Name);
+                return !string.IsNullOrWhiteSpace(Name) && _oldName != Name;
             });
             InsertDocuments = new RelayCommand(InternalInsertDocuments);
             CreateIndex = new RelayCommand(InternalCreateIndex);
@@ -278,7 +268,7 @@ namespace MDbGui.Net.ViewModel
         {
             base.Cleanup();
             MessengerInstance.Unregister(this);
-            foreach (var folder in Folders)
+            foreach (var folder in Children)
                 folder.Cleanup();
         }
     }
