@@ -18,7 +18,7 @@ using MDbGui.Net.Utils;
 namespace MDbGui.Net.Views.Controls
 {
     /// <summary>
-    /// Interaction logic for UpdateView.xaml
+    /// Interaction logic for AggregateView.xaml
     /// </summary>
     public partial class AggregateView : UserControl
     {

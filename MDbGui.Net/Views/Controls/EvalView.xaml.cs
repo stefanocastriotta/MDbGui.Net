@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace MDbGui.Net.Views.Controls
 {
     /// <summary>
-    /// Interaction logic for CommandView.xaml
+    /// Interaction logic for EvalView.xaml
     /// </summary>
     public partial class EvalView : UserControl
     {

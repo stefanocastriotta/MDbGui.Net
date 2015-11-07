@@ -95,6 +95,9 @@
                 <DataTemplate x:Key="AggregateTemplate">
                     <local:AggregateView></local:AggregateView>
                 </DataTemplate>
+                <DataTemplate x:Key="DistinctTemplate">
+                    <local:DistinctView></local:DistinctView>
+                </DataTemplate>
             </ContentControl.Resources>
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
@@ -122,6 +125,9 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding CommandType}" Value="Aggregate">
                             <Setter Property="ContentTemplate" Value="{StaticResource AggregateTemplate}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CommandType}" Value="Distinct">
+                            <Setter Property="ContentTemplate" Value="{StaticResource DistinctTemplate}" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

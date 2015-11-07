@@ -162,6 +162,9 @@
     <Compile Include="Views\Controls\LogView.xaml.cs">
       <DependentUpon>LogView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Controls\DistinctView.xaml.cs">
+      <DependentUpon>DistinctView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\ReplaceView.xaml.cs">
       <DependentUpon>ReplaceView.xaml</DependentUpon>
     </Compile>
@@ -213,6 +216,10 @@
     <Page Include="Views\Controls\LogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\DistinctView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Controls\ReplaceView.xaml">
       <SubType>Designer</SubType>

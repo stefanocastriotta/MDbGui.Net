@@ -153,6 +153,14 @@ namespace MDbGui.Net.Model
             return result;
         }
 
+        public async Task<List<BsonValue>> DistinctAsync(string databaseName, string collection, string field, BsonDocument filter, CancellationToken token)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            var result = await mongoCollection.DistinctAsync<BsonValue>(field, filter, null, token);
+            return await result.ToListAsync();
+        }
+
         public async Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, BsonArray documents, CancellationToken token)
         {
             var db = client.GetDatabase(databaseName);

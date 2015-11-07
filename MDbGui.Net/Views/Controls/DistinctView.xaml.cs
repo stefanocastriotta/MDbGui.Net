@@ -18,11 +18,11 @@ using System.Windows.Shapes;
 namespace MDbGui.Net.Views.Controls
 {
     /// <summary>
-    /// Interaction logic for RemoveView.xaml
+    /// Interaction logic for DistinctView.xaml
     /// </summary>
-    public partial class RemoveView : UserControl
+    public partial class DistinctView : UserControl
     {
-        public RemoveView()
+        public DistinctView()
         {
             InitializeComponent();
             Messenger.Default.Register<NotificationMessage<BsonExtensions.BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
@@ -30,10 +30,10 @@ namespace MDbGui.Net.Views.Controls
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "DeleteParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "DeleteQuery")
+            if (message.Notification == "DistinctParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "DistinctFilter")
             {
-                removeEditor.CaretOffset = message.Content.Position;
-                removeEditor.Focus();
+                distinctFilterEditor.CaretOffset = message.Content.Position;
+                distinctFilterEditor.Focus();
             }
         }
     }

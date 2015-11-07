@@ -98,6 +98,11 @@ namespace MDbGui.Net.Design
             return Task.FromResult<long>(100);
         }
 
+        public Task<List<BsonValue>> DistinctAsync(string databaseName, string collection, string field, BsonDocument filter, CancellationToken token)
+        {
+            return Task.FromResult<List<BsonValue>>(new List<BsonValue>());
+        }
+
         public Task<BulkWriteResult<BsonDocument>> InsertAsync(string databaseName, string collection, BsonArray documents, CancellationToken token)
         {
             return null;

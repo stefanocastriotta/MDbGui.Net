@@ -41,6 +41,7 @@ namespace MDbGui.Net.ViewModel
             CommandTypes.Add(Model.CommandType.Replace, "Replace");
             CommandTypes.Add(Model.CommandType.Remove, "Remove");
             CommandTypes.Add(Model.CommandType.Aggregate, "Aggregate");
+            CommandTypes.Add(Model.CommandType.Distinct, "Distinct");
             CommandTypes.Add(Model.CommandType.RunCommand, "RunCommand");
             CommandTypes.Add(Model.CommandType.Eval, "Eval");
 
@@ -69,6 +70,8 @@ namespace MDbGui.Net.ViewModel
             PageForward = new RelayCommand(InnerPageForward);
 
             ExecuteCount = new RelayCommand(InnerExecuteCount);
+
+            ExecuteDistinct = new RelayCommand(InnerExecuteDistinct);
 
             ExecuteCommand = new RelayCommand(InnerExecuteCommand);
 
@@ -542,6 +545,76 @@ namespace MDbGui.Net.ViewModel
             catch (Exception ex)
             {
                 Utils.LoggerHelper.Logger.Error("Exception while executing Count command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+            }
+            finally
+            {
+                Executing = false;
+            }
+        }
+
+        #endregion
+
+        #region Distinct
+
+        private string _distinctFilter = "{}";
+
+        public string DistinctFilter
+        {
+            get
+            {
+                return _distinctFilter;
+            }
+            set
+            {
+                Set(ref _distinctFilter, value);
+            }
+        }
+
+        private string _distinctFieldName;
+
+        public string DistinctFieldName
+        {
+            get
+            {
+                return _distinctFieldName;
+            }
+            set
+            {
+                Set(ref _distinctFieldName, value);
+            }
+        }
+
+        public RelayCommand ExecuteDistinct { get; set; }
+
+        public async void InnerExecuteDistinct()
+        {
+            Executing = true;
+            try
+            {
+                var results = await Service.DistinctAsync(Database, Collection, DistinctFieldName, DistinctFilter.Deserialize<BsonDocument>("DistinctFilter"), cts.Token);
+                Executing = false;
+                ShowPager = false;
+
+                RawResult = results.ToJson(jsonWriterSettings);
+                SelectedViewIndex = 0;
+
+                Root = new ResultsViewModel(results.Select(r => new BsonDocument(results.IndexOf(r).ToString(), r)).ToList(), this);
+                GC.Collect();
+            }
+            catch (BsonExtensions.BsonParseException ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Distinct command", ex);
+                SelectedViewIndex = 1;
+                RawResult = ex.Message;
+                Root = null;
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "DistinctParseException"));
+            }
+            catch (Exception ex)
+            {
+                Utils.LoggerHelper.Logger.Error("Exception while executing Distinct command", ex);
                 SelectedViewIndex = 1;
                 RawResult = ex.Message;
                 Root = null;
