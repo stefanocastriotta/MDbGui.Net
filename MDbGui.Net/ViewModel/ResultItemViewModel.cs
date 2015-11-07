@@ -83,7 +83,7 @@ namespace MDbGui.Net.ViewModel
             }
             else
             {
-                Value = element.Value.ToString().Replace("\n", " ").Replace("\r", " ").Replace("\\n", " ").Replace("\\r", " ");
+                Value = element.Value.ToJson(jsonWriterSettings).Replace("\n", " ").Replace("\r", " ").Replace("\\n", " ").Replace("\\r", " ").Trim(' ', '\"');
                 if (Value.Length > 100)
                     Value = Value.Substring(0, 100) + "...";
             }
