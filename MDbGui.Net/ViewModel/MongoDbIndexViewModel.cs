@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
 using MongoDB.Bson;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -64,12 +65,12 @@ namespace MDbGui.Net.ViewModel
 
         private void InternalEditIndex()
         {
-            Messenger.Default.Send(new NotificationMessage<MongoDbIndexViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, "EditIndex"));
+            Messenger.Default.Send(new NotificationMessage<MongoDbIndexViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, Constants.EditIndexMessage));
         }
 
         private void InternalConfirmDropIndex()
         {
-            Messenger.Default.Send(new NotificationMessage<MongoDbIndexViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, "ConfirmDropIndex"));
+            Messenger.Default.Send(new NotificationMessage<MongoDbIndexViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, Constants.ConfirmDropIndexMessage));
         }
 
         public override void Cleanup()

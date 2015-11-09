@@ -31,8 +31,7 @@ namespace MDbGui.Net.ViewModel
             get { return _activeConnections; }
             set
             {
-                _activeConnections = value;
-                RaisePropertyChanged("ActiveConnections");
+                Set(ref _activeConnections, value);
             }
         }
 
@@ -42,8 +41,7 @@ namespace MDbGui.Net.ViewModel
             get { return _tabs; }
             set
             {
-                _tabs = value;
-                RaisePropertyChanged("Tabs");
+                Set(ref _tabs, value);
             }
         }
 
@@ -81,7 +79,7 @@ namespace MDbGui.Net.ViewModel
             Messenger.Default.Register<NotificationMessage<TabViewModel>>(this, (message) => TabMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbServerViewModel>>(this, (message) => MongoDbServerMessageHandler(message));
 
-            if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
+            if (IsInDesignModeStatic)
             {
                 var _mongoDbService = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<IMongoDbService>();
                 MongoDbServerViewModel serverVm = new MongoDbServerViewModel(_mongoDbService);
@@ -106,9 +104,9 @@ namespace MDbGui.Net.ViewModel
 
         private async void LoggingInMessageHandler(NotificationMessage<ConnectionInfo> message)
         {
-            if (message.Notification == "LoggingIn")
+            if (message.Notification == Constants.LoggingInMessage)
             {
-                var _mongoDbService = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<IMongoDbService>();
+                var _mongoDbService = SimpleIoc.Default.GetInstanceWithoutCaching<IMongoDbService>();
                 MongoDbServerViewModel serverVm = new MongoDbServerViewModel(_mongoDbService);
                 serverVm.IsBusy = true;
                 serverVm.Name = message.Content.Address + ":" + message.Content.Port;
@@ -120,15 +118,15 @@ namespace MDbGui.Net.ViewModel
 
                 try
                 {
-                    Utils.LoggerHelper.Logger.Info("Connecting to server " + message.Content.Address + ":" + message.Content.Port);
+                    LoggerHelper.Logger.Info("Connecting to server " + message.Content.Address + ":" + message.Content.Port);
                     var serverInfo = await _mongoDbService.ConnectAsync(message.Content);
                     serverVm.ServerVersion = SemanticVersion.Parse(serverInfo.ServerStatus["version"].AsString);
-                    Utils.LoggerHelper.Logger.Info("Connected to server " + message.Content.Address + ":" + message.Content.Port);
+                    LoggerHelper.Logger.Info("Connected to server " + message.Content.Address + ":" + message.Content.Port);
                     serverVm.LoadDatabases(serverInfo.Databases);
                 }
                 catch (Exception ex)
                 {
-                    Utils.LoggerHelper.Logger.Error("Failed to connect to server " + message.Content.Address + ":" + message.Content.Port, ex);
+                    LoggerHelper.Logger.Error("Failed to connect to server " + message.Content.Address + ":" + message.Content.Port, ex);
                 }
                 serverVm.IsBusy = false;
             }
@@ -170,7 +168,7 @@ namespace MDbGui.Net.ViewModel
 
         private void MongoDbServerMessageHandler(NotificationMessage<MongoDbServerViewModel> message)
         {
-            if (message.Notification == "Disconnect")
+            if (message.Notification == Constants.DisconnectMessage)
             {
                 LoggerHelper.Logger.Info("Disconnecting from server " + message.Content.Name);
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>

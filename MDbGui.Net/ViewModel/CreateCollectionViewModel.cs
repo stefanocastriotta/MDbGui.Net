@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -129,7 +130,7 @@ namespace MDbGui.Net.ViewModel
 
         public void InnerCreateCollection()
         {
-            Messenger.Default.Send(new NotificationMessage<CreateCollectionViewModel>(this, Database, this, "CreateCollection"));
+            Messenger.Default.Send(new NotificationMessage<CreateCollectionViewModel>(this, Database, this, Constants.CreateCollectionMessage));
         }
 
         public override void Cleanup()

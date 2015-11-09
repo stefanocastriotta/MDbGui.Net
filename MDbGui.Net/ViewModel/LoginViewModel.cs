@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using MongoDB.Driver;
 using MDbGui.Net.Model;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -117,7 +118,7 @@ namespace MDbGui.Net.ViewModel
                 info.Port = client.Settings.Server.Port;
             }
 
-            Messenger.Default.Send(new NotificationMessage<ConnectionInfo>(info, "LoggingIn"));
+            Messenger.Default.Send(new NotificationMessage<ConnectionInfo>(info, Constants.LoggingInMessage));
         }
 
         public override void Cleanup()

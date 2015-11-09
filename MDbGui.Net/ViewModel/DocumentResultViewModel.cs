@@ -104,7 +104,7 @@ namespace MDbGui.Net.ViewModel
             Collection = collection;
             EditResult = new RelayCommand(() =>
             {
-                Messenger.Default.Send(new NotificationMessage<DocumentResultViewModel>(this, "EditResult"));
+                Messenger.Default.Send(new NotificationMessage<DocumentResultViewModel>(this, Constants.EditResultMessage));
             });
             CopyToClipboard = new RelayCommand(() =>
             {
@@ -112,7 +112,7 @@ namespace MDbGui.Net.ViewModel
             });
             ConfirmDeleteResult = new RelayCommand(() =>
             {
-                Messenger.Default.Send(new NotificationMessage<DocumentResultViewModel>(this, "ConfirmDeleteResult"));
+                Messenger.Default.Send(new NotificationMessage<DocumentResultViewModel>(this, Constants.ConfirmDeleteResultMessage));
             });
         }
 
@@ -149,7 +149,7 @@ namespace MDbGui.Net.ViewModel
         protected override void OnExpanding()
         {
             base.OnExpanding();
-            Messenger.Default.Send(new NotificationMessage(this, ((ResultsViewModel)this.Parent).Owner, "ItemExpanding"));
+            Messenger.Default.Send(new NotificationMessage(this, ((ResultsViewModel)this.Parent).Owner, Constants.ItemExpandingMessage));
         }
     }
 }

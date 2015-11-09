@@ -12,6 +12,7 @@ using System;
 using System.Threading;
 using MongoDB.Driver.Core.Misc;
 using GalaSoft.MvvmLight.Ioc;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -75,7 +76,7 @@ namespace MDbGui.Net.ViewModel
             OpenCreateNewCollection = new RelayCommand<MongoDbDatabaseViewModel>(
             database =>
             {
-                Messenger.Default.Send(new NotificationMessage<MongoDbDatabaseViewModel>(this, "OpenCreateNewCollection"));
+                Messenger.Default.Send(new NotificationMessage<MongoDbDatabaseViewModel>(this, Constants.OpenCreateNewCollectionMessage));
             });
 
             Refresh = new RelayCommand(LoadCollections);
@@ -85,7 +86,7 @@ namespace MDbGui.Net.ViewModel
 
             ConfirmDropDatabase = new RelayCommand(() =>
             {
-                Messenger.Default.Send(new NotificationMessage<MongoDbDatabaseViewModel>(this, "ConfirmDropDatabase"));
+                Messenger.Default.Send(new NotificationMessage<MongoDbDatabaseViewModel>(this, Constants.ConfirmDropDatabaseMessage));
             });
 
             Messenger.Default.Register<PropertyChangedMessage<bool>>(this, (message) =>
@@ -270,7 +271,7 @@ namespace MDbGui.Net.ViewModel
 
         private async void InnerCreateNewCollection(NotificationMessage<CreateCollectionViewModel> message)
         {
-            if (message.Notification == "CreateCollection" && message.Target == this)
+            if (message.Notification == Constants.CreateCollectionMessage && message.Target == this)
             {
                 try
                 {
@@ -310,7 +311,7 @@ namespace MDbGui.Net.ViewModel
 
         public async void InnerDropCollection(NotificationMessage<MongoDbCollectionViewModel> message)
         {
-            if (message.Notification == "DropCollection" && message.Target == this)
+            if (message.Notification == Constants.DropCollectionMessage && message.Target == this)
             {
                 IsBusy = true;
                 message.Content.IsBusy = true;

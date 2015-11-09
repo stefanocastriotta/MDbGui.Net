@@ -315,7 +315,7 @@ namespace MDbGui.Net.ViewModel
 
         private async void ReplaceOneHandler(NotificationMessage<ReplaceOneViewModel> message)
         {
-            if (message.Target == this && message.Notification == "UpdateDocument")
+            if (message.Target == this && message.Notification == Constants.UpdateDocumentMessage)
             {
                 Executing = true;
                 try
@@ -343,7 +343,7 @@ namespace MDbGui.Net.ViewModel
 
         private async void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
         {
-            if (message.Notification == "DeleteResult")
+            if (message.Notification == Constants.DeleteResultMessage)
             {
                 Executing = true;
                 try

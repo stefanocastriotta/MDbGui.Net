@@ -26,7 +26,7 @@ namespace MDbGui.Net.Views.Dialogs
 
         private void NotificationMessageHandler(NotificationMessage<ReplaceOneViewModel> message)
         {
-            if (message.Notification == "UpdateDocument")
+            if (message.Notification == Constants.UpdateDocumentMessage)
             {
                 this.Close();
             }

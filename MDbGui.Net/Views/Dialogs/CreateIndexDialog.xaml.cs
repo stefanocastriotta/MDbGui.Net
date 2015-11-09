@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
+using MDbGui.Net.Utils;
 using MDbGui.Net.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace MDbGui.Net.Views.Dialogs
 
         private void NotificationMessageHandler(NotificationMessage<CreateIndexViewModel> message)
         {
-            if (message.Notification == "CreateIndex" || message.Notification == "RecreateIndex")
+            if (message.Notification == Constants.CreateIndexMessage || message.Notification == Constants.RecreateIndexMessage)
             {
                 this.Close();
             }

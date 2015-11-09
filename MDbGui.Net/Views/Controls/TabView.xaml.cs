@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using ICSharpCode.AvalonEdit.Search;
+using MDbGui.Net.Utils;
 using MDbGui.Net.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace MDbGui.Net.Views.Controls
 
         private void NotificationMessageHandler(NotificationMessage message)
         {
-            if (message.Notification == "ItemExpanding")
+            if (message.Notification == Constants.ItemExpandingMessage)
             {
                 foreach (var col in grdView.Columns)
                 {
@@ -44,13 +45,13 @@ namespace MDbGui.Net.Views.Controls
 
         private void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
         {
-            if (message.Notification == "ConfirmDeleteResult")
+            if (message.Notification == Constants.ConfirmDeleteResultMessage)
             {
                 var result = MessageBox.Show("Delete result with id: " + message.Content.Id + "?", "Delete confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     TabViewModel tabVm = ((ResultsViewModel)message.Content.Parent).Owner;
-                    Messenger.Default.Send(new NotificationMessage<DocumentResultViewModel>(this, tabVm, message.Content, "DeleteResult"));
+                    Messenger.Default.Send(new NotificationMessage<DocumentResultViewModel>(this, tabVm, message.Content, Constants.DeleteResultMessage));
                 }
             }
         }

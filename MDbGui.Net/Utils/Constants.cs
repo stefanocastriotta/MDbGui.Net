@@ -37,6 +37,8 @@ namespace MDbGui.Net.Utils
 
         public const string DeleteQueryProperty = "DeleteQuery";
         public const string RemoveParseException = "RemoveParseException";
+        public const string DeleteResultMessage = "DeleteResult";
+        public const string ConfirmDeleteResultMessage = "ConfirmDeleteResult";
 
         public const string ReplaceFilterProperty = "ReplaceFilter";
         public const string ReplacementProperty = "Replacement";
@@ -47,8 +49,35 @@ namespace MDbGui.Net.Utils
         public const string UpdateFilterProperty = "UpdateFilter";
         public const string UpdateDocumentProperty = "UpdateDocument";
         public const string UpdateParseException = "UpdateParseException";
+        public const string UpdateDocumentMessage = "UpdateDocument";
+
+        public const string LoggingInMessage = "LoggingIn";
+        public const string DisconnectMessage = "Disconnect";
 
         public const string OpenTab = "OpenTab";
         public const string CloseTab = "CloseTab";
+
+        public const string ItemExpandingMessage = "ItemExpanding";
+
+        public const string EditResultMessage = "EditResult";
+
+        public const string OpenCreateIndexMessage = "OpenCreateIndex";
+        public const string CreateIndexMessage = "CreateIndex";
+        public const string RecreateIndexMessage = "RecreateIndex";
+        public const string EditIndexMessage = "EditIndex";
+        public const string ConfirmDropIndexMessage = "ConfirmDropIndex";
+        public const string DropIndexMessage = "DropIndex";
+
+        public const string ConfirmDropCollectionMessage = "ConfirmDropCollection";
+        public const string DropCollectionMessage = "DropCollection";
+        public const string OpenCreateNewCollectionMessage = "OpenCreateNewCollection";
+        public const string CreateCollectionMessage = "CreateCollection";
+
+        public const string ConfirmDropDatabaseMessage = "ConfirmDropDatabase";
+        public const string DropDatabaseMessage = "DropDatabase";
+
+        public const string EditUserMessage = "EditUser";
+        public const string ConfirmDeleteUserMessage = "ConfirmDeleteUser";
+        public const string DeleteUserMessage = "DeleteUser";
     }
 }

@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -317,9 +318,9 @@ namespace MDbGui.Net.ViewModel
         public void InnerCreateIndex()
         {
             if (IsNew)
-                Messenger.Default.Send(new NotificationMessage<CreateIndexViewModel>(this, Collection, this, "CreateIndex"));
+                Messenger.Default.Send(new NotificationMessage<CreateIndexViewModel>(this, Collection, this, Constants.CreateIndexMessage));
             else
-                Messenger.Default.Send(new NotificationMessage<CreateIndexViewModel>(this, Collection, this, "RecreateIndex"));
+                Messenger.Default.Send(new NotificationMessage<CreateIndexViewModel>(this, Collection, this, Constants.RecreateIndexMessage));
         }
 
         public override void Cleanup()

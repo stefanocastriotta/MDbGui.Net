@@ -101,7 +101,7 @@ namespace MDbGui.Net.ViewModel
 
         public void InnerDisconnect()
         {
-            Messenger.Default.Send(new NotificationMessage<MongoDbServerViewModel>(this, "Disconnect"));
+            Messenger.Default.Send(new NotificationMessage<MongoDbServerViewModel>(this, Constants.DisconnectMessage));
         }
 
         private void InnerOpenRunCommand(DatabaseCommand param)
@@ -188,7 +188,7 @@ namespace MDbGui.Net.ViewModel
 
         public async void InnerDropDatabase(NotificationMessage<MongoDbDatabaseViewModel> message)
         {
-            if (message.Notification == "DropDatabase" && message.Target == this)
+            if (message.Notification == Constants.DropDatabaseMessage && message.Target == this)
             {
                 LoggerHelper.Logger.DebugFormat("DropDatabase notification received on server '{0}', database name '{1}'", Name, message.Content.Name);
                 IsBusy = true;

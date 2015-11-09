@@ -95,7 +95,7 @@ namespace MDbGui.Net.ViewModel
             ConfirmDropCollection = new RelayCommand(
             () =>
             {
-                Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, "ConfirmDropCollection"));
+                Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, Constants.ConfirmDropCollectionMessage));
             });
 
             Messenger.Default.Register<PropertyChangedMessage<bool>>(this, (message) =>
@@ -166,7 +166,7 @@ namespace MDbGui.Net.ViewModel
 
         private void InternalCreateIndex()
         {
-            Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, "CreateIndex"));
+            Messenger.Default.Send(new NotificationMessage<MongoDbCollectionViewModel>(this, Constants.OpenCreateIndexMessage));
         }
 
         public async void LoadIndexes()
@@ -198,13 +198,14 @@ namespace MDbGui.Net.ViewModel
 
         private async void InnerCreateIndex(NotificationMessage<CreateIndexViewModel> message)
         {
-            if ((message.Notification == "CreateIndex" || message.Notification == "RecreateIndex") && message.Target == this)
+            if ((message.Notification == Constants.CreateIndexMessage || message.Notification == Constants.RecreateIndexMessage) && message.Target == this)
             {
                 try
                 {
                     IsBusy = true;
-                    if (message.Notification == "RecreateIndex")
+                    if (message.Notification == Constants.RecreateIndexMessage)
                         await Database.Server.MongoDbService.DropIndexAsync(Database.Name, Name, message.Content.Name);
+
                     await Database.Server.MongoDbService.CreateIndexAsync(Database.Name, Name, message.Content.IndexDefinition.Deserialize<BsonDocument>("IndexDefinition"), 
                         new MongoDB.Driver.CreateIndexOptions()
                         {
@@ -242,7 +243,7 @@ namespace MDbGui.Net.ViewModel
 
         private async void IndexMessageHandler(NotificationMessage<MongoDbIndexViewModel> message)
         {
-            if (message.Notification == "DropIndex" && message.Target == this)
+            if (message.Notification == Constants.DropIndexMessage && message.Target == this)
             {
                 IsBusy = true;
                 message.Content.IsBusy = true;

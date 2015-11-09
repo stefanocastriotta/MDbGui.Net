@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
 using MongoDB.Bson;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -52,12 +53,12 @@ namespace MDbGui.Net.ViewModel
 
         private void InternalEditUser()
         {
-            Messenger.Default.Send(new NotificationMessage<MongoDbUserViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, "EditUser"));
+            Messenger.Default.Send(new NotificationMessage<MongoDbUserViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, Constants.EditUserMessage));
         }
 
         private void InternalConfirmDeleteUser()
         {
-            Messenger.Default.Send(new NotificationMessage<MongoDbUserViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, "ConfirmDeleteUser"));
+            Messenger.Default.Send(new NotificationMessage<MongoDbUserViewModel>(this, ServiceLocator.Current.GetInstance<MainViewModel>(), this, Constants.ConfirmDeleteUserMessage));
         }
 
         public override void Cleanup()

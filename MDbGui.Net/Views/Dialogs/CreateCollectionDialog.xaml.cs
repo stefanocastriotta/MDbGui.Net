@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
+using MDbGui.Net.Utils;
 using MDbGui.Net.ViewModel;
 using System.Windows;
 
@@ -27,7 +28,7 @@ namespace MDbGui.Net.Views.Dialogs
 
         private void NotificationMessageHandler(NotificationMessage<CreateCollectionViewModel> message)
         {
-            if (message.Notification == "CreateCollection")
+            if (message.Notification == Constants.CreateCollectionMessage)
             {
                 this.Close();
             }

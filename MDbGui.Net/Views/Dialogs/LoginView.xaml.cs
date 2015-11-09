@@ -3,6 +3,7 @@ using Microsoft.Practices.ServiceLocation;
 using MDbGui.Net.Model;
 using MDbGui.Net.ViewModel;
 using System.Windows;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.Views.Dialogs
 {
@@ -27,7 +28,7 @@ namespace MDbGui.Net.Views.Dialogs
 
         private void NotificationMessageHandler(NotificationMessage<ConnectionInfo> message)
         {
-            if (message.Notification == "LoggingIn")
+            if (message.Notification == Constants.LoggingInMessage)
             {
                 this.Close();
             }
