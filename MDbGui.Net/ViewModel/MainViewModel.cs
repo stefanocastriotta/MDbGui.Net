@@ -146,12 +146,17 @@ namespace MDbGui.Net.ViewModel
                         message.Content.Connections.AddRange(GetActiveConnections());
                         Tabs.Add(message.Content);
                         SelectedTab = message.Content;
-                        if (message.Content.ExecuteOnOpen)
+                        if (message.Content.ExecuteOnOpen && message.Content.SelectedOperation != null)
                         {
-                            if (message.Content.SelectedOperation == "Find")
-                                message.Content.FindOperation.ExecuteFind.Execute(null);
-                            else if (message.Content.SelectedOperation == "Command")
-                                message.Content.CommandOperation.ExecuteCommand.Execute(null);
+                            switch (message.Content.SelectedOperation.Name)
+                            {
+                                case "Find":
+                                    message.Content.FindOperation.ExecuteFind.Execute(null);
+                                    break;
+                                case "Command":
+                                    message.Content.CommandOperation.ExecuteCommand.Execute(null);
+                                    break;
+                            }
                         }
                     });
                     break;

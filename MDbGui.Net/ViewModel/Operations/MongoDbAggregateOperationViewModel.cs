@@ -16,6 +16,7 @@ namespace MDbGui.Net.ViewModel.Operations
         public MongoDbAggregateOperationViewModel(TabViewModel owner) : base(owner)
         {
             Name = "Aggregate";
+            DisplayName = "Aggregate";
             AggregateOptions = new AggregateOptions();
             ExecuteAggregate = new RelayCommand(InnerExecuteAggregate);
         }

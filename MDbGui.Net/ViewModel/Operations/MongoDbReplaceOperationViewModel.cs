@@ -15,6 +15,7 @@ namespace MDbGui.Net.ViewModel.Operations
         public MongoDbReplaceOperationViewModel(TabViewModel owner) : base(owner)
         {
             Name = "Replace";
+            DisplayName = "Replace";
             ExecuteReplace = new RelayCommand(InnerExecuteReplace);
         }
 

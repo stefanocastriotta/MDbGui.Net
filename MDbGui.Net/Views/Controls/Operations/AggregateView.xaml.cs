@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
-using MDbGui.Net.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,15 +13,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MDbGui.Net.Utils;
 
-namespace MDbGui.Net.Views.Controls
+namespace MDbGui.Net.Views.Controls.Operations
 {
     /// <summary>
-    /// Interaction logic for InsertView.xaml
+    /// Interaction logic for AggregateView.xaml
     /// </summary>
-    public partial class InsertView : UserControl
+    public partial class AggregateView : UserControl
     {
-        public InsertView()
+        public AggregateView()
         {
             InitializeComponent();
             Messenger.Default.Register<NotificationMessage<BsonExtensions.BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
@@ -30,10 +30,10 @@ namespace MDbGui.Net.Views.Controls
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "InsertParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "Insert")
+            if (message.Notification == "AggregateParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "AggregatePipeline")
             {
-                insertEditor.CaretOffset = message.Content.Position;
-                insertEditor.Focus();
+                aggregateEditor.CaretOffset = message.Content.Position;
+                aggregateEditor.Focus();
             }
         }
     }

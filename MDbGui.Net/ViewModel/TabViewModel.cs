@@ -43,16 +43,16 @@ namespace MDbGui.Net.ViewModel
             CommandOperation = new MongoDbCommandOperationViewModel(this);
             EvalOperation = new MongoDbEvalOperationViewModel(this);
 
-            Operations = new List<string>();
-            Operations.Add("Find");
-            Operations.Add("Insert");
-            Operations.Add("Update");
-            Operations.Add("Replace");
-            Operations.Add("Remove");
-            Operations.Add("Aggregate");
-            Operations.Add("Distinct");
-            Operations.Add("Command");
-            Operations.Add("Eval");
+            Operations = new List<MongoDbOperationViewModel>();
+            Operations.Add(FindOperation);
+            Operations.Add(InsertOperation);
+            Operations.Add(UpdateOperation);
+            Operations.Add(ReplaceOperation);
+            Operations.Add(RemoveOperation);
+            Operations.Add(AggregateOperation);
+            Operations.Add(DistinctOperation);
+            Operations.Add(CommandOperation);
+            Operations.Add(EvalOperation);
 
             CopyToClipboard = new RelayCommand(() =>
             {
@@ -70,11 +70,11 @@ namespace MDbGui.Net.ViewModel
             Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
         }
 
-        public List<string> Operations { get; private set; }
+        public List<MongoDbOperationViewModel> Operations { get; private set; }
 
-        private string _selectedOperation;
+        private MongoDbOperationViewModel _selectedOperation;
 
-        public string SelectedOperation
+        public MongoDbOperationViewModel SelectedOperation
         {
             get
             {
@@ -83,7 +83,7 @@ namespace MDbGui.Net.ViewModel
             set
             {
                 Set(ref _selectedOperation, value);
-                if (value == "Find")
+                if (value != null && value.Name == "Find")
                 {
                     if (Root != null && Root.Children.Count > 0)
                         ShowPager = true;

@@ -107,7 +107,7 @@ namespace MDbGui.Net.ViewModel
         private void InnerOpenRunCommand(DatabaseCommand param)
         {
             TabViewModel tabVm = SimpleIoc.Default.GetInstanceWithoutCaching<TabViewModel>();
-            tabVm.SelectedOperation = "Command";
+            tabVm.SelectedOperation = tabVm.CommandOperation;
             tabVm.Service = this.MongoDbService;
             tabVm.Database = "admin";
             tabVm.Name = this.Name;

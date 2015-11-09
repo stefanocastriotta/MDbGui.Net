@@ -15,14 +15,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MDbGui.Net.Views.Controls
+namespace MDbGui.Net.Views.Controls.Operations
 {
     /// <summary>
-    /// Interaction logic for RemoveView.xaml
+    /// Interaction logic for ReplaceView.xaml
     /// </summary>
-    public partial class RemoveView : UserControl
+    public partial class ReplaceView : UserControl
     {
-        public RemoveView()
+        public ReplaceView()
         {
             InitializeComponent();
             Messenger.Default.Register<NotificationMessage<BsonExtensions.BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
@@ -30,10 +30,19 @@ namespace MDbGui.Net.Views.Controls
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "DeleteParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "DeleteQuery")
+            if (message.Notification == "ReplaceParseException" && message.Sender == this.DataContext)
             {
-                removeEditor.CaretOffset = message.Content.Position;
-                removeEditor.Focus();
+                switch (message.Content.PropertyName)
+                {
+                    case "ReplaceFilter":
+                        replaceFilterEditor.CaretOffset = message.Content.Position;
+                        replaceFilterEditor.Focus();
+                        break;
+                    case "Replacement":
+                        replacementEditor.CaretOffset = message.Content.Position;
+                        replacementEditor.Focus();
+                        break;
+                }
             }
         }
     }

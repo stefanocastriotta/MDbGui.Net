@@ -15,6 +15,7 @@ namespace MDbGui.Net.ViewModel.Operations
         public MongoDbDistinctOperationViewModel(TabViewModel owner) : base(owner)
         {
             Name = "Distinct";
+            DisplayName = "Distinct";
             ExecuteDistinct = new RelayCommand(InnerExecuteDistinct);
         }
 

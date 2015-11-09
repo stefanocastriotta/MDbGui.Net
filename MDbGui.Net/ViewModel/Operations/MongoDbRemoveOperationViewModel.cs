@@ -15,6 +15,7 @@ namespace MDbGui.Net.ViewModel.Operations
         public MongoDbRemoveOperationViewModel(TabViewModel owner) : base(owner)
         {
             Name = "Remove";
+            DisplayName = "Remove";
             ExecuteDelete = new RelayCommand(InnerExecuteDelete);
         }
 

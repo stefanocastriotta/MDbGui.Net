@@ -15,14 +15,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MDbGui.Net.Views.Controls
+namespace MDbGui.Net.Views.Controls.Operations
 {
     /// <summary>
-    /// Interaction logic for ReplaceView.xaml
+    /// Interaction logic for DistinctView.xaml
     /// </summary>
-    public partial class ReplaceView : UserControl
+    public partial class DistinctView : UserControl
     {
-        public ReplaceView()
+        public DistinctView()
         {
             InitializeComponent();
             Messenger.Default.Register<NotificationMessage<BsonExtensions.BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
@@ -30,19 +30,10 @@ namespace MDbGui.Net.Views.Controls
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "ReplaceParseException" && message.Sender == this.DataContext)
+            if (message.Notification == "DistinctParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "DistinctFilter")
             {
-                switch (message.Content.PropertyName)
-                {
-                    case "ReplaceFilter":
-                        replaceFilterEditor.CaretOffset = message.Content.Position;
-                        replaceFilterEditor.Focus();
-                        break;
-                    case "Replacement":
-                        replacementEditor.CaretOffset = message.Content.Position;
-                        replacementEditor.Focus();
-                        break;
-                }
+                distinctFilterEditor.CaretOffset = message.Content.Position;
+                distinctFilterEditor.Focus();
             }
         }
     }

@@ -16,6 +16,7 @@ namespace MDbGui.Net.ViewModel.Operations
         public MongoDbInsertOperationViewModel(TabViewModel owner) : base(owner)
         {
             Name = "Insert";
+            DisplayName = "Insert";
             ExecuteInsert = new RelayCommand(InnerExecuteInsert);
         }
 

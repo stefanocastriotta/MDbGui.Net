@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="MDbGui.Net.Views.Controls.ResultsView"
+﻿<UserControl x:Class="MDbGui.Net.Views.Controls.TabView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,6 +6,7 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:MDbGui.Net.Views.Controls"
+             xmlns:operations="clr-namespace:MDbGui.Net.Views.Controls.Operations"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:utils="clr-namespace:MDbGui.Net.Utils"
              xmlns:vm="clr-namespace:MDbGui.Net.ViewModel"
@@ -66,67 +67,67 @@
         </Grid>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5">
             <TextBlock Text="Operation"></TextBlock>
-            <ComboBox ItemsSource="{Binding Operations}" SelectedItem="{Binding SelectedOperation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <ComboBox ItemsSource="{Binding Operations}" SelectedItem="{Binding SelectedOperation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="DisplayName">
             </ComboBox>
         </StackPanel>
         <ContentControl Grid.Row="2" Content="{Binding}">
             <ContentControl.Resources>
                 <DataTemplate x:Key="FindTemplate">
-                    <local:FindView></local:FindView>
+                    <operations:FindView></operations:FindView>
                 </DataTemplate>
                 <DataTemplate x:Key="CommandTemplate">
-                    <local:CommandView></local:CommandView>
+                    <operations:CommandView></operations:CommandView>
                 </DataTemplate>
                 <DataTemplate x:Key="EvalTemplate">
-                    <local:EvalView></local:EvalView>
+                    <operations:EvalView></operations:EvalView>
                 </DataTemplate>
                 <DataTemplate x:Key="InsertTemplate">
-                    <local:InsertView></local:InsertView>
+                    <operations:InsertView></operations:InsertView>
                 </DataTemplate>
                 <DataTemplate x:Key="UpdateTemplate">
-                    <local:UpdateView></local:UpdateView>
+                    <operations:UpdateView></operations:UpdateView>
                 </DataTemplate>
                 <DataTemplate x:Key="ReplaceTemplate">
-                    <local:ReplaceView></local:ReplaceView>
+                    <operations:ReplaceView></operations:ReplaceView>
                 </DataTemplate>
                 <DataTemplate x:Key="RemoveTemplate">
-                    <local:RemoveView></local:RemoveView>
+                    <operations:RemoveView></operations:RemoveView>
                 </DataTemplate>
                 <DataTemplate x:Key="AggregateTemplate">
-                    <local:AggregateView></local:AggregateView>
+                    <operations:AggregateView></operations:AggregateView>
                 </DataTemplate>
                 <DataTemplate x:Key="DistinctTemplate">
-                    <local:DistinctView></local:DistinctView>
+                    <operations:DistinctView></operations:DistinctView>
                 </DataTemplate>
             </ContentControl.Resources>
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Find">
+                        <DataTrigger Binding="{Binding SelectedOperation.Name}" Value="Find">
                             <Setter Property="ContentTemplate" Value="{StaticResource FindTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Command">
+                        <DataTrigger Binding="{Binding SelectedOperation.Name}" Value="Command">
                             <Setter Property="ContentTemplate" Value="{StaticResource CommandTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Eval">
+                        <DataTrigger Binding="{Binding SelectedOperation.Name}" Value="Eval">
                             <Setter Property="ContentTemplate" Value="{StaticResource EvalTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Insert">
+                        <DataTrigger Binding="{Binding SelectedOperation.Name}" Value="Insert">
                             <Setter Property="ContentTemplate" Value="{StaticResource InsertTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Update">
+                        <DataTrigger Binding="{Binding SelectedOperation.Name}" Value="Update">
                             <Setter Property="ContentTemplate" Value="{StaticResource UpdateTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Replace">
+                        <DataTrigger Binding="{Binding SelectedOperation.Name}" Value="Replace">
                             <Setter Property="ContentTemplate" Value="{StaticResource ReplaceTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Remove">
+                        <DataTrigger Binding="{Binding SelectedOperation.Name}" Value="Remove">
                             <Setter Property="ContentTemplate" Value="{StaticResource RemoveTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Aggregate">
+                        <DataTrigger Binding="{Binding SelectedOperation.Name}" Value="Aggregate">
                             <Setter Property="ContentTemplate" Value="{StaticResource AggregateTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Distinct">
+                        <DataTrigger Binding="{Binding SelectedOperation.Name}" Value="Distinct">
                             <Setter Property="ContentTemplate" Value="{StaticResource DistinctTemplate}" />
                         </DataTrigger>
                     </Style.Triggers>
@@ -143,26 +144,26 @@
                 <Label Content="{Binding ExecutingTime}"></Label>
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Visibility="{Binding ShowPager, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Button Height="18" Width="22" Command="{Binding ExecuteFind}">
+                <Button Height="18" Width="22" Command="{Binding FindOperation.ExecuteFind}">
                     <StackPanel Orientation="Horizontal">
                         <fa:ImageAwesome Icon="CaretLeft"></fa:ImageAwesome>
                         <fa:ImageAwesome Icon="CaretLeft"></fa:ImageAwesome>
                     </StackPanel>
                 </Button>
-                <Button Height="18" Width="18" Command="{Binding PageBack}">
+                <Button Height="18" Width="18" Command="{Binding FindOperation.PageBack}">
                     <fa:ImageAwesome Icon="CaretLeft"></fa:ImageAwesome>
                 </Button>
-                <TextBox Width="30" Height="18" Style="{StaticResource ResultsView}" Text="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True">
+                <TextBox Width="30" Height="18" Style="{StaticResource ResultsView}" Text="{Binding FindOperation.Skip, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True">
                     <TextBox.InputBindings>
-                        <KeyBinding Command="{Binding DoPaging}" CommandParameter="false" Key="Enter" />
+                        <KeyBinding Command="{Binding FindOperation.DoPaging}" CommandParameter="false" Key="Enter" />
                     </TextBox.InputBindings>
                 </TextBox>
-                <TextBox Width="30" Height="18" Style="{StaticResource ResultsView}" Text="{Binding Size, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True">
+                <TextBox Width="30" Height="18" Style="{StaticResource ResultsView}" Text="{Binding FindOperation.Size, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True">
                     <TextBox.InputBindings>
-                        <KeyBinding Command="{Binding DoPaging}" CommandParameter="false" Key="Enter" />
+                        <KeyBinding Command="{Binding FindOperation.DoPaging}" CommandParameter="false" Key="Enter" />
                     </TextBox.InputBindings>
                 </TextBox>
-                <Button Height="18" Width="18" Command="{Binding PageForward}">
+                <Button Height="18" Width="18" Command="{Binding FindOperation.PageForward}">
                     <fa:ImageAwesome Icon="CaretRight"></fa:ImageAwesome>
                 </Button>
             </StackPanel>

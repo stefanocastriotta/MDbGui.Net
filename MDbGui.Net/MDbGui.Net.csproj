@@ -154,16 +154,16 @@
     <Compile Include="ViewModel\MongoDbServerViewModel.cs" />
     <Compile Include="ViewModel\ResultsViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="Views\Controls\EvalView.xaml.cs">
+    <Compile Include="Views\Controls\Operations\EvalView.xaml.cs">
       <DependentUpon>EvalView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\CommandView.xaml.cs">
+    <Compile Include="Views\Controls\Operations\CommandView.xaml.cs">
       <DependentUpon>CommandView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\FindView.xaml.cs">
+    <Compile Include="Views\Controls\Operations\FindView.xaml.cs">
       <DependentUpon>FindView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\InsertView.xaml.cs">
+    <Compile Include="Views\Controls\Operations\InsertView.xaml.cs">
       <DependentUpon>InsertView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\LogDetailsView.xaml.cs">
@@ -172,26 +172,26 @@
     <Compile Include="Views\Controls\LogView.xaml.cs">
       <DependentUpon>LogView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\DistinctView.xaml.cs">
+    <Compile Include="Views\Controls\Operations\DistinctView.xaml.cs">
       <DependentUpon>DistinctView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\ReplaceView.xaml.cs">
+    <Compile Include="Views\Controls\Operations\ReplaceView.xaml.cs">
       <DependentUpon>ReplaceView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\ResultsView.xaml.cs">
-      <DependentUpon>ResultsView.xaml</DependentUpon>
+    <Compile Include="Views\Controls\TabView.xaml.cs">
+      <DependentUpon>TabView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\ServerTreeView.xaml.cs">
       <DependentUpon>ServerTreeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\AggregateView.xaml.cs">
+    <Compile Include="Views\Controls\Operations\AggregateView.xaml.cs">
       <DependentUpon>AggregateView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\RemoveView.xaml.cs">
+    <Compile Include="Views\Controls\Operations\RemoveView.xaml.cs">
       <DependentUpon>RemoveView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\TextEditorExt.cs" />
-    <Compile Include="Views\Controls\UpdateView.xaml.cs">
+    <Compile Include="Views\Controls\Operations\UpdateView.xaml.cs">
       <DependentUpon>UpdateView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialogs\CreateCollectionDialog.xaml.cs">
@@ -203,19 +203,19 @@
     <Compile Include="Views\Dialogs\UpdateDocumentView.xaml.cs">
       <DependentUpon>UpdateDocumentView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\Controls\EvalView.xaml">
+    <Page Include="Views\Controls\Operations\EvalView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Controls\CommandView.xaml">
+    <Page Include="Views\Controls\Operations\CommandView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Controls\FindView.xaml">
+    <Page Include="Views\Controls\Operations\FindView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Controls\InsertView.xaml">
+    <Page Include="Views\Controls\Operations\InsertView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -227,23 +227,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Controls\DistinctView.xaml">
+    <Page Include="Views\Controls\Operations\DistinctView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Controls\ReplaceView.xaml">
+    <Page Include="Views\Controls\Operations\ReplaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Controls\AggregateView.xaml">
+    <Page Include="Views\Controls\Operations\AggregateView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Controls\RemoveView.xaml">
+    <Page Include="Views\Controls\Operations\RemoveView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Controls\UpdateView.xaml">
+    <Page Include="Views\Controls\Operations\UpdateView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -282,7 +282,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Controls\ResultsView.xaml">
+    <Page Include="Views\Controls\TabView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

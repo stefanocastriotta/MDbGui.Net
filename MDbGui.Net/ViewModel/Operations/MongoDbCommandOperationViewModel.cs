@@ -14,7 +14,8 @@ namespace MDbGui.Net.ViewModel.Operations
     {
         public MongoDbCommandOperationViewModel(TabViewModel owner) : base(owner)
         {
-            Name = "Run Command";
+            Name = "Command";
+            DisplayName = "Run command";
             ExecuteCommand = new RelayCommand(InnerExecuteCommand);
         }
 

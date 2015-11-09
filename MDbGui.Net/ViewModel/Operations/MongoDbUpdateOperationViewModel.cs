@@ -15,6 +15,7 @@ namespace MDbGui.Net.ViewModel.Operations
         public MongoDbUpdateOperationViewModel(TabViewModel owner) : base(owner)
         {
             Name = "Update";
+            DisplayName = "Update";
             ExecuteUpdate = new RelayCommand(InnerExecuteUpdate);
         }
 

@@ -60,7 +60,7 @@
                     </TabControl.ItemTemplate>
                     <TabControl.ContentTemplate>
                         <DataTemplate DataType="{x:Type local:TabViewModel}">
-                            <uc:ResultsView></uc:ResultsView>
+                            <uc:TabView></uc:TabView>
                         </DataTemplate>
                     </TabControl.ContentTemplate>
                 </TabControl>

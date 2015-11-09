@@ -14,6 +14,7 @@ namespace MDbGui.Net.ViewModel.Operations
         public MongoDbEvalOperationViewModel(TabViewModel owner) : base(owner)
         {
             Name = "Eval";
+            DisplayName = "Eval";
             ExecuteEval = new RelayCommand(InnerExecuteEval);
         }
 

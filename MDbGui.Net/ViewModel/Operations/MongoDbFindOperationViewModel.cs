@@ -15,7 +15,8 @@ namespace MDbGui.Net.ViewModel.Operations
     {
         public MongoDbFindOperationViewModel(TabViewModel owner) : base(owner)
         {
-            Name = "Find / Count";
+            Name = "Find";
+            DisplayName = "Find / Count";
             ExecuteFind = new RelayCommand<bool>((explain) =>
             {
                 Skip = 0;

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="MDbGui.Net.Views.Controls.ReplaceView"
+﻿<UserControl x:Class="MDbGui.Net.Views.Controls.Operations.InsertView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -21,24 +21,17 @@
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Label Content="Filter"></Label>
-        <local:TextEditorExt x:Name="replaceFilterEditor" Grid.Column="1" MaxHeight="50">
+        <Label Content="Documents"></Label>
+        <local:TextEditorExt x:Name="insertEditor" Grid.Column="1" Height="200" MaxHeight="300">
             <i:Interaction.Behaviors>
-                <utils:AvalonEditBehavior GiveMeTheText="{Binding ReplaceFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <utils:AvalonEditBehavior GiveMeTheText="{Binding Insert, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
         </local:TextEditorExt>
-        <Label Grid.Row="1" Content="Replacement"></Label>
-        <local:TextEditorExt x:Name="replacementEditor" Grid.Row="1" Grid.Column="1" Height="200" MaxHeight="300">
-            <i:Interaction.Behaviors>
-                <utils:AvalonEditBehavior GiveMeTheText="{Binding Replacement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            </i:Interaction.Behaviors>
-        </local:TextEditorExt>
-        <Button Grid.Row="2" Command="{Binding ExecuteReplace}" Content="Replace"></Button>
+        <Button Grid.Row="1" Command="{Binding ExecuteInsert}" Content="Insert"></Button>
     </Grid>
 </UserControl>

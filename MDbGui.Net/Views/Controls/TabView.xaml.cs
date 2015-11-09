@@ -19,11 +19,11 @@ using System.Windows.Shapes;
 namespace MDbGui.Net.Views.Controls
 {
     /// <summary>
-    /// Interaction logic for RestultsView.xaml
+    /// Interaction logic for TabView.xaml
     /// </summary>
-    public partial class ResultsView : UserControl
+    public partial class TabView : UserControl
     {
-        public ResultsView()
+        public TabView()
         {
             InitializeComponent();
             Messenger.Default.Register<NotificationMessage>(this, (message) => NotificationMessageHandler(message));

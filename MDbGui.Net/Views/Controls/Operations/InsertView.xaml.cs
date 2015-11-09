@@ -15,14 +15,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MDbGui.Net.Views.Controls
+namespace MDbGui.Net.Views.Controls.Operations
 {
     /// <summary>
-    /// Interaction logic for DistinctView.xaml
+    /// Interaction logic for InsertView.xaml
     /// </summary>
-    public partial class DistinctView : UserControl
+    public partial class InsertView : UserControl
     {
-        public DistinctView()
+        public InsertView()
         {
             InitializeComponent();
             Messenger.Default.Register<NotificationMessage<BsonExtensions.BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
@@ -30,10 +30,10 @@ namespace MDbGui.Net.Views.Controls
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "DistinctParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "DistinctFilter")
+            if (message.Notification == "InsertParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "Insert")
             {
-                distinctFilterEditor.CaretOffset = message.Content.Position;
-                distinctFilterEditor.Focus();
+                insertEditor.CaretOffset = message.Content.Position;
+                insertEditor.Focus();
             }
         }
     }

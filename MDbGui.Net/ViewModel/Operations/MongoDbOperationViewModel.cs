@@ -29,5 +29,19 @@ namespace MDbGui.Net.ViewModel.Operations
                 Set(ref _name, value);
             }
         }
+
+        private string _displayName = string.Empty;
+
+        public string DisplayName
+        {
+            get
+            {
+                return _displayName;
+            }
+            set
+            {
+                Set(ref _displayName, value);
+            }
+        }
     }
 }

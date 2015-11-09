@@ -124,7 +124,7 @@ namespace MDbGui.Net.ViewModel
             tabVm.Collection = this.Name;
             tabVm.Name = this.Name;
             tabVm.ExecuteOnOpen = true;
-            tabVm.SelectedOperation = "Find";
+            tabVm.SelectedOperation = tabVm.FindOperation;
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 
@@ -144,7 +144,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
-                Utils.LoggerHelper.Logger.Error(string.Format("Failed to rename collection '{0}' to '{1}' on database '{2}', server '{3}'", this._oldName, this.Name, Database.Name, Database.Server.Name), ex);
+                LoggerHelper.Logger.Error(string.Format("Failed to rename collection '{0}' to '{1}' on database '{2}', server '{3}'", this._oldName, this.Name, Database.Name, Database.Server.Name), ex);
                 this.Name = _oldName;
             }
             finally
@@ -160,7 +160,7 @@ namespace MDbGui.Net.ViewModel
             tabVm.Service = this.Database.Server.MongoDbService;
             tabVm.Collection = this.Name;
             tabVm.Name = this.Name;
-            tabVm.SelectedOperation = "Insert";
+            tabVm.SelectedOperation = tabVm.InsertOperation;
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 
@@ -188,7 +188,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
-                Utils.LoggerHelper.Logger.Error(string.Format("Failed to load indexes on collection '{0}', database '{1}', server '{2}'", this.Name, Database.Name, Database.Server.Name), ex);
+                LoggerHelper.Logger.Error(string.Format("Failed to load indexes on collection '{0}', database '{1}', server '{2}'", this.Name, Database.Name, Database.Server.Name), ex);
             }
             finally
             {
@@ -231,7 +231,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Utils.LoggerHelper.Logger.Error(string.Format("Failed to create index '{0}' on collection '{1}', database '{2}', server '{3}'", message.Content.Name, this.Name, Database.Name, Database.Server.Name), ex);
+                    LoggerHelper.Logger.Error(string.Format("Failed to create index '{0}' on collection '{1}', database '{2}', server '{3}'", message.Content.Name, this.Name, Database.Name, Database.Server.Name), ex);
                 }
                 finally
                 {
@@ -255,7 +255,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Utils.LoggerHelper.Logger.Error(string.Format("Failed to drop index '{0}' on collection '{1}', database '{2}', server '{3}'", message.Content.Name, this.Name, Database.Name, Database.Server.Name), ex);
+                    LoggerHelper.Logger.Error(string.Format("Failed to drop index '{0}' on collection '{1}', database '{2}', server '{3}'", message.Content.Name, this.Name, Database.Name, Database.Server.Name), ex);
                 }
                 finally
                 {
