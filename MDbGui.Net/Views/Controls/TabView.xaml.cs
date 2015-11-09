@@ -1,21 +1,9 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
-using ICSharpCode.AvalonEdit.Search;
 using MDbGui.Net.Utils;
 using MDbGui.Net.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MDbGui.Net.Views.Dialogs;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MDbGui.Net.Views.Controls
 {
@@ -28,6 +16,7 @@ namespace MDbGui.Net.Views.Controls
         {
             InitializeComponent();
             Messenger.Default.Register<NotificationMessage>(this, (message) => ItemExpandingMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => EditResultMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DeleteResultMessageHandler(message));
         }
 
@@ -40,6 +29,19 @@ namespace MDbGui.Net.Views.Controls
                     if (double.IsNaN(col.Width)) col.Width = col.ActualWidth;
                     col.Width = double.NaN;
                 }
+            }
+        }
+
+        private void EditResultMessageHandler(NotificationMessage<DocumentResultViewModel> message)
+        {
+            if (message.Notification == Constants.EditResultMessage)
+            {
+                UpdateDocumentView wnd = new UpdateDocumentView();
+                var vm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<ReplaceOneViewModel>();
+                vm.Document = message.Content;
+                vm.Replacement = message.Content.Result.ToJson(new JsonWriterSettingsExtended() { Indent = true, UseLocalTime = true });
+                wnd.DataContext = vm;
+                wnd.ShowDialog();
             }
         }
 

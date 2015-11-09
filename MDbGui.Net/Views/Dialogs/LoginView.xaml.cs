@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
-using Microsoft.Practices.ServiceLocation;
 using MDbGui.Net.Model;
 using MDbGui.Net.ViewModel;
 using System.Windows;

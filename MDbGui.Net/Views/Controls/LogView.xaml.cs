@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using log4net.Core;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -25,12 +27,20 @@ namespace MDbGui.Net.Views.Controls
         {
             InitializeComponent();
             ((INotifyCollectionChanged)grdLogs.Items).CollectionChanged += LogView_CollectionChanged;
+            Messenger.Default.Register<NotificationMessage<log4net.Core.LoggingEvent>>(this, (message) => LogDetailsMessageHandler(message));
         }
 
         private void LogView_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (grdLogs.Items.Count > 0)
                 grdLogs.ScrollIntoView(grdLogs.Items[grdLogs.Items.Count - 1]);
+        }
+
+        private void LogDetailsMessageHandler(NotificationMessage<LoggingEvent> message)
+        {
+            LogDetailsView logDetails = new LogDetailsView();
+            logDetails.DataContext = message.Content;
+            logDetails.ShowDialog();
         }
     }
 }
