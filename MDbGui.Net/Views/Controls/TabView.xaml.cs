@@ -27,13 +27,13 @@ namespace MDbGui.Net.Views.Controls
         public TabView()
         {
             InitializeComponent();
-            Messenger.Default.Register<NotificationMessage>(this, (message) => NotificationMessageHandler(message));
-            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage>(this, (message) => ItemExpandingMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DeleteResultMessageHandler(message));
         }
 
-        private void NotificationMessageHandler(NotificationMessage message)
+        private void ItemExpandingMessageHandler(NotificationMessage message)
         {
-            if (message.Notification == Constants.ItemExpandingMessage)
+            if (message.Notification == Constants.ItemExpandingMessage && message.Target == this.DataContext)
             {
                 foreach (var col in grdView.Columns)
                 {
@@ -43,7 +43,7 @@ namespace MDbGui.Net.Views.Controls
             }
         }
 
-        private void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
+        private void DeleteResultMessageHandler(NotificationMessage<DocumentResultViewModel> message)
         {
             if (message.Notification == Constants.ConfirmDeleteResultMessage)
             {

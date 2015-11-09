@@ -28,7 +28,7 @@ namespace MDbGui.Net.Views
             Messenger.Default.Register<NotificationMessage<MongoDbDatabaseViewModel>>(this, (message) => DatabaseMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbCollectionViewModel>>(this, (message) => CollectionMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<MongoDbIndexViewModel>>(this, (message) => IndexMessageHandler(message));
-            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => EditResultMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<log4net.Core.LoggingEvent>>(this, (message) => LogDetailsMessageHandler(message));
             LoggerHelper.Logger.Debug("Application started");
         }
@@ -160,7 +160,7 @@ namespace MDbGui.Net.Views
             }
         }
 
-        private void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
+        private void EditResultMessageHandler(NotificationMessage<DocumentResultViewModel> message)
         {
             if (message.Notification == Constants.EditResultMessage)
             {

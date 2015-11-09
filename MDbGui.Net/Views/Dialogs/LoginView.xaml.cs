@@ -23,10 +23,10 @@ namespace MDbGui.Net.Views.Dialogs
             vm = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<LoginViewModel>();
             this.DataContext = vm;
             Closing += (s, e) => vm.Cleanup();
-            Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => NotificationMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
         }
 
-        private void NotificationMessageHandler(NotificationMessage<ConnectionInfo> message)
+        private void LoggingInMessageHandler(NotificationMessage<ConnectionInfo> message)
         {
             if (message.Notification == Constants.LoggingInMessage)
             {

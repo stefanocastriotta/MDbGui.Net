@@ -16,7 +16,7 @@ namespace MDbGui.Net.Views.Dialogs
         public UpdateDocumentView()
         {
             InitializeComponent();
-            Messenger.Default.Register<NotificationMessage<ReplaceOneViewModel>>(this, (message) => NotificationMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<ReplaceOneViewModel>>(this, (message) => UpdateDocumentMessageHandler(message));
             Closing += (s, e) =>
             {
                 ((ReplaceOneViewModel)this.DataContext).Cleanup();
@@ -24,7 +24,7 @@ namespace MDbGui.Net.Views.Dialogs
             Messenger.Default.Register<NotificationMessage<BsonExtensions.BsonParseException>>(this, (message) => BsonParseExceptionMessageHandler(message));
         }
 
-        private void NotificationMessageHandler(NotificationMessage<ReplaceOneViewModel> message)
+        private void UpdateDocumentMessageHandler(NotificationMessage<ReplaceOneViewModel> message)
         {
             if (message.Notification == Constants.UpdateDocumentMessage)
             {

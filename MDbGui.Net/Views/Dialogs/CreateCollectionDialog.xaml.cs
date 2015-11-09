@@ -16,7 +16,7 @@ namespace MDbGui.Net.Views.Dialogs
         public CreateCollectionDialog()
         {
             InitializeComponent();
-            Messenger.Default.Register<NotificationMessage<CreateCollectionViewModel>>(this, (message) => NotificationMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<CreateCollectionViewModel>>(this, (message) => CreateCollectionMessageHandler(message));
             if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
             {
                 var vmTest = GalaSoft.MvvmLight.Ioc.SimpleIoc.Default.GetInstanceWithoutCaching<CreateCollectionViewModel>();
@@ -26,7 +26,7 @@ namespace MDbGui.Net.Views.Dialogs
             }
         }
 
-        private void NotificationMessageHandler(NotificationMessage<CreateCollectionViewModel> message)
+        private void CreateCollectionMessageHandler(NotificationMessage<CreateCollectionViewModel> message)
         {
             if (message.Notification == Constants.CreateCollectionMessage)
             {

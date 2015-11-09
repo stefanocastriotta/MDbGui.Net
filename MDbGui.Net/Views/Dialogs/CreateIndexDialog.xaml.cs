@@ -25,10 +25,10 @@ namespace MDbGui.Net.Views.Dialogs
         public CreateIndexDialog()
         {
             InitializeComponent();
-            Messenger.Default.Register<NotificationMessage<CreateIndexViewModel>>(this, (message) => NotificationMessageHandler(message));
+            Messenger.Default.Register<NotificationMessage<CreateIndexViewModel>>(this, (message) => CreateIndexMessageHandler(message));
         }
 
-        private void NotificationMessageHandler(NotificationMessage<CreateIndexViewModel> message)
+        private void CreateIndexMessageHandler(NotificationMessage<CreateIndexViewModel> message)
         {
             if (message.Notification == Constants.CreateIndexMessage || message.Notification == Constants.RecreateIndexMessage)
             {
