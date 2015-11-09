@@ -306,7 +306,7 @@ namespace MDbGui.Net.ViewModel
 
         public void InnerExecuteClose()
         {
-            Messenger.Default.Send(new NotificationMessage<TabViewModel>(this, "CloseTab"));
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(this, Constants.CloseTab));
         }
 
         public RelayCommand ExecuteStop { get; set; }

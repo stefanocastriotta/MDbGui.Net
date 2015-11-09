@@ -47,5 +47,8 @@ namespace MDbGui.Net.Utils
         public const string UpdateFilterProperty = "UpdateFilter";
         public const string UpdateDocumentProperty = "UpdateDocument";
         public const string UpdateParseException = "UpdateParseException";
+
+        public const string OpenTab = "OpenTab";
+        public const string CloseTab = "CloseTab";
     }
 }

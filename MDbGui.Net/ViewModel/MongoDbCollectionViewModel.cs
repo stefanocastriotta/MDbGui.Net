@@ -125,7 +125,7 @@ namespace MDbGui.Net.ViewModel
             tabVm.Name = this.Name;
             tabVm.ExecuteOnOpen = true;
             tabVm.SelectedOperation = tabVm.FindOperation;
-            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, Constants.OpenTab));
         }
 
         private void InternalRenameCollection()
@@ -161,7 +161,7 @@ namespace MDbGui.Net.ViewModel
             tabVm.Collection = this.Name;
             tabVm.Name = this.Name;
             tabVm.SelectedOperation = tabVm.InsertOperation;
-            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, Constants.OpenTab));
         }
 
         private void InternalCreateIndex()

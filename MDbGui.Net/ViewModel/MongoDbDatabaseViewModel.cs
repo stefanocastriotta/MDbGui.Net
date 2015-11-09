@@ -265,7 +265,7 @@ namespace MDbGui.Net.ViewModel
                 tabVm.CommandOperation.Command = param.Command;
                 tabVm.ExecuteOnOpen = param.ExecuteImmediately;
             }
-            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, Constants.OpenTab));
         }
 
         private async void InnerCreateNewCollection(NotificationMessage<CreateCollectionViewModel> message)

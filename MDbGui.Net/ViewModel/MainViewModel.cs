@@ -139,7 +139,7 @@ namespace MDbGui.Net.ViewModel
         {
             switch (message.Notification)
             {
-                case "OpenTab":
+                case Constants.OpenTab:
                     LoggerHelper.Logger.Debug("OpenTab message received");
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
@@ -160,7 +160,7 @@ namespace MDbGui.Net.ViewModel
                         }
                     });
                     break;
-                case "CloseTab":
+                case Constants.CloseTab:
                     LoggerHelper.Logger.Debug("CloseTab message received");
                     Tabs.Remove(message.Content);
                     message.Content.Cleanup();

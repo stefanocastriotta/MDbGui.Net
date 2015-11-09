@@ -120,7 +120,7 @@ namespace MDbGui.Net.ViewModel
             }
             tabVm.SelectedViewIndex = 1;
             LoggerHelper.Logger.Debug("Opening RunCommandTab for server " + Name);
-            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
+            Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, Constants.OpenTab));
         }
 
         private async void GetDatabases()
