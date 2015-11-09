@@ -83,7 +83,7 @@ namespace MDbGui.Net.ViewModel
             set
             {
                 Set(ref _selectedOperation, value);
-                if (value != null && value.Name == "Find")
+                if (value != null && value.Name == Constants.FindProperty)
                 {
                     if (Root != null && Root.Children.Count > 0)
                         ShowPager = true;

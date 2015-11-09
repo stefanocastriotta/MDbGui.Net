@@ -14,7 +14,7 @@ namespace MDbGui.Net.ViewModel.Operations
     {
         public MongoDbDistinctOperationViewModel(TabViewModel owner) : base(owner)
         {
-            Name = "Distinct";
+            Name = Constants.DistinctOperation;
             DisplayName = "Distinct";
             ExecuteDistinct = new RelayCommand(InnerExecuteDistinct);
         }
@@ -54,7 +54,7 @@ namespace MDbGui.Net.ViewModel.Operations
             Owner.Executing = true;
             try
             {
-                var results = await Owner.Service.DistinctAsync(Owner.Database, Owner.Collection, DistinctFieldName, DistinctFilter.Deserialize<BsonDocument>("DistinctFilter"), Owner.Cts.Token);
+                var results = await Owner.Service.DistinctAsync(Owner.Database, Owner.Collection, DistinctFieldName, DistinctFilter.Deserialize<BsonDocument>(Constants.DistinctFilterProperty), Owner.Cts.Token);
                 Owner.Executing = false;
                 Owner.ShowPager = false;
 
@@ -70,7 +70,7 @@ namespace MDbGui.Net.ViewModel.Operations
                 Owner.SelectedViewIndex = 1;
                 Owner.RawResult = ex.Message;
                 Owner.Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "DistinctParseException"));
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, Constants.DistinctParseException));
             }
             catch (Exception ex)
             {

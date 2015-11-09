@@ -30,7 +30,7 @@ namespace MDbGui.Net.Views.Controls.Operations
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "CommandParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "Command")
+            if (message.Notification == Constants.CommandParseException && message.Sender == this.DataContext && message.Content.PropertyName == Constants.CommandPropertyProperty)
             {
                 commandEditor.CaretOffset = message.Content.Position;
                 commandEditor.Focus();

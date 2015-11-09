@@ -15,7 +15,7 @@ namespace MDbGui.Net.ViewModel.Operations
     {
         public MongoDbInsertOperationViewModel(TabViewModel owner) : base(owner)
         {
-            Name = "Insert";
+            Name = Constants.InsertOperation;
             DisplayName = "Insert";
             ExecuteInsert = new RelayCommand(InnerExecuteInsert);
         }
@@ -41,7 +41,7 @@ namespace MDbGui.Net.ViewModel.Operations
             Owner.Executing = true;
             try
             {
-                var result = await Owner.Service.InsertAsync(Owner.Database, Owner.Collection, Insert.Deserialize<BsonArray>("Insert"), Owner.Cts.Token);
+                var result = await Owner.Service.InsertAsync(Owner.Database, Owner.Collection, Insert.Deserialize<BsonArray>(Constants.InsertProperty), Owner.Cts.Token);
 
                 Owner.RawResult = result.ToJson(Options.JsonWriterSettings);
                 Owner.RawResult += Environment.NewLine;
@@ -61,7 +61,7 @@ namespace MDbGui.Net.ViewModel.Operations
                 Owner.SelectedViewIndex = 1;
                 Owner.RawResult = ex.Message;
                 Owner.Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "InsertParseException"));
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, Constants.InsertParseException));
             }
             catch (Exception ex)
             {

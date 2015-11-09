@@ -30,7 +30,7 @@ namespace MDbGui.Net.Views.Controls.Operations
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "DeleteParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "DeleteQuery")
+            if (message.Notification == Constants.RemoveParseException && message.Sender == this.DataContext && message.Content.PropertyName == Constants.DeleteQueryProperty)
             {
                 removeEditor.CaretOffset = message.Content.Position;
                 removeEditor.Focus();

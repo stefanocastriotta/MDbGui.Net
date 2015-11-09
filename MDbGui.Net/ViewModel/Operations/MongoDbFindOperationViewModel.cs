@@ -15,7 +15,7 @@ namespace MDbGui.Net.ViewModel.Operations
     {
         public MongoDbFindOperationViewModel(TabViewModel owner) : base(owner)
         {
-            Name = "Find";
+            Name = Constants.FindOperation;
             DisplayName = "Find / Count";
             ExecuteFind = new RelayCommand<bool>((explain) =>
             {
@@ -109,7 +109,7 @@ namespace MDbGui.Net.ViewModel.Operations
             bool stopRequested = false;
             try
             {
-                task = Owner.Service.FindAsync(Owner.Database, Owner.Collection, Find.Deserialize<BsonDocument>("Find"), Sort.Deserialize<BsonDocument>("Sort"), Projection.Deserialize<BsonDocument>("Projection"), Size, Skip, explain, operationID, Owner.Cts.Token);
+                task = Owner.Service.FindAsync(Owner.Database, Owner.Collection, Find.Deserialize<BsonDocument>(Constants.FindProperty), Sort.Deserialize<BsonDocument>(Constants.SortProperty), Projection.Deserialize<BsonDocument>(Constants.ProjectionProperty), Size, Skip, explain, operationID, Owner.Cts.Token);
                 var results = await task.WithCancellation(Owner.Cts.Token);
                 Owner.Executing = false;
 
@@ -156,7 +156,7 @@ namespace MDbGui.Net.ViewModel.Operations
                 Owner.SelectedViewIndex = 1;
                 Owner.RawResult = ex.Message;
                 Owner.Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "FindParseException"));
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, Constants.FindParseException));
             }
             catch (OperationCanceledException)
             {
@@ -225,7 +225,7 @@ namespace MDbGui.Net.ViewModel.Operations
             Owner.Executing = true;
             try
             {
-                var result = await Owner.Service.CountAsync(Owner.Database, Owner.Collection, Find.Deserialize<BsonDocument>("Find"), Owner.Cts.Token);
+                var result = await Owner.Service.CountAsync(Owner.Database, Owner.Collection, Find.Deserialize<BsonDocument>(Constants.FindProperty), Owner.Cts.Token);
                 Owner.Executing = false;
                 Owner.ShowPager = false;
 
@@ -240,7 +240,7 @@ namespace MDbGui.Net.ViewModel.Operations
                 Owner.SelectedViewIndex = 1;
                 Owner.RawResult = ex.Message;
                 Owner.Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "FindParseException"));
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, Constants.FindParseException));
             }
             catch (Exception ex)
             {

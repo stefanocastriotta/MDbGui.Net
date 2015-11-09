@@ -14,7 +14,7 @@ namespace MDbGui.Net.ViewModel.Operations
     {
         public MongoDbRemoveOperationViewModel(TabViewModel owner) : base(owner)
         {
-            Name = "Remove";
+            Name = Constants.RemoveOperation;
             DisplayName = "Remove";
             ExecuteDelete = new RelayCommand(InnerExecuteDelete);
         }
@@ -54,7 +54,7 @@ namespace MDbGui.Net.ViewModel.Operations
             Owner.Executing = true;
             try
             {
-                var result = await Owner.Service.DeleteAsync(Owner.Database, Owner.Collection, DeleteQuery.Deserialize<BsonDocument>("DeleteQuery"), DeleteJustOne, Owner.Cts.Token);
+                var result = await Owner.Service.DeleteAsync(Owner.Database, Owner.Collection, DeleteQuery.Deserialize<BsonDocument>(Constants.DeleteQueryProperty), DeleteJustOne, Owner.Cts.Token);
 
                 Owner.RawResult = result.ToJson(Options.JsonWriterSettings);
                 Owner.RawResult += Environment.NewLine;
@@ -66,15 +66,15 @@ namespace MDbGui.Net.ViewModel.Operations
             }
             catch (BsonExtensions.BsonParseException ex)
             {
-                LoggerHelper.Logger.Error("Exception while executing Delete command", ex);
+                LoggerHelper.Logger.Error("Exception while executing Remove command", ex);
                 Owner.SelectedViewIndex = 1;
                 Owner.RawResult = ex.Message;
                 Owner.Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "DeleteParseException"));
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, Constants.RemoveParseException));
             }
             catch (Exception ex)
             {
-                LoggerHelper.Logger.Error("Exception while executing Delete command", ex);
+                LoggerHelper.Logger.Error("Exception while executing Remove command", ex);
                 Owner.RawResult = ex.Message;
                 Owner.SelectedViewIndex = 1;
                 Owner.Root = null;

@@ -30,19 +30,19 @@ namespace MDbGui.Net.Views.Controls.Operations
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "FindParseException" && message.Sender == this.DataContext)
+            if (message.Notification == Constants.FindParseException && message.Sender == this.DataContext)
             {
                 switch (message.Content.PropertyName)
                 {
-                    case "Find":
+                    case Constants.FindProperty:
                         findEditor.CaretOffset = message.Content.Position;
                         findEditor.Focus();
                         break;
-                    case "Sort":
+                    case Constants.SortProperty:
                         sortEditor.CaretOffset = message.Content.Position;
                         sortEditor.Focus();
                         break;
-                    case "Projection":
+                    case Constants.ProjectionProperty:
                         projectionEditor.CaretOffset = message.Content.Position;
                         projectionEditor.Focus();
                         break;

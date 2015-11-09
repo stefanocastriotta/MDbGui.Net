@@ -30,7 +30,7 @@ namespace MDbGui.Net.Views.Controls.Operations
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "InsertParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "Insert")
+            if (message.Notification == Constants.InsertParseException && message.Sender == this.DataContext && message.Content.PropertyName == Constants.InsertProperty)
             {
                 insertEditor.CaretOffset = message.Content.Position;
                 insertEditor.Focus();

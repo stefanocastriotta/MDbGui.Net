@@ -30,15 +30,15 @@ namespace MDbGui.Net.Views.Controls.Operations
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "UpdateParseException" && message.Sender == this.DataContext)
+            if (message.Notification == Constants.UpdateParseException && message.Sender == this.DataContext)
             {
                 switch (message.Content.PropertyName)
                 {
-                    case "UpdateFilter":
+                    case Constants.UpdateFilterProperty:
                         updateFilterEditor.CaretOffset = message.Content.Position;
                         updateFilterEditor.Focus();
                         break;
-                    case "UpdateDocument":
+                    case Constants.UpdateDocumentProperty:
                         updateDocumentEditor.CaretOffset = message.Content.Position;
                         updateDocumentEditor.Focus();
                         break;

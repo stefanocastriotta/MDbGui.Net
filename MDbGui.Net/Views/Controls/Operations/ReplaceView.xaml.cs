@@ -30,15 +30,15 @@ namespace MDbGui.Net.Views.Controls.Operations
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "ReplaceParseException" && message.Sender == this.DataContext)
+            if (message.Notification == Constants.ReplaceParseException && message.Sender == this.DataContext)
             {
                 switch (message.Content.PropertyName)
                 {
-                    case "ReplaceFilter":
+                    case Constants.ReplaceFilterProperty:
                         replaceFilterEditor.CaretOffset = message.Content.Position;
                         replaceFilterEditor.Focus();
                         break;
-                    case "Replacement":
+                    case Constants.ReplacementProperty:
                         replacementEditor.CaretOffset = message.Content.Position;
                         replacementEditor.Focus();
                         break;

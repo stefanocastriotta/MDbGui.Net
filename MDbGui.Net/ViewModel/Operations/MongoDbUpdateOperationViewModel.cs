@@ -14,7 +14,7 @@ namespace MDbGui.Net.ViewModel.Operations
     {
         public MongoDbUpdateOperationViewModel(TabViewModel owner) : base(owner)
         {
-            Name = "Update";
+            Name = Constants.UpdateOperation;
             DisplayName = "Update";
             ExecuteUpdate = new RelayCommand(InnerExecuteUpdate);
         }
@@ -68,7 +68,7 @@ namespace MDbGui.Net.ViewModel.Operations
             Owner.Executing = true;
             try
             {
-                var result = await Owner.Service.UpdateAsync(Owner.Database, Owner.Collection, UpdateFilter.Deserialize<BsonDocument>("UpdateFilter"), UpdateDocument.Deserialize<BsonDocument>("UpdateDocument"), UpdateMulti, Owner.Cts.Token);
+                var result = await Owner.Service.UpdateAsync(Owner.Database, Owner.Collection, UpdateFilter.Deserialize<BsonDocument>(Constants.UpdateFilterProperty), UpdateDocument.Deserialize<BsonDocument>(Constants.UpdateDocumentProperty), UpdateMulti, Owner.Cts.Token);
 
                 Owner.RawResult = result.ToJson(Options.JsonWriterSettings);
                 Owner.RawResult += Environment.NewLine;
@@ -84,7 +84,7 @@ namespace MDbGui.Net.ViewModel.Operations
                 Owner.SelectedViewIndex = 1;
                 Owner.RawResult = ex.Message;
                 Owner.Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "UpdateParseException"));
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, Constants.UpdateParseException));
             }
             catch (Exception ex)
             {

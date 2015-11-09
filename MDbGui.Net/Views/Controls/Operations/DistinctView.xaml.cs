@@ -30,7 +30,7 @@ namespace MDbGui.Net.Views.Controls.Operations
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "DistinctParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "DistinctFilter")
+            if (message.Notification == Constants.DistinctParseException && message.Sender == this.DataContext && message.Content.PropertyName == Constants.DistinctFilterProperty)
             {
                 distinctFilterEditor.CaretOffset = message.Content.Position;
                 distinctFilterEditor.Focus();

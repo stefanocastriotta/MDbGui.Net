@@ -14,7 +14,7 @@ namespace MDbGui.Net.ViewModel.Operations
     {
         public MongoDbCommandOperationViewModel(TabViewModel owner) : base(owner)
         {
-            Name = "Command";
+            Name = Constants.CommandOperation;
             DisplayName = "Run command";
             ExecuteCommand = new RelayCommand(InnerExecuteCommand);
         }
@@ -40,7 +40,7 @@ namespace MDbGui.Net.ViewModel.Operations
             Owner.Executing = true;
             try
             {
-                var result = await Owner.Service.ExecuteRawCommandAsync(Owner.Database, Command.Deserialize<BsonDocument>("Command"), Owner.Cts.Token);
+                var result = await Owner.Service.ExecuteRawCommandAsync(Owner.Database, Command.Deserialize<BsonDocument>(Constants.CommandPropertyProperty), Owner.Cts.Token);
 
                 Owner.RawResult = result.ToJson(Options.JsonWriterSettings);
 
@@ -53,7 +53,7 @@ namespace MDbGui.Net.ViewModel.Operations
                 Owner.SelectedViewIndex = 1;
                 Owner.RawResult = ex.Message;
                 Owner.Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "CommandParseException"));
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, Constants.CommandParseException));
             }
             catch (Exception ex)
             {

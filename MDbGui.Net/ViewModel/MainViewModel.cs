@@ -150,10 +150,10 @@ namespace MDbGui.Net.ViewModel
                         {
                             switch (message.Content.SelectedOperation.Name)
                             {
-                                case "Find":
+                                case Constants.FindOperation:
                                     message.Content.FindOperation.ExecuteFind.Execute(null);
                                     break;
-                                case "Command":
+                                case Constants.CommandOperation:
                                     message.Content.CommandOperation.ExecuteCommand.Execute(null);
                                     break;
                             }

@@ -14,7 +14,7 @@ namespace MDbGui.Net.ViewModel.Operations
     {
         public MongoDbReplaceOperationViewModel(TabViewModel owner) : base(owner)
         {
-            Name = "Replace";
+            Name = Constants.ReplaceOperation;
             DisplayName = "Replace";
             ExecuteReplace = new RelayCommand(InnerExecuteReplace);
         }
@@ -54,7 +54,7 @@ namespace MDbGui.Net.ViewModel.Operations
             Owner.Executing = true;
             try
             {
-                var result = await Owner.Service.ReplaceOneAsync(Owner.Database, Owner.Collection, ReplaceFilter.Deserialize<BsonDocument>("ReplaceFilter"), Replacement.Deserialize<BsonDocument>("Replacement"), Owner.Cts.Token);
+                var result = await Owner.Service.ReplaceOneAsync(Owner.Database, Owner.Collection, ReplaceFilter.Deserialize<BsonDocument>(Constants.ReplaceFilterProperty), Replacement.Deserialize<BsonDocument>(Constants.ReplacementProperty), Owner.Cts.Token);
 
                 Owner.RawResult = result.ToJson(Options.JsonWriterSettings);
                 Owner.RawResult += Environment.NewLine;
@@ -70,7 +70,7 @@ namespace MDbGui.Net.ViewModel.Operations
                 Owner.SelectedViewIndex = 1;
                 Owner.RawResult = ex.Message;
                 Owner.Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "ReplaceParseException"));
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, Constants.ReplaceParseException));
             }
             catch (Exception ex)
             {

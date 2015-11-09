@@ -15,7 +15,7 @@ namespace MDbGui.Net.ViewModel.Operations
     {
         public MongoDbAggregateOperationViewModel(TabViewModel owner) : base(owner)
         {
-            Name = "Aggregate";
+            Name = Constants.AggregateOperation;
             DisplayName = "Aggregate";
             AggregateOptions = new AggregateOptions();
             ExecuteAggregate = new RelayCommand(InnerExecuteAggregate);
@@ -74,7 +74,7 @@ namespace MDbGui.Net.ViewModel.Operations
             try
             {
                 var pipeline = AggregatePipeline.Deserialize<BsonArray>();
-                task = Owner.Service.AggregateAsync(Owner.Database, Owner.Collection, AggregatePipeline.Deserialize<BsonArray>("AggregatePipeline"), AggregateOptions, AggregateExplain, Owner.Cts.Token);
+                task = Owner.Service.AggregateAsync(Owner.Database, Owner.Collection, AggregatePipeline.Deserialize<BsonArray>(Constants.AggregatePipelineProperty), AggregateOptions, AggregateExplain, Owner.Cts.Token);
                 var results = await task.WithCancellation(Owner.Cts.Token);
                 Owner.Executing = false;
                 Owner.ShowPager = false;
@@ -112,7 +112,7 @@ namespace MDbGui.Net.ViewModel.Operations
                 Owner.SelectedViewIndex = 1;
                 Owner.RawResult = ex.Message;
                 Owner.Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "AggregateParseException"));
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, Constants.AggregateParseException));
             }
             catch (Exception ex)
             {

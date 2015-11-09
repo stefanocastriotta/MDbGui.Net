@@ -57,14 +57,14 @@ namespace MDbGui.Net.ViewModel
         {
             try
             {
-                ReplacementBsonDocument = Replacement.Deserialize<BsonDocument>("Replacement");
-                Messenger.Default.Send(new NotificationMessage<ReplaceOneViewModel>(this, ((ResultsViewModel)Document.Parent).Owner, this, "UpdateDocument"));
+                ReplacementBsonDocument = Replacement.Deserialize<BsonDocument>(Constants.ReplacementProperty);
+                Messenger.Default.Send(new NotificationMessage<ReplaceOneViewModel>(this, ((ResultsViewModel)Document.Parent).Owner, this, Constants.UpdateDocumentProperty));
             }
             catch (BsonExtensions.BsonParseException ex)
             {
                 Utils.LoggerHelper.Logger.Error("Exception while updating a document", ex);
                 ErrorMessage = ex.Message;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "ReplaceOneParseException"));
+                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, Constants.ReplaceOneParseException));
             }
             catch(Exception ex)
             {

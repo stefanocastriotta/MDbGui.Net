@@ -111,6 +111,7 @@
     <Compile Include="Model\MongoDbService.cs" />
     <Compile Include="Model\IMongoDbService.cs" />
     <Compile Include="Utils\BsonExtensions.cs" />
+    <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\ExceptionToStringConverter.cs" />
     <Compile Include="Utils\LoggerHelper.cs" />
     <Compile Include="Utils\LogLevelTemplateSelector.cs" />

@@ -34,7 +34,7 @@ namespace MDbGui.Net.Views.Dialogs
 
         private void BsonParseExceptionMessageHandler(NotificationMessage<BsonExtensions.BsonParseException> message)
         {
-            if (message.Notification == "ReplaceOneParseException" && message.Sender == this.DataContext && message.Content.PropertyName == "Replacement")
+            if (message.Notification == Constants.ReplaceOneParseException && message.Sender == this.DataContext && message.Content.PropertyName == Constants.ReplacementProperty)
             {
                 replaceDocumentEditor.CaretOffset = message.Content.Position;
                 replaceDocumentEditor.Focus();

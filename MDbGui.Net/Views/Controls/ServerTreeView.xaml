@@ -171,6 +171,22 @@
                     </TextBlock>
                 </StackPanel>
             </DataTemplate>
+
+            <DataTemplate DataType="{x:Type local:MongoDbUserViewModel}">
+                <StackPanel Orientation="Horizontal">
+                    <fa:ImageAwesome Icon="User" Width="16" Height="16" Visibility="{Binding IconVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    </fa:ImageAwesome>
+                    <TextBlock Margin="5,0,0,0" Text="{Binding Name}" PreviewMouseRightButtonDown="OnPreviewMouseRightButtonDown">
+                        <TextBlock.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Edit user" Command="{Binding Path=EditUser}" />
+                                <MenuItem Header="Delete index..." Command="{Binding Path=ConfirmDeleteUser}" />
+                            </ContextMenu>
+                        </TextBlock.ContextMenu>
+                    </TextBlock>
+                </StackPanel>
+            </DataTemplate>
+
         </TreeView.Resources>
     </TreeView>
 
