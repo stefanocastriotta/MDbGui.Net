@@ -18,8 +18,8 @@
             <utils:StringToDocumentTextConverter x:Key="StringToDocumentTextConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
-    
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding AggregateOperation}">
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>

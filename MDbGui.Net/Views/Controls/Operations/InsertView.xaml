@@ -17,7 +17,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding InsertOperation}">
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
