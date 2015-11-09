@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using MDbGui.Net.Utils;
+using MDbGui.Net.ViewModel.Operations;
 using Microsoft.Practices.ServiceLocation;
 using MongoDB.Bson;
 using System;
@@ -118,12 +119,12 @@ namespace MDbGui.Net.ViewModel
         private void InternalOpenTab()
         {
             TabViewModel tabVm = SimpleIoc.Default.GetInstanceWithoutCaching<TabViewModel>();
-            tabVm.CommandType = Model.CommandType.Find;
             tabVm.Database = this.Database.Name;
             tabVm.Service = this.Database.Server.MongoDbService;
             tabVm.Collection = this.Name;
             tabVm.Name = this.Name;
             tabVm.ExecuteOnOpen = true;
+            tabVm.SelectedOperation = "Find";
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 
@@ -155,11 +156,11 @@ namespace MDbGui.Net.ViewModel
         private void InternalInsertDocuments()
         {
             TabViewModel tabVm = new TabViewModel();
-            tabVm.CommandType = Model.CommandType.Insert;
             tabVm.Database = this.Database.Name;
             tabVm.Service = this.Database.Server.MongoDbService;
             tabVm.Collection = this.Name;
             tabVm.Name = this.Name;
+            tabVm.SelectedOperation = "Insert";
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 

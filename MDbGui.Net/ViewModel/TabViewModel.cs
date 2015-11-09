@@ -16,16 +16,15 @@ using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using System.Threading;
 using MongoDB.Driver;
+using MDbGui.Net.ViewModel.Operations;
 
 namespace MDbGui.Net.ViewModel
 {
     public class TabViewModel : ViewModelBase, IDisposable
     {
-        CancellationTokenSource cts = new CancellationTokenSource();
+        public CancellationTokenSource Cts = new CancellationTokenSource();
 
         private bool _disposed;
-
-        JsonWriterSettingsExtended jsonWriterSettings = new JsonWriterSettingsExtended() { Indent = true, UseLocalTime = true };
 
         public TabViewModel()
         {
@@ -34,18 +33,26 @@ namespace MDbGui.Net.ViewModel
 
             Connections = new List<ActiveConnection>();
 
-            CommandTypes = new Dictionary<CommandType, string>();
-            CommandTypes.Add(Model.CommandType.Find, "Find / Count");
-            CommandTypes.Add(Model.CommandType.Insert, "Insert");
-            CommandTypes.Add(Model.CommandType.Update, "Update");
-            CommandTypes.Add(Model.CommandType.Replace, "Replace");
-            CommandTypes.Add(Model.CommandType.Remove, "Remove");
-            CommandTypes.Add(Model.CommandType.Aggregate, "Aggregate");
-            CommandTypes.Add(Model.CommandType.Distinct, "Distinct");
-            CommandTypes.Add(Model.CommandType.RunCommand, "RunCommand");
-            CommandTypes.Add(Model.CommandType.Eval, "Eval");
+            FindOperation = new MongoDbFindOperationViewModel(this);
+            InsertOperation = new MongoDbInsertOperationViewModel(this);
+            UpdateOperation = new MongoDbUpdateOperationViewModel(this);
+            ReplaceOperation = new MongoDbReplaceOperationViewModel(this);
+            RemoveOperation = new MongoDbRemoveOperationViewModel(this);
+            AggregateOperation = new MongoDbAggregateOperationViewModel(this);
+            DistinctOperation = new MongoDbDistinctOperationViewModel(this);
+            CommandOperation = new MongoDbCommandOperationViewModel(this);
+            EvalOperation = new MongoDbEvalOperationViewModel(this);
 
-            AggregateOptions = new MongoDB.Driver.AggregateOptions();
+            Operations = new List<string>();
+            Operations.Add("Find");
+            Operations.Add("Insert");
+            Operations.Add("Update");
+            Operations.Add("Replace");
+            Operations.Add("Remove");
+            Operations.Add("Aggregate");
+            Operations.Add("Distinct");
+            Operations.Add("Command");
+            Operations.Add("Eval");
 
             CopyToClipboard = new RelayCommand(() =>
             {
@@ -54,57 +61,29 @@ namespace MDbGui.Net.ViewModel
 
             ExecuteStop = new RelayCommand(() =>
             {
-                cts.Cancel();
+                Cts.Cancel();
             });
 
             ExecuteClose = new RelayCommand(InnerExecuteClose);
 
-            ExecuteFind = new RelayCommand<bool>((explain) =>
-            {
-                Skip = 0;
-                InnerExecuteFind(explain);
-            });
-
-            DoPaging = new RelayCommand<bool>(InnerExecuteFind);
-            PageBack = new RelayCommand(InnerPageBack);
-            PageForward = new RelayCommand(InnerPageForward);
-
-            ExecuteCount = new RelayCommand(InnerExecuteCount);
-
-            ExecuteDistinct = new RelayCommand(InnerExecuteDistinct);
-
-            ExecuteCommand = new RelayCommand(InnerExecuteCommand);
-
-            ExecuteEval = new RelayCommand(InnerExecuteEval);
-
-            ExecuteInsert = new RelayCommand(InnerExecuteInsert);
-
-            ExecuteUpdate = new RelayCommand(InnerExecuteUpdate);
-            
-            ExecuteReplace = new RelayCommand(InnerExecuteReplace);
-
-            ExecuteDelete = new RelayCommand(InnerExecuteDelete);
-
-            ExecuteAggregate = new RelayCommand(InnerExecuteAggregate);
-
-            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<ReplaceOneViewModel>>(this, (message) => ReplaceOneHandler(message));
+            Messenger.Default.Register<NotificationMessage<DocumentResultViewModel>>(this, (message) => DocumentMessageHandler(message));
         }
 
-        public Dictionary<CommandType, string> CommandTypes { get; private set; }
- 
-        private CommandType _commandType;
+        public List<string> Operations { get; private set; }
 
-        public CommandType CommandType
+        private string _selectedOperation;
+
+        public string SelectedOperation
         {
             get
             {
-                return _commandType;
+                return _selectedOperation;
             }
             set
             {
-                Set(ref _commandType, value);
-                if (value == CommandType.Find)
+                Set(ref _selectedOperation, value);
+                if (value == "Find")
                 {
                     if (Root != null && Root.Children.Count > 0)
                         ShowPager = true;
@@ -114,6 +93,15 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
+        public MongoDbFindOperationViewModel FindOperation { get;set; }
+        public MongoDbInsertOperationViewModel InsertOperation { get; set; }
+        public MongoDbUpdateOperationViewModel UpdateOperation { get; set; }
+        public MongoDbReplaceOperationViewModel ReplaceOperation { get; set; }
+        public MongoDbRemoveOperationViewModel RemoveOperation { get; set; }
+        public MongoDbAggregateOperationViewModel AggregateOperation { get; set; }
+        public MongoDbDistinctOperationViewModel DistinctOperation { get; set; }
+        public MongoDbCommandOperationViewModel CommandOperation { get; set; }
+        public MongoDbEvalOperationViewModel EvalOperation { get; set; }
 
         private string _name = string.Empty;
 
@@ -142,7 +130,7 @@ namespace MDbGui.Net.ViewModel
                 ShowProgress = true;
                 if (value && !_executing)
                 {
-                    cts = new CancellationTokenSource();
+                    Cts = new CancellationTokenSource();
                     ExecutingTime = TimeSpan.Zero.ToString("hh':'mm':'ss'.'fff");
                     _executingStartTime = DateTime.Now;
                     ExecutingTimer.Start();
@@ -325,626 +313,6 @@ namespace MDbGui.Net.ViewModel
 
         public RelayCommand CopyToClipboard { get; set; }
 
-        #region Find
-
-        private string _find = "{}";
-
-        public string Find
-        {
-            get
-            {
-                return _find;
-            }
-            set
-            {
-                Set(ref _find, value);
-            }
-        }
-
-        private string _sort = "{}";
-
-        public string Sort
-        {
-            get
-            {
-                return _sort;
-            }
-            set
-            {
-                Set(ref _sort, value);
-            }
-        }
-
-        private string _projection = "{}";
-
-        public string Projection
-        {
-            get
-            {
-                return _projection;
-            }
-            set
-            {
-                Set(ref _projection, value);
-            }
-        }
-
-        private int _skip = 0;
-
-        public int Skip
-        {
-            get
-            {
-                return _skip;
-            }
-            set
-            {
-                Set(ref _skip, value);
-            }
-        }
-
-        private int _size = 50;
-
-        public int Size
-        {
-            get
-            {
-                return _size;
-            }
-            set
-            {
-                Set(ref _size, value);
-            }
-        }
-
-        public RelayCommand<bool> ExecuteFind { get; set; }
-
-        public async void InnerExecuteFind(bool explain = false)
-        {
-            Executing = true;
-            Guid operationID = Guid.NewGuid();
-            Task<List<BsonDocument>> task = null;
-            bool stopRequested = false;
-            try
-            {
-                task = Service.FindAsync(Database, Collection, Find.Deserialize<BsonDocument>("Find"), Sort.Deserialize<BsonDocument>("Sort"), Projection.Deserialize<BsonDocument>("Projection"), Size, Skip, explain, operationID, cts.Token);
-                var results = await task.WithCancellation(cts.Token);
-                Executing = false;
-
-                if (!explain)
-                {
-                    ShowPager = true;
-                    StringBuilder sb = new StringBuilder();
-                    int index = 1;
-                    sb.Append("[");
-                    foreach (var result in results)
-                    {
-                        sb.AppendLine();
-                        sb.Append("/* # ");
-                        sb.Append(index.ToString());
-                        sb.AppendLine(" */");
-                        sb.Append(result.ToJson(jsonWriterSettings));
-                        sb.Append(",");
-                        index++;
-                    }
-                    if (results.Count > 0)
-                        sb.Length -= 1;
-                    sb.AppendLine();
-                    sb.Append("]");
-
-                    RawResult = sb.ToString();
-                    sb.Clear();
-                }
-                else
-                {
-                    ShowPager = false;
-                    if (results.Count > 0)
-                        RawResult = results[0].ToJson(jsonWriterSettings);
-                    else
-                        RawResult = "";
-                }
-                SelectedViewIndex = 0;
-
-                Root = new ResultsViewModel(results, this);
-                GC.Collect();
-            }
-            catch (BsonExtensions.BsonParseException ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing find command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "FindParseException"));
-            }
-            catch (OperationCanceledException)
-            {
-                stopRequested = true;
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing find command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
-            }
-            if (stopRequested)
-            {
-                if (!task.IsCompleted)
-                {
-                    task.ContinueWith(t =>
-                    {
-                        if (t.Exception != null)
-                        {
-                            Utils.LoggerHelper.Logger.Warn("Exception while executing find command", t.Exception);
-                        }
-                    });
-                    var currentOp = await Service.Eval(Database, "function() { return db.currentOP(); }");
-                    if (currentOp != null)
-                    {
-                        var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationID.ToString());
-                        if (operation != null)
-                        {
-                            await Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
-                        }
-                    }
-                }
-            }
-        }
-
-        public RelayCommand PageBack { get; set; }
-
-        public void InnerPageBack()
-        {
-            Skip -= Size;
-            Skip = Math.Max(0, Skip);
-            InnerExecuteFind();
-        }
-
-        public RelayCommand PageForward { get; set; }
-
-        public void InnerPageForward()
-        {
-            Skip += Size;
-            InnerExecuteFind();
-        }
-
-        public RelayCommand<bool> DoPaging { get; set; }
-
-        #endregion
-
-        #region Count
-
-        public RelayCommand ExecuteCount { get; set; }
-
-        public async void InnerExecuteCount()
-        {
-            Executing = true;
-            try
-            {
-                var result = await Service.CountAsync(Database, Collection, Find.Deserialize<BsonDocument>("Find"), cts.Token);
-                Executing = false;
-                ShowPager = false;
-
-                RawResult = result.ToString();
-                SelectedViewIndex = 1;
-
-                Root = null;
-            }
-            catch (BsonExtensions.BsonParseException ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Count command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "FindParseException"));
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Count command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
-            }
-        }
-
-        #endregion
-
-        #region Distinct
-
-        private string _distinctFilter = "{}";
-
-        public string DistinctFilter
-        {
-            get
-            {
-                return _distinctFilter;
-            }
-            set
-            {
-                Set(ref _distinctFilter, value);
-            }
-        }
-
-        private string _distinctFieldName;
-
-        public string DistinctFieldName
-        {
-            get
-            {
-                return _distinctFieldName;
-            }
-            set
-            {
-                Set(ref _distinctFieldName, value);
-            }
-        }
-
-        public RelayCommand ExecuteDistinct { get; set; }
-
-        public async void InnerExecuteDistinct()
-        {
-            Executing = true;
-            try
-            {
-                var results = await Service.DistinctAsync(Database, Collection, DistinctFieldName, DistinctFilter.Deserialize<BsonDocument>("DistinctFilter"), cts.Token);
-                Executing = false;
-                ShowPager = false;
-
-                RawResult = results.ToJson(jsonWriterSettings);
-                SelectedViewIndex = 0;
-
-                Root = new ResultsViewModel(results.Select(r => new BsonDocument(results.IndexOf(r).ToString(), r)).ToList(), this);
-                GC.Collect();
-            }
-            catch (BsonExtensions.BsonParseException ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Distinct command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "DistinctParseException"));
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Distinct command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
-            }
-        }
-
-        #endregion
-
-        #region Command
-
-        private string _command = "{}";
-
-        public string Command
-        {
-            get
-            {
-                return _command;
-            }
-            set
-            {
-                Set(ref _command, value);
-            }
-        }
-
-        public RelayCommand ExecuteCommand { get; set; }
-
-        public async void InnerExecuteCommand()
-        {
-            Executing = true;
-            try
-            {
-                var result = await Service.ExecuteRawCommandAsync(Database, Command.Deserialize<BsonDocument>("Command"), cts.Token);
-
-                RawResult = result.ToJson(jsonWriterSettings);
-
-                SelectedViewIndex = 1;
-                Root = new ResultsViewModel(new List<BsonDocument>() { result }, this);
-            }
-            catch (BsonExtensions.BsonParseException ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "CommandParseException"));
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing command", ex);
-                RawResult = ex.Message;
-                SelectedViewIndex = 1;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
-                ShowPager = false;
-            }
-        }
-
-        #endregion
-
-        #region Eval
-
-        private string _evalFunction = "function () {" + Environment.NewLine + "\t" + Environment.NewLine + "}";
-
-        public string EvalFunction
-        {
-            get
-            {
-                return _evalFunction;
-            }
-            set
-            {
-                Set(ref _evalFunction, value);
-            }
-        }
-
-
-        public RelayCommand ExecuteEval { get; set; }
-
-        public async void InnerExecuteEval()
-        {
-            Executing = true;
-            try
-            {
-                var result = await Service.Eval(Database, EvalFunction);
-
-                RawResult = result.ToJson(jsonWriterSettings);
-
-                if (result.IsBsonDocument)
-                    Root = new ResultsViewModel(new List<BsonDocument>() { result.AsBsonDocument }, this);
-                else
-                    Root = new ResultsViewModel(new List<BsonDocument>() { new BsonDocument().Add("result", result) }, this);
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Eval command", ex);
-                RawResult = ex.Message;
-                Root = null;
-            }
-            finally
-            {
-                SelectedViewIndex = 1;
-                Executing = false;
-                ShowPager = false;
-            }
-        }
-
-        #endregion
-
-        #region Insert
-
-        private string _insert = "[" + Environment.NewLine + "\t" + Environment.NewLine + "]";
-
-        public string Insert
-        {
-            get
-            {
-                return _insert;
-            }
-            set
-            {
-                Set(ref _insert, value);
-            }
-        }
-
-        public RelayCommand ExecuteInsert { get; set; }
-
-        public async void InnerExecuteInsert()
-        {
-            Executing = true;
-            try
-            {
-                var result = await Service.InsertAsync(Database, Collection, Insert.Deserialize<BsonArray>("Insert"), cts.Token);
-
-                RawResult = result.ToJson(jsonWriterSettings);
-                RawResult += Environment.NewLine;
-                RawResult += Environment.NewLine;
-                RawResult += "Inserted Count: " + result.InsertedCount;
-                RawResult += Environment.NewLine;
-                RawResult += Environment.NewLine;
-                if (result.ProcessedRequests != null && result.ProcessedRequests.Count > 0)
-                    RawResult += "Processed requests: " + Environment.NewLine + string.Join(Environment.NewLine, result.ProcessedRequests.Cast<InsertOneModel<BsonDocument>>().Select(s => s.Document.ToJson(jsonWriterSettings)));
-
-                SelectedViewIndex = 1;
-                Root = null;
-            }
-            catch (BsonExtensions.BsonParseException ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Insert command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "InsertParseException"));
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Insert command", ex);
-                RawResult = ex.Message;
-                SelectedViewIndex = 1;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
-                ShowPager = false;
-            }
-        }
-
-        #endregion
-
-        #region Update
-
-        private string _updateFilter = "{}";
-
-        public string UpdateFilter
-        {
-            get
-            {
-                return _updateFilter;
-            }
-            set
-            {
-                Set(ref _updateFilter, value);
-            }
-        }
-
-        private string _updateDocument = "{}";
-
-        public string UpdateDocument
-        {
-            get
-            {
-                return _updateDocument;
-            }
-            set
-            {
-                Set(ref _updateDocument, value);
-            }
-        }
-
-        private bool _updateMulti;
-
-        public bool UpdateMulti
-        {
-            get
-            {
-                return _updateMulti;
-            }
-            set
-            {
-                Set(ref _updateMulti, value);
-            }
-        }
-
-        public RelayCommand ExecuteUpdate { get; set; }
-
-        public async void InnerExecuteUpdate()
-        {
-            Executing = true;
-            try
-            {
-                var result = await Service.UpdateAsync(Database, Collection, UpdateFilter.Deserialize<BsonDocument>("UpdateFilter"), UpdateDocument.Deserialize<BsonDocument>("UpdateDocument"), UpdateMulti, cts.Token);
-
-                RawResult = result.ToJson(jsonWriterSettings);
-                RawResult += Environment.NewLine;
-                RawResult += Environment.NewLine;
-                RawResult += "Modified Count: " + result.ModifiedCount;
-
-                SelectedViewIndex = 1;
-                Root = null;
-            }
-            catch (BsonExtensions.BsonParseException ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Update command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "UpdateParseException"));
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Update command", ex);
-                RawResult = ex.Message;
-                SelectedViewIndex = 1;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
-                ShowPager = false;
-            }
-        }
-
-        #endregion
-
-        #region Replace
-
-        private string _replaceFilter = "{}";
-
-        public string ReplaceFilter
-        {
-            get
-            {
-                return _replaceFilter;
-            }
-            set
-            {
-                Set(ref _replaceFilter, value);
-            }
-        }
-
-        private string _replacement = "{}";
-
-        public string Replacement
-        {
-            get
-            {
-                return _replacement;
-            }
-            set
-            {
-                Set(ref _replacement, value);
-            }
-        }
-
-        public RelayCommand ExecuteReplace { get; set; }
-
-        public async void InnerExecuteReplace()
-        {
-            Executing = true;
-            try
-            {
-                var result = await Service.ReplaceOneAsync(Database, Collection, ReplaceFilter.Deserialize<BsonDocument>("ReplaceFilter"), Replacement.Deserialize<BsonDocument>("Replacement"), cts.Token);
-
-                RawResult = result.ToJson(jsonWriterSettings);
-                RawResult += Environment.NewLine;
-                RawResult += Environment.NewLine;
-                RawResult += "Modified Count: " + result.ModifiedCount;
-
-                SelectedViewIndex = 1;
-                Root = null;
-            }
-            catch (BsonExtensions.BsonParseException ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Replace command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "ReplaceParseException"));
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Replace command", ex);
-                RawResult = ex.Message;
-                SelectedViewIndex = 1;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
-                ShowPager = false;
-            }
-        }
-
         private async void ReplaceOneHandler(NotificationMessage<ReplaceOneViewModel> message)
         {
             if (message.Target == this && message.Notification == "UpdateDocument")
@@ -952,7 +320,7 @@ namespace MDbGui.Net.ViewModel
                 Executing = true;
                 try
                 {
-                    var result = await Service.ReplaceOneAsync(Database, Collection, BsonDocument.Parse("{ _id: ObjectId('" + message.Content.Document.Id + "') }"), message.Content.ReplacementBsonDocument, cts.Token);
+                    var result = await Service.ReplaceOneAsync(Database, Collection, BsonDocument.Parse("{ _id: ObjectId('" + message.Content.Document.Id + "') }"), message.Content.ReplacementBsonDocument, Cts.Token);
 
                     var doc = message.Content.Replacement.Deserialize<BsonDocument>();
                     message.Content.Document.Result = doc;
@@ -963,7 +331,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Utils.LoggerHelper.Logger.Error("Exception while updating a document", ex);
+                    LoggerHelper.Logger.Error("Exception while updating a document", ex);
                 }
                 finally
                 {
@@ -972,76 +340,6 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
-        #endregion
-
-        #region Delete
-
-        public RelayCommand ExecuteDelete { get; set; }
-
-        private string _deleteQuery = "{}";
-
-        public string DeleteQuery
-        {
-            get
-            {
-                return _deleteQuery;
-            }
-            set
-            {
-                Set(ref _deleteQuery, value);
-            }
-        }
-
-        private bool _deleteJustOne;
-
-        public bool DeleteJustOne
-        {
-            get
-            {
-                return _deleteJustOne;
-            }
-            set
-            {
-                Set(ref _deleteJustOne, value);
-            }
-        }
-
-        public async void InnerExecuteDelete()
-        {
-            Executing = true;
-            try
-            {
-                var result = await Service.DeleteAsync(Database, Collection, DeleteQuery.Deserialize<BsonDocument>("DeleteQuery"), DeleteJustOne, cts.Token);
-
-                RawResult = result.ToJson(jsonWriterSettings);
-                RawResult += Environment.NewLine;
-                RawResult += Environment.NewLine;
-                RawResult += "Deleted Count: " + result.DeletedCount;
-
-                SelectedViewIndex = 1;
-                Root = null;
-            }
-            catch (BsonExtensions.BsonParseException ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Delete command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "DeleteParseException"));
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Delete command", ex);
-                RawResult = ex.Message;
-                SelectedViewIndex = 1;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
-                ShowPager = false;
-            }
-        }
 
         private async void DocumentMessageHandler(NotificationMessage<DocumentResultViewModel> message)
         {
@@ -1050,7 +348,7 @@ namespace MDbGui.Net.ViewModel
                 Executing = true;
                 try
                 {
-                    var result = await Service.DeleteAsync(Database, Collection, ("{_id: ObjectId('" + message.Content.Id + "')}").Deserialize<BsonDocument>("Id"), true, cts.Token);
+                    var result = await Service.DeleteAsync(Database, Collection, ("{_id: ObjectId('" + message.Content.Id + "')}").Deserialize<BsonDocument>("Id"), true, Cts.Token);
                     if (result.DeletedCount == 1 && Root != null)
                     {
                         Root.Children.Remove(message.Content);
@@ -1062,7 +360,7 @@ namespace MDbGui.Net.ViewModel
                             sb.Append("/* # ");
                             sb.Append(((DocumentResultViewModel)item).Index);
                             sb.AppendLine(" */");
-                            sb.AppendLine(((DocumentResultViewModel)item).Result.ToJson(jsonWriterSettings));
+                            sb.AppendLine(((DocumentResultViewModel)item).Result.ToJson(Options.JsonWriterSettings));
                             sb.Append(",");
                         }
                         if (Root.Children.Count > 0)
@@ -1078,7 +376,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Utils.LoggerHelper.Logger.Error("Exception while deleting a document", ex);
+                    LoggerHelper.Logger.Error("Exception while deleting a document", ex);
                     RawResult = ex.Message;
                     SelectedViewIndex = 1;
                 }
@@ -1088,140 +386,6 @@ namespace MDbGui.Net.ViewModel
                 }
             }
         }
-
-        #endregion
-
-        #region Aggregate
-
-        private string _aggregatePipeline = "[" + Environment.NewLine + "\t" + Environment.NewLine + "]";
-
-        public string AggregatePipeline
-        {
-            get
-            {
-                return _aggregatePipeline;
-            }
-            set
-            {
-                Set(ref _aggregatePipeline, value);
-            }
-        }
-
-        private AggregateOptions _aggregateOptions;
-
-        public AggregateOptions AggregateOptions
-        {
-            get
-            {
-                return _aggregateOptions;
-            }
-            set
-            {
-                Set(ref _aggregateOptions, value);
-            }
-        }
-
-        private bool _aggregateExplain;
-
-        public bool AggregateExplain
-        {
-            get
-            {
-                return _aggregateExplain;
-            }
-            set
-            {
-                Set(ref _aggregateExplain, value);
-            }
-        }
-
-        public RelayCommand ExecuteAggregate { get; set; }
-
-        public async void InnerExecuteAggregate()
-        {
-            Executing = true;
-            Guid operationID = Guid.NewGuid();
-            Task<List<BsonDocument>> task = null;
-            bool stopRequested = false;
-            try
-            {
-                var pipeline = AggregatePipeline.Deserialize<BsonArray>();
-                task = Service.AggregateAsync(Database, Collection, AggregatePipeline.Deserialize<BsonArray>("AggregatePipeline"), AggregateOptions, AggregateExplain, cts.Token);
-                var results = await task.WithCancellation(cts.Token);
-                Executing = false;
-                ShowPager = false;
-                StringBuilder sb = new StringBuilder();
-                int index = 1;
-                sb.Append("[");
-                foreach (var result in results)
-                {
-                    sb.AppendLine();
-                    sb.Append("/* # ");
-                    sb.Append(index.ToString());
-                    sb.AppendLine(" */");
-                    sb.AppendLine(result.ToJson(jsonWriterSettings));
-                    sb.Append(",");
-                    index++;
-                }
-                if (results.Count > 0)
-                    sb.Length -= 1;
-                sb.AppendLine();
-                sb.Append("]");
-
-                RawResult = sb.ToString();
-                SelectedViewIndex = 0;
-                sb.Clear();
-                Root = new ResultsViewModel(results, this);
-                GC.Collect();
-            }
-            catch (OperationCanceledException)
-            {
-                stopRequested = true;
-            }
-            catch (BsonExtensions.BsonParseException ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-                Messenger.Default.Send(new NotificationMessage<BsonExtensions.BsonParseException>(this, ex, "AggregateParseException"));
-            }
-            catch (Exception ex)
-            {
-                Utils.LoggerHelper.Logger.Error("Exception while executing Aggregate command", ex);
-                SelectedViewIndex = 1;
-                RawResult = ex.Message;
-                Root = null;
-            }
-            finally
-            {
-                Executing = false;
-            }
-            if (stopRequested)
-            {
-                if (!task.IsCompleted)
-                {
-                    task.ContinueWith(t =>
-                    {
-                        if (t.Exception != null)
-                        {
-                            Utils.LoggerHelper.Logger.Warn("Exception while executing find command", t.Exception);
-                        }
-                    });
-                    var currentOp = await Service.Eval(Database, "function() { return db.currentOP(); }");
-                    if (currentOp != null)
-                    {
-                        var operation = currentOp.AsBsonDocument["inprog"].AsBsonArray.FirstOrDefault(item => item.AsBsonDocument.Contains("query") && item.AsBsonDocument["query"].AsBsonDocument.Contains("$comment") && item.AsBsonDocument["query"]["$comment"].AsString == operationID.ToString());
-                        if (operation != null)
-                        {
-                            await Service.Eval(Database, string.Format("function() {{ return db.killOp({0}); }}", operation["opid"].AsInt32));
-                        }
-                    }
-                }
-            }
-        }
-
-        #endregion
 
         public override void Cleanup()
         {
@@ -1253,7 +417,7 @@ namespace MDbGui.Net.ViewModel
         {
             if (!_disposed)
             {
-                cts.Dispose();
+                Cts.Dispose();
 
                 // Indicate that the instance has been disposed.
                 _disposed = true;

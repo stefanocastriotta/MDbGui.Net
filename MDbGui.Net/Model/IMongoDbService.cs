@@ -32,5 +32,6 @@ namespace MDbGui.Net.Model
         Task<ReplaceOneResult> ReplaceOneAsync(string databaseName, string collection, BsonDocument filter, BsonDocument document, CancellationToken token);
         Task<DeleteResult> DeleteAsync(string databaseName, string collection, BsonDocument filter, bool justOne, CancellationToken token);
         Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, BsonArray pipeline, AggregateOptions options, bool explain, CancellationToken token);
+        Task<List<BsonDocument>> MapReduceAsync(string databaseName, string collection, BsonJavaScript map, BsonJavaScript reduce, MapReduceOptions<BsonDocument, BsonDocument> options, CancellationToken token);
     }
 }

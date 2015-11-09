@@ -229,5 +229,13 @@ namespace MDbGui.Net.Model
                 return result;
             }, token);
         }
+
+        public async Task<List<BsonDocument>> MapReduceAsync(string databaseName, string collection, BsonJavaScript map, BsonJavaScript reduce, MapReduceOptions<BsonDocument, BsonDocument> options, CancellationToken token)
+        {
+            var db = client.GetDatabase(databaseName);
+            var mongoCollection = db.GetCollection<BsonDocument>(collection);
+            var result = await mongoCollection.MapReduceAsync<BsonDocument>(map, reduce, options, token);
+            return await result.ToListAsync();
+        }
     }
 }

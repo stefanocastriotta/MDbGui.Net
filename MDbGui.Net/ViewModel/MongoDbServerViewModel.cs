@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using MongoDB.Driver.Core.Misc;
 using GalaSoft.MvvmLight.Ioc;
+using MDbGui.Net.Utils;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -93,7 +94,7 @@ namespace MDbGui.Net.ViewModel
             this.IsExpanded = true;
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
-                Utils.LoggerHelper.Logger.Debug("Adding new database to server " + Name);
+                LoggerHelper.Logger.Debug("Adding new database to server " + Name);
                 Children.Add(newDb);
             });
         }
@@ -106,19 +107,19 @@ namespace MDbGui.Net.ViewModel
         private void InnerOpenRunCommand(DatabaseCommand param)
         {
             TabViewModel tabVm = SimpleIoc.Default.GetInstanceWithoutCaching<TabViewModel>();
-            tabVm.CommandType = CommandType.RunCommand;
+            tabVm.SelectedOperation = "Command";
             tabVm.Service = this.MongoDbService;
             tabVm.Database = "admin";
             tabVm.Name = this.Name;
             if (param == null)
-                tabVm.Command = "{}";
+                tabVm.CommandOperation.Command = "{}";
             else
             {
-                tabVm.Command = param.Command;
+                tabVm.CommandOperation.Command = param.Command;
                 tabVm.ExecuteOnOpen = param.ExecuteImmediately;
             }
             tabVm.SelectedViewIndex = 1;
-            Utils.LoggerHelper.Logger.Debug("Opening RunCommandTab for server " + Name);
+            LoggerHelper.Logger.Debug("Opening RunCommandTab for server " + Name);
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 
@@ -127,14 +128,14 @@ namespace MDbGui.Net.ViewModel
             try
             {
                 this.IsBusy = true;
-                Utils.LoggerHelper.Logger.Debug("Getting database list of server " + Name);
+                LoggerHelper.Logger.Debug("Getting database list of server " + Name);
                 var databases = await MongoDbService.ListDatabasesAsync();
-                Utils.LoggerHelper.Logger.Debug("Database list of server " + Name + " received");
+                LoggerHelper.Logger.Debug("Database list of server " + Name + " received");
                 LoadDatabases(databases);
             }
             catch (Exception ex)
             {
-                Utils.LoggerHelper.Logger.Error("Failed to get databases on server " + Name, ex);
+                LoggerHelper.Logger.Error("Failed to get databases on server " + Name, ex);
             }
             finally
             {
@@ -146,7 +147,7 @@ namespace MDbGui.Net.ViewModel
         {
             try
             {
-                Utils.LoggerHelper.Logger.Debug("Loading database list of server " + Name);
+                LoggerHelper.Logger.Debug("Loading database list of server " + Name);
                 this.Children.Clear();
                 List<MongoDbDatabaseViewModel> systemDatabases = new List<MongoDbDatabaseViewModel>();
                 List<MongoDbDatabaseViewModel> standardDatabases = new List<MongoDbDatabaseViewModel>();
@@ -181,7 +182,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
-                Utils.LoggerHelper.Logger.Error("Failed to load database list on server " + Name, ex);
+                LoggerHelper.Logger.Error("Failed to load database list on server " + Name, ex);
             }
         }
 
@@ -189,19 +190,19 @@ namespace MDbGui.Net.ViewModel
         {
             if (message.Notification == "DropDatabase" && message.Target == this)
             {
-                Utils.LoggerHelper.Logger.DebugFormat("DropDatabase notification received on server '{0}', database name '{1}'", Name, message.Content.Name);
+                LoggerHelper.Logger.DebugFormat("DropDatabase notification received on server '{0}', database name '{1}'", Name, message.Content.Name);
                 IsBusy = true;
                 message.Content.IsBusy = true;
                 try
                 {
-                    Utils.LoggerHelper.Logger.Info("Dropping database " + message.Content.Name + " on server " + Name);
+                    LoggerHelper.Logger.Info("Dropping database " + message.Content.Name + " on server " + Name);
                     await MongoDbService.DropDatabaseAsync(message.Content.Name);
                     Children.Remove(message.Content);
                     message.Content.Cleanup();
                 }
                 catch (Exception ex)
                 {
-                    Utils.LoggerHelper.Logger.Error(string.Format("Error while dropping database '{0}' on server '{1}'", message.Content.Name, Name), ex);
+                    LoggerHelper.Logger.Error(string.Format("Error while dropping database '{0}' on server '{1}'", message.Content.Name, Name), ex);
                 }
                 finally
                 {
@@ -231,7 +232,7 @@ namespace MDbGui.Net.ViewModel
             }
             catch (Exception ex)
             {
-                Utils.LoggerHelper.Logger.Error(string.Format("Failed to get users on server '{0}'", Name), ex);
+                LoggerHelper.Logger.Error(string.Format("Failed to get users on server '{0}'", Name), ex);
             }
             finally
             {

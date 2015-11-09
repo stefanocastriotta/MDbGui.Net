@@ -254,14 +254,17 @@ namespace MDbGui.Net.ViewModel
         private void InnerOpenRunCommand(DatabaseCommand param)
         {
             TabViewModel tabVm = SimpleIoc.Default.GetInstanceWithoutCaching<TabViewModel>();
-            tabVm.CommandType = CommandType.RunCommand;
+            tabVm.SelectedOperation = "Command";
             tabVm.Database = this.Name;
             tabVm.Service = this.Server.MongoDbService;
             tabVm.Name = this.Name;
             if (param == null)
-                tabVm.Command = "{}";
+                tabVm.CommandOperation.Command = "{}";
             else
-                tabVm.Command = param.Command;
+            {
+                tabVm.CommandOperation.Command = param.Command;
+                tabVm.ExecuteOnOpen = param.ExecuteImmediately;
+            }
             Messenger.Default.Send(new NotificationMessage<TabViewModel>(tabVm, "OpenTab"));
         }
 

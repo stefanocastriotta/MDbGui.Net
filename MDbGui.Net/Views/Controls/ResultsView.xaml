@@ -66,7 +66,7 @@
         </Grid>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5">
             <TextBlock Text="Operation"></TextBlock>
-            <ComboBox ItemsSource="{Binding CommandTypes}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=CommandType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <ComboBox ItemsSource="{Binding Operations}" SelectedItem="{Binding SelectedOperation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             </ComboBox>
         </StackPanel>
         <ContentControl Grid.Row="2" Content="{Binding}">
@@ -102,31 +102,31 @@
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding CommandType}" Value="Find">
+                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Find">
                             <Setter Property="ContentTemplate" Value="{StaticResource FindTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding CommandType}" Value="RunCommand">
+                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Command">
                             <Setter Property="ContentTemplate" Value="{StaticResource CommandTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding CommandType}" Value="Eval">
+                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Eval">
                             <Setter Property="ContentTemplate" Value="{StaticResource EvalTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding CommandType}" Value="Insert">
+                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Insert">
                             <Setter Property="ContentTemplate" Value="{StaticResource InsertTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding CommandType}" Value="Update">
+                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Update">
                             <Setter Property="ContentTemplate" Value="{StaticResource UpdateTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding CommandType}" Value="Replace">
+                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Replace">
                             <Setter Property="ContentTemplate" Value="{StaticResource ReplaceTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding CommandType}" Value="Remove">
+                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Remove">
                             <Setter Property="ContentTemplate" Value="{StaticResource RemoveTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding CommandType}" Value="Aggregate">
+                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Aggregate">
                             <Setter Property="ContentTemplate" Value="{StaticResource AggregateTemplate}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding CommandType}" Value="Distinct">
+                        <DataTrigger Binding="{Binding SelectedOperation}" Value="Distinct">
                             <Setter Property="ContentTemplate" Value="{StaticResource DistinctTemplate}" />
                         </DataTrigger>
                     </Style.Triggers>

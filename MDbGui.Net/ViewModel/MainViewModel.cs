@@ -13,6 +13,7 @@ using MDbGui.Net.Utils;
 using MongoDB.Driver.Core.Misc;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
+using MDbGui.Net.ViewModel.Operations;
 
 namespace MDbGui.Net.ViewModel
 {
@@ -139,7 +140,7 @@ namespace MDbGui.Net.ViewModel
             switch (message.Notification)
             {
                 case "OpenTab":
-                    Utils.LoggerHelper.Logger.Debug("OpenTab message received");
+                    LoggerHelper.Logger.Debug("OpenTab message received");
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
                         message.Content.Connections.AddRange(GetActiveConnections());
@@ -147,20 +148,15 @@ namespace MDbGui.Net.ViewModel
                         SelectedTab = message.Content;
                         if (message.Content.ExecuteOnOpen)
                         {
-                            switch (message.Content.CommandType)
-                            {
-                                case CommandType.Find:
-                                    message.Content.ExecuteFind.Execute(null);
-                                    break;
-                                case CommandType.RunCommand:
-                                    message.Content.ExecuteCommand.Execute(null);
-                                    break;
-                            }
+                            if (message.Content.SelectedOperation == "Find")
+                                message.Content.FindOperation.ExecuteFind.Execute(null);
+                            else if (message.Content.SelectedOperation == "Command")
+                                message.Content.CommandOperation.ExecuteCommand.Execute(null);
                         }
                     });
                     break;
                 case "CloseTab":
-                    Utils.LoggerHelper.Logger.Debug("CloseTab message received");
+                    LoggerHelper.Logger.Debug("CloseTab message received");
                     Tabs.Remove(message.Content);
                     message.Content.Cleanup();
                     break;
@@ -171,7 +167,7 @@ namespace MDbGui.Net.ViewModel
         {
             if (message.Notification == "Disconnect")
             {
-                Utils.LoggerHelper.Logger.Info("Disconnecting from server " + message.Content.Name);
+                LoggerHelper.Logger.Info("Disconnecting from server " + message.Content.Name);
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     ActiveConnections.Remove(message.Content);

@@ -16,7 +16,7 @@ namespace MDbGui.Net.Design
 
             MongoDbServer server = new MongoDbServer();
             server.Databases = new List<BsonDocument>();
-            server.Databases.Add(new BsonDocument{ { "name", "TestDatabase1" } });
+            server.Databases.Add(new BsonDocument { { "name", "TestDatabase1" } });
             return Task.FromResult(server);
         }
 
@@ -126,6 +126,11 @@ namespace MDbGui.Net.Design
         public Task<List<BsonDocument>> AggregateAsync(string databaseName, string collectionName, BsonArray pipeline, AggregateOptions options, bool explain, CancellationToken token)
         {
             return null;
+        }
+
+        public Task<List<BsonDocument>> MapReduceAsync(string databaseName, string collection, BsonJavaScript map, BsonJavaScript reduce, MapReduceOptions<BsonDocument, BsonDocument> options, CancellationToken token)
+        {
+            return Task.FromResult(new List<BsonDocument>());
         }
     }
 }
