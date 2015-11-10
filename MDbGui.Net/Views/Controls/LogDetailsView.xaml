@@ -7,7 +7,8 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:utils="clr-namespace:MDbGui.Net.Utils"
         mc:Ignorable="d"
-        Title="LogDetailsView" Height="600" Width="800">
+        Title="LogDetailsView" Height="600" Width="800"
+        d:DataContext="{Binding DesignLogDetails.LogEvent, Source={StaticResource Locator}}">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -34,7 +35,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
@@ -43,12 +44,12 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <Label Content="Timestamp"></Label>
-        <TextBlock Grid.Column="1" Text="{Binding TimeStamp}"></TextBlock>
-        <Label Grid.Row="1" Content="Level"></Label>
+        <Label Content="Timestamp" VerticalContentAlignment="Center"></Label>
+        <TextBlock Grid.Column="1" Text="{Binding TimeStamp}" VerticalAlignment="Center"></TextBlock>
+        <Label Grid.Row="1" Content="Level" VerticalContentAlignment="Center"></Label>
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-            <TextBlock Text="{Binding Level}"></TextBlock>
-            <ContentControl Content="{Binding}">
+            <TextBlock Text="{Binding Level}" Margin="0,0,10,0" VerticalAlignment="Center"></TextBlock>
+            <ContentControl Content="{Binding}" VerticalAlignment="Center">
                 <ContentControl.ContentTemplateSelector>
                     <utils:LogLevelTemplateSelector ErrorTemplate="{StaticResource ErrorTemplate}"
 			                WarningTemplate="{StaticResource WarningTemplate}"
@@ -58,11 +59,11 @@
                 </ContentControl.ContentTemplateSelector>
             </ContentControl>
         </StackPanel>
-        <Label Grid.Row="2" Content="Message"></Label>
-        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding RenderedMessage}"></TextBlock>
-        <Label Grid.Row="3" Content="Exception" Visibility="{Binding ExceptionObject, Converter={StaticResource NullValueToVisibilityConverter}}"></Label>
-        <TextBlock Grid.Row="3" Grid.Column="1" Visibility="{Binding ExceptionObject, Converter={StaticResource NullValueToVisibilityConverter}}" Text="{Binding ExceptionObject, Converter={StaticResource ExceptionToStringConverter}}"></TextBlock>
-        <Label Grid.Row="4" Content="Properties" Visibility="{Binding Properties, Converter={StaticResource NullValueToVisibilityConverter}}"></Label>
-        <TextBlock Grid.Row="4" Grid.Column="1" Visibility="{Binding Properties, Converter={StaticResource NullValueToVisibilityConverter}}" Text="{Binding Properties, Converter={StaticResource ObjectToJsonConverter}}"></TextBlock>
+        <Label Grid.Row="2" Content="Message" VerticalContentAlignment="Center"></Label>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding RenderedMessage, Mode=OneWay}" IsReadOnly="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextWrapping="Wrap"></TextBox>
+        <Label Grid.Row="3" Content="Exception" VerticalContentAlignment="Center" Visibility="{Binding ExceptionObject, Converter={StaticResource NullValueToVisibilityConverter}}"></Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Visibility="{Binding ExceptionObject, Converter={StaticResource NullValueToVisibilityConverter}}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding ExceptionObject, Converter={StaticResource ExceptionToStringConverter}, Mode=OneWay}" IsReadOnly="True"></TextBox>
+        <Label Grid.Row="4" Content="Properties" VerticalContentAlignment="Center" Visibility="{Binding Properties, Converter={StaticResource NullValueToVisibilityConverter}}"></Label>
+        <TextBox Grid.Row="4" Grid.Column="1" Visibility="{Binding Properties, Converter={StaticResource NullValueToVisibilityConverter}}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding Properties, Converter={StaticResource ObjectToJsonConverter}, Mode=OneWay}" IsReadOnly="True"></TextBox>
     </Grid>
 </Window>

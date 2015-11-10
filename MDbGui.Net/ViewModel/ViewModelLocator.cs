@@ -45,6 +45,7 @@ namespace MDbGui.Net.ViewModel
             SimpleIoc.Default.Register<CreateCollectionViewModel>();
             SimpleIoc.Default.Register<CreateIndexViewModel>();
             SimpleIoc.Default.Register<ReplaceOneViewModel>();
+            SimpleIoc.Default.Register<Design.LogDetailsDesignViewModel>();
         }
 
         /// <summary>
@@ -58,6 +59,20 @@ namespace MDbGui.Net.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the DesignLogDetails property.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1822:MarkMembersAsStatic",
+            Justification = "This non-static member is needed for data binding purposes.")]
+        public Design.LogDetailsDesignViewModel DesignLogDetails
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<Design.LogDetailsDesignViewModel>();
             }
         }
 

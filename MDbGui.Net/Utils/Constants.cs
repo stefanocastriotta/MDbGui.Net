@@ -79,5 +79,7 @@ namespace MDbGui.Net.Utils
         public const string EditUserMessage = "EditUser";
         public const string ConfirmDeleteUserMessage = "ConfirmDeleteUser";
         public const string DeleteUserMessage = "DeleteUser";
+
+        public const string ShowLogDetailsMessage = "ShowLogDetails";
     }
 }

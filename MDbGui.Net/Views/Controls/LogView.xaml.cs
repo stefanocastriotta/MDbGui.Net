@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using log4net.Core;
+using MDbGui.Net.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -38,9 +39,12 @@ namespace MDbGui.Net.Views.Controls
 
         private void LogDetailsMessageHandler(NotificationMessage<LoggingEvent> message)
         {
-            LogDetailsView logDetails = new LogDetailsView();
-            logDetails.DataContext = message.Content;
-            logDetails.ShowDialog();
+            if (message.Notification == Constants.ShowLogDetailsMessage)
+            {
+                LogDetailsView logDetails = new LogDetailsView();
+                logDetails.DataContext = message.Content;
+                logDetails.ShowDialog();
+            }
         }
     }
 }

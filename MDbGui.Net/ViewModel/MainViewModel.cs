@@ -73,7 +73,7 @@ namespace MDbGui.Net.ViewModel
             LogEvents = LoggerHelper.LogEvents;
             ViewLogDetails = new RelayCommand<log4net.Core.LoggingEvent>((param) =>
             {
-                Messenger.Default.Send(new NotificationMessage<log4net.Core.LoggingEvent>(param, "ShowLogDetails"));
+                Messenger.Default.Send(new NotificationMessage<log4net.Core.LoggingEvent>(param, Constants.ShowLogDetailsMessage));
             });
             Messenger.Default.Register<NotificationMessage<ConnectionInfo>>(this, (message) => LoggingInMessageHandler(message));
             Messenger.Default.Register<NotificationMessage<TabViewModel>>(this, (message) => TabMessageHandler(message));
@@ -93,11 +93,19 @@ namespace MDbGui.Net.ViewModel
 
                 TabViewModel tabDesign1 = SimpleIoc.Default.GetInstanceWithoutCaching<TabViewModel>();
                 tabDesign1.Name = "Collection1";
+                tabDesign1.SelectedOperation = tabDesign1.FindOperation;
                 this.Tabs.Add(tabDesign1);
                 this.SelectedTab = tabDesign1;
                 TabViewModel tabDesign2 = SimpleIoc.Default.GetInstanceWithoutCaching<TabViewModel>();
                 tabDesign2.Name = "localhost:27017";
+                tabDesign2.SelectedOperation = tabDesign2.AggregateOperation;
                 this.Tabs.Add(tabDesign2);
+
+                LogEvents = new ObservableCollection<log4net.Core.LoggingEvent>();
+                LogEvents.Add(new log4net.Core.LoggingEvent(new log4net.Core.LoggingEventData() { Level = log4net.Core.Level.Debug, Message = "Test debug message", TimeStamp = DateTime.Parse("2015/11/09 00:01:00") }));
+                LogEvents.Add(new log4net.Core.LoggingEvent(new log4net.Core.LoggingEventData() { Level = log4net.Core.Level.Info, Message = "Test info message", TimeStamp = DateTime.Parse("2015/11/09 00:02:00") }));
+                LogEvents.Add(new log4net.Core.LoggingEvent(new log4net.Core.LoggingEventData() { ExceptionString = "TestException", Level = log4net.Core.Level.Warn, Message = "Test warn message", TimeStamp = DateTime.Parse("2015/11/09 00:03:00") }));
+                LogEvents.Add(new log4net.Core.LoggingEvent(new log4net.Core.LoggingEventData() { ExceptionString = "TestException", Level = log4net.Core.Level.Error, Message = "Test error message", TimeStamp = DateTime.Parse("2015/11/09 00:04:00") }));
             }
 
         }

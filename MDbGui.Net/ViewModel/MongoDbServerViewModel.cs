@@ -168,15 +168,15 @@ namespace MDbGui.Net.ViewModel
 
                 this.Children.Add(systemDbFolder);
 
-                foreach (var db in standardDatabases.OrderBy(o => o.Name))
-                    this.Children.Add(db);
-
                 if (ServerVersion >= SemanticVersion.Parse("2.6.0"))
                 {
                     _users = new FolderViewModel("Users", this);
                     _users.Children.Add(new MongoDbUserViewModel(null, null) { IconVisible = false });
                     this.Children.Add(_users);
                 }
+
+                foreach (var db in standardDatabases.OrderBy(o => o.Name))
+                    this.Children.Add(db);
 
                 this.IsExpanded = true;
             }
