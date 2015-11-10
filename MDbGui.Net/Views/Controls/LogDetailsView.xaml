@@ -42,7 +42,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Label Content="Timestamp" VerticalContentAlignment="Center"></Label>
         <TextBlock Grid.Column="1" Text="{Binding TimeStamp}" VerticalAlignment="Center"></TextBlock>
@@ -61,9 +61,13 @@
         </StackPanel>
         <Label Grid.Row="2" Content="Message" VerticalContentAlignment="Center"></Label>
         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding RenderedMessage, Mode=OneWay}" IsReadOnly="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextWrapping="Wrap"></TextBox>
-        <Label Grid.Row="3" Content="Exception" VerticalContentAlignment="Center" Visibility="{Binding ExceptionObject, Converter={StaticResource NullValueToVisibilityConverter}}"></Label>
-        <TextBox Grid.Row="3" Grid.Column="1" Visibility="{Binding ExceptionObject, Converter={StaticResource NullValueToVisibilityConverter}}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding ExceptionObject, Converter={StaticResource ExceptionToStringConverter}, Mode=OneWay}" IsReadOnly="True"></TextBox>
-        <Label Grid.Row="4" Content="Properties" VerticalContentAlignment="Center" Visibility="{Binding Properties, Converter={StaticResource NullValueToVisibilityConverter}}"></Label>
-        <TextBox Grid.Row="4" Grid.Column="1" Visibility="{Binding Properties, Converter={StaticResource NullValueToVisibilityConverter}}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding Properties, Converter={StaticResource ObjectToJsonConverter}, Mode=OneWay}" IsReadOnly="True"></TextBox>
+        <Label Grid.Row="3" Content="Exception" VerticalContentAlignment="Top" Visibility="{Binding ExceptionObject, Converter={StaticResource NullValueToVisibilityConverter}}"></Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Visibility="{Binding ExceptionObject, Converter={StaticResource NullValueToVisibilityConverter}}" MaxHeight="250" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+                 TextWrapping="Wrap" Text="{Binding ExceptionObject, Converter={StaticResource ExceptionToStringConverter}, Mode=OneWay}" IsReadOnly="True"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"></TextBox>
+        <Label Grid.Row="4" Content="Properties" VerticalContentAlignment="Top" Visibility="{Binding Properties, Converter={StaticResource NullValueToVisibilityConverter}}"></Label>
+        <TextBox Grid.Row="4" Grid.Column="1" Visibility="{Binding Properties, Converter={StaticResource NullValueToVisibilityConverter}}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+                 TextWrapping="Wrap" Text="{Binding Properties, Converter={StaticResource ObjectToJsonConverter}, Mode=OneWay}" IsReadOnly="True"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"></TextBox>
     </Grid>
 </Window>
