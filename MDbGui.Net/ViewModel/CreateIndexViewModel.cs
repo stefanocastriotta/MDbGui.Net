@@ -23,7 +23,7 @@ namespace MDbGui.Net.ViewModel
             }
         }
 
-        protected string _name = string.Empty;
+        protected string _name = null;
 
         public string Name
         {
@@ -60,7 +60,7 @@ namespace MDbGui.Net.ViewModel
         }
 
 
-        protected string _indexDefinition = string.Empty;
+        protected string _indexDefinition = null;
         public string IndexDefinition
         {
             get
