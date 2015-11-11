@@ -275,7 +275,7 @@ namespace MDbGui.Net.ViewModel
             {
                 try
                 {
-                    IsBusy = true;
+                    _collections.IsBusy = true;
                     MongoDB.Driver.CreateCollectionOptions options = new MongoDB.Driver.CreateCollectionOptions();
                     options.AutoIndexId = message.Content.AutoIndexId;
                     options.Capped = message.Content.Capped;
@@ -304,7 +304,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 finally
                 {
-                    IsBusy = false;
+                    _collections.IsBusy = false;
                 }
             }
         }
@@ -313,7 +313,7 @@ namespace MDbGui.Net.ViewModel
         {
             if (message.Notification == Constants.DropCollectionMessage && message.Target == this)
             {
-                IsBusy = true;
+                _collections.IsBusy = true;
                 message.Content.IsBusy = true;
                 try
                 {
@@ -328,7 +328,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 finally
                 {
-                    IsBusy = false;
+                    _collections.IsBusy = false;
                     message.Content.IsBusy = false;
                 }
             }

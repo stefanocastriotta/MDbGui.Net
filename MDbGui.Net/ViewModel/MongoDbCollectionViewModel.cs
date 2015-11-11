@@ -202,7 +202,7 @@ namespace MDbGui.Net.ViewModel
             {
                 try
                 {
-                    IsBusy = true;
+                    _indexes.IsBusy = true;
                     if (message.Notification == Constants.RecreateIndexMessage)
                         await Database.Server.MongoDbService.DropIndexAsync(Database.Name, Name, message.Content.Name);
 
@@ -236,7 +236,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 finally
                 {
-                    IsBusy = false;
+                    _indexes.IsBusy = false;
                 }
             }
         }
@@ -245,13 +245,13 @@ namespace MDbGui.Net.ViewModel
         {
             if (message.Notification == Constants.DropIndexMessage && message.Target == this)
             {
-                IsBusy = true;
+                _indexes.IsBusy = true;
                 message.Content.IsBusy = true;
                 try
                 {
                     await Database.Server.MongoDbService.DropIndexAsync(Database.Name, Name, message.Content.Name);
                     _indexes.Children.Remove(message.Content);
-                    _indexes.ItemsCount = _indexes.Children.OfType<MongoDbCollectionViewModel>().Count();
+                    _indexes.ItemsCount = _indexes.Children.OfType<MongoDbIndexViewModel>().Count();
                     message.Content.Cleanup();
                 }
                 catch (Exception ex)
@@ -260,7 +260,7 @@ namespace MDbGui.Net.ViewModel
                 }
                 finally
                 {
-                    IsBusy = false;
+                    _indexes.IsBusy = false;
                     message.Content.IsBusy = false;
                 }
             }
