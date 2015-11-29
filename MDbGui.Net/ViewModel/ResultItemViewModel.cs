@@ -60,6 +60,15 @@ namespace MDbGui.Net.ViewModel
 
         public string Value { get; set; }
 
+        public string _toolTip { get; set; }
+        public override object ToolTip
+        {
+            get
+            {
+                return _toolTip;
+            }
+        }
+
         public string Type { get; set; }
 
         public RelayCommand CopyToClipboard { get; set; }
@@ -74,18 +83,22 @@ namespace MDbGui.Net.ViewModel
             Element = element;
             Type = element.Value.BsonType.ToString();
             if (element.Value.IsBsonArray)
-                Value = string.Format("{0} ({1} items)", element.Value.BsonType.ToString(), element.Value.AsBsonArray.Count);
+            {
+                Value = _toolTip = string.Format("{0} ({1} items)", element.Value.BsonType.ToString(), element.Value.AsBsonArray.Count);
+            }
             else if (element.Value.IsBsonDocument)
-                Value = string.Format("{0} ({1} fields)", element.Value.BsonType.ToString(), element.Value.AsBsonDocument.ElementCount);
+                Value = _toolTip = string.Format("{0} ({1} fields)", element.Value.BsonType.ToString(), element.Value.AsBsonDocument.ElementCount);
             else if (element.Value.IsValidDateTime)
             {
-                Value = element.Value.ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss.FFFzzz");
+                Value = _toolTip = element.Value.ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss.FFFzzz");
             }
             else
             {
-                Value = element.Value.ToJson(jsonWriterSettings).Replace("\n", " ").Replace("\r", " ").Replace("\\n", " ").Replace("\\r", " ").Trim(' ', '\"');
+                Value = _toolTip = element.Value.ToJson(jsonWriterSettings).Replace("\n", " ").Replace("\r", " ").Replace("\\n", " ").Replace("\\r", " ").Trim(' ', '\"');
                 if (Value.Length > 100)
                     Value = Value.Substring(0, 100) + "...";
+                if (_toolTip.Length > 1000)
+                    _toolTip = _toolTip.Substring(0, 1000) + "...";
             }
 
             CopyToClipboard = new RelayCommand(() =>

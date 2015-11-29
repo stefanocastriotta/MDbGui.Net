@@ -184,7 +184,7 @@
                                 <GridViewColumn Header="Value">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Value}" />
+                                            <TextBlock Text="{Binding Value}" ToolTip="{Binding ToolTip}" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
