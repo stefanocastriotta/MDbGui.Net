@@ -41,7 +41,7 @@ $DestinationDir = $DestinationDir.TrimEnd('/', '\')
 New-Item -ItemType Directory -Path $DestinationDir
 New-Item -ItemType Directory -Path $DestinationDirExe
 
-Copy-Item ".\src\MDbGui.Net\bin\$configuration\*.*" `
+Copy-Item ".\..\..\src\MDbGui.Net\bin\$configuration\*.*" `
     $DestinationDirExe `
     -Force -Recurse
 
