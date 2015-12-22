@@ -45,6 +45,8 @@ Copy-Item ".\..\..\src\MDbGui.Net\bin\$configuration\*.*" `
     $DestinationDirExe `
     -Force -Recurse
 
+Copy-Item ".\..\..\src\MDbGui.Net\Resources\" "$DestinationDirExe\Resources\" -Force -Recurse
+
 $appDir = $DestinationDirExe.ToString() + "\app"
 New-Item -Force -ItemType directory -Path $appDir
 
