@@ -30,11 +30,11 @@ $preReleaseString = $splitted[0]
 if ([string]::IsNullOrEmpty($preReleaseString))
 {
     $preReleaseString = "stable"
-    $ProductName = "MdbGui.NET"
+    $ProductName = "MDbGui.Net"
 }
 else
 {
-    $ProductName = "MdbGui.NET-$preReleaseString"
+    $ProductName = "MDbGui.Net-$preReleaseString"
 }
 
 Write-Output "Pre Release Number is: $preReleaseNum"
