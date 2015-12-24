@@ -24,13 +24,13 @@ if ([string]::IsNullOrEmpty($preReleaseNum))
 {
     $preReleaseNum = "0"
 }
-$clickOnceVersion = $assemblyVersion + "." + $preReleaseNum
+$clickOnceVersion = $version.MajorMinorPatch + "." + $preReleaseNum
 
 Write-Output "Pre Release Number is: $preReleaseNum"
 Write-Output "SemVer - Assembly and File: $assemblyVersion Informational: $assemblyInformationalVersion"
 Write-Output "Click Once Version: $clickOnceVersion"
 
-Write-Output "Nuget Version: " + $version.NuGetVersionV2
+Write-Output "Nuget Version: $version.NuGetVersionV2"
 
 Write-Output ("##vso[task.setvariable variable=NugetVersion;]" + $version.NugetVersionV2)
 Write-Output ("##vso[task.setvariable variable=AssemblyVersion;]" + $assemblyVersion)
