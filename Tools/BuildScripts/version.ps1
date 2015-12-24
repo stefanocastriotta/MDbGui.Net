@@ -26,9 +26,16 @@ if ([string]::IsNullOrEmpty($preReleaseNum))
 }
 $clickOnceVersion = $version.MajorMinorPatch + "." + $preReleaseNum
 
+$preReleaseString = $splitted[0]
+if ([string]::IsNullOrEmpty($preReleaseString))
+{
+    $preReleaseString = "stable"
+}
+
 Write-Output "Pre Release Number is: $preReleaseNum"
 Write-Output "SemVer - Assembly and File: $assemblyVersion Informational: $assemblyInformationalVersion"
 Write-Output "Click Once Version: $clickOnceVersion"
+Write-Output "preReleaseString: $preReleaseString"
 
 Write-Output "Nuget Version: $version.NuGetVersionV2"
 
@@ -37,6 +44,7 @@ Write-Output ("##vso[task.setvariable variable=AssemblyVersion;]" + $assemblyVer
 Write-Output ("##vso[task.setvariable variable=FileInfoVersion;]" + $assemblyFileVersion)
 Write-Output ("##vso[task.setvariable variable=AssemblyInformationalVersion;]" + $assemblyInformationalVersion)
 Write-Output ("##vso[task.setvariable variable=ClickOnceVersion;]" + $clickOnceVersion)
+Write-Output ("##vso[task.setvariable variable=AzureBlobPrefix;]" + $preReleaseString)
 
 #change build number.
 Write-Output ("##vso[task.setvariable variable=build.buildnumber;]" + $version.FullSemVer)
