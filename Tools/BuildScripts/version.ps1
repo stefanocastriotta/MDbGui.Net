@@ -30,12 +30,18 @@ $preReleaseString = $splitted[0]
 if ([string]::IsNullOrEmpty($preReleaseString))
 {
     $preReleaseString = "stable"
+    $ProductName = "MdbGui.NET"
+}
+else
+{
+    $ProductName = "MdbGui.NET-$preReleaseString"
 }
 
 Write-Output "Pre Release Number is: $preReleaseNum"
 Write-Output "SemVer - Assembly and File: $assemblyVersion Informational: $assemblyInformationalVersion"
 Write-Output "Click Once Version: $clickOnceVersion"
 Write-Output "preReleaseString: $preReleaseString"
+Write-Output "ProductName: $ProductName"
 
 Write-Output "Nuget Version: $version.NuGetVersionV2"
 
@@ -45,6 +51,7 @@ Write-Output ("##vso[task.setvariable variable=FileInfoVersion;]" + $assemblyFil
 Write-Output ("##vso[task.setvariable variable=AssemblyInformationalVersion;]" + $assemblyInformationalVersion)
 Write-Output ("##vso[task.setvariable variable=ClickOnceVersion;]" + $clickOnceVersion)
 Write-Output ("##vso[task.setvariable variable=AzureBlobPrefix;]" + $preReleaseString)
+Write-Output ("##vso[task.setvariable variable=ProductName;]" + $ProductName)
 
 #change build number.
 Write-Output ("##vso[task.setvariable variable=build.buildnumber;]" + $version.FullSemVer)
