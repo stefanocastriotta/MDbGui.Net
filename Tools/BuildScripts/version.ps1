@@ -16,7 +16,16 @@ $version = $output | ConvertFrom-Json
 $assemblyVersion = $version.AssemblySemver
 $assemblyFileVersion = $version.AssemblySemver
 $assemblyInformationalVersion = ($version.SemVer + "/" + $version.Sha)
+$preReleaseTag = $version.PreReleaseTag
 
+$splitted = $preReleaseTag.Split('.')
+$preReleaseNum = $splitted[$splitted.Length - 1]
+if ([string]::IsNullOrEmpty($preReleaseNum))
+{
+    $preReleaseNum = "0"
+}
+
+Write-Output "Pre Release Number is: $preReleaseNum"
 Write-Output "SemVer - Assembly and File: $assemblyVersion Informational: $assemblyInformationalVersion"
 
 Write-Output $version.NuGetVersionV2
