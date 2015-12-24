@@ -22,9 +22,16 @@ namespace MDbGui.Net
             try
             {
                 base.OnStartup(e);
-                XmlReader reader = XmlReader.Create("Resources/BsonHighlighting.xml");
-                HighlightingManager.Instance.RegisterHighlighting("Bson", new string[] { ".bson" }, HighlightingLoader.Load(reader, HighlightingManager.Instance));
-
+                var resFile = new FileInfo("Resources/BsonHighlighting.xml");
+                if (!resFile.Exists)
+                {
+                    MessageBox.Show("Unable to find resource file " + resFile.FullName);
+                }
+                else
+                {
+                    XmlReader reader = XmlReader.Create("Resources/BsonHighlighting.xml");
+                    HighlightingManager.Instance.RegisterHighlighting("Bson", new string[] { ".bson" }, HighlightingLoader.Load(reader, HighlightingManager.Instance));
+                }
             }
             catch (System.Exception ex)
             {
