@@ -9,7 +9,7 @@ $runningDirectory = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
 if ($DestinationDir -eq "") 
 {
-    $DestinationDir = $runningDirectory + "\release"
+    $DestinationDir = $runningDirectory + "\$Configuration"
 }
 elseif ($DestinationDir.StartsWith(".")) 
 {
@@ -18,6 +18,7 @@ elseif ($DestinationDir.StartsWith("."))
 
 $DestinationDir = [System.IO.Path]::GetFullPath($DestinationDir)
 $DestinationDirExe = $DestinationDir + "\MDbGuiNet"
+$DestinationDirClickOnce = $DestinationDir + "\MDbGuiNetClickOnce"
 
 Write-Host "Destination dir is $DestinationDir"
 
@@ -51,6 +52,8 @@ $appDir = $DestinationDirExe.ToString() + "\app"
 New-Item -Force -ItemType directory -Path $appDir
 
 Write-Host "Destination dir is  $DestinationDirExe"
+
+Move-Item "$DestinationDirExe\app.publish" "$DestinationDirClickOnce\" -Force
 
 Write-Host "Cleaning up $DestinationDirExe"
 Get-ChildItem $DestinationDirExe -Include *.xml | foreach ($_) {remove-item $_.fullname}
