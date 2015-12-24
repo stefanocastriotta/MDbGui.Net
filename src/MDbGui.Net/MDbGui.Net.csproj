@@ -59,6 +59,9 @@
   <PropertyGroup>
     <ApplicationIcon>Resources\Database.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyName>MDbGui.Netx</AssemblyName>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="FontAwesome.WPF">
       <HintPath>..\packages\FontAwesome.WPF.4.4.0.5\lib\FontAwesome.WPF.dll</HintPath>
