@@ -60,7 +60,7 @@
     <ApplicationIcon>Resources\Database.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyName>MDbGui.Netx</AssemblyName>
+    <AssemblyName>MDbGui.Net</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FontAwesome.WPF">
