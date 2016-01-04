@@ -138,9 +138,10 @@ namespace MDbGui.Net.ViewModel
             {
                 if (Element.Value.IsBsonArray)
                 {
-                    foreach (var child in Element.Value.AsBsonArray)
+                    var array = Element.Value.AsBsonArray;
+                    for (int i = 0; i < array.Count; i++)
                     {
-                        ResultItemViewModel item = new ResultItemViewModel(new BsonElement(Element.Value.AsBsonArray.IndexOf(child).ToString(), child));
+                        ResultItemViewModel item = new ResultItemViewModel(new BsonElement(i.ToString(), array[i]));
                         Children.Add(item);
                     }
                 }

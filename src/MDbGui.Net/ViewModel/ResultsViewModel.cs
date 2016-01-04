@@ -35,8 +35,8 @@ namespace MDbGui.Net.ViewModel
         {
             try
             {
-                foreach (var result in _documents)
-                    Children.Add(new DocumentResultViewModel(result, Owner.Service, Owner.Database, Owner.Collection, _documents.IndexOf(result) + 1));
+                for (int i = 0; i < _documents.Count; i++)
+                    Children.Add(new DocumentResultViewModel(_documents[i], Owner.Service, Owner.Database, Owner.Collection, i + 1));
             }
             catch
             {
