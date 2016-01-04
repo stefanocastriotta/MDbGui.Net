@@ -137,7 +137,7 @@
 
         <DockPanel Grid.Row="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" LastChildFill="False" >
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Visibility="{Binding ShowProgress, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <fa:ImageAwesome Spin="True" Icon="Refresh" Height="18" Width="18" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></fa:ImageAwesome>
+                <fa:ImageAwesome Spin="{Binding Executing}" Icon="Refresh" Height="18" Width="18" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></fa:ImageAwesome>
                 <Label Content="Executing command" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}"></Label>
                 <Button Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Stop" Command="{Binding ExecuteStop}"></Button>
                 <Label Content="Execution completed" Visibility="{Binding Executing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"></Label>
